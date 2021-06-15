@@ -1,0 +1,15 @@
+/rtmp2webrtc/rtmp2webrtc
+
+/dump
+/pkg
+/app
+
+/.idea
+
+/test.sh
+/outRecord.h264
+/*.ivf
+/*.ogg
+/*.h264
+/*.flv
+/*.mp4

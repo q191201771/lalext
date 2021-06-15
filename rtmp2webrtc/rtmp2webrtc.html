@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RTMP To WebRTC</title>
+
+    <style>
+        textarea {
+            width: 500px;
+            min-height: 75px;
+        }
+    </style>
+
+    <script>
+        let log = msg => {
+            document.getElementById('div').innerHTML += msg + '<br>'
+        }
+
+        let localSessionDescription
+
+        let pc = new RTCPeerConnection({
+            iceServers: [
+                {
+                    urls: 'stun:stun.l.google.com:19302'
+                }
+            ]
+        })
+
+        pc.ontrack = function (event) {
+            var el = document.createElement(event.track.kind)
+            el.srcObject = event.streams[0]
+            el.autoplay = true
+            el.controls = true
+
+            document.getElementById('remoteVideos').appendChild(el)
+        }
+
+        pc.oniceconnectionstatechange = e => log(pc.iceConnectionState)
+        pc.onicecandidate = event => {
+            console.log(event)
+            if (event.candidate === null) {
+                console.log(pc.localDescription)
+                localSessionDescription = btoa(JSON.stringify(pc.localDescription))
+            }
+        }
+
+        pc.addTransceiver('video', {'direction': 'sendrecv'})
+
+        pc.createOffer().then(d => pc.setLocalDescription(d)).catch(log)
+
+        window.startSession = () => {
+            let rtmpUrl = document.getElementById('idRtmpUrl').value
+            if (rtmpUrl === '') {
+                return alert('rtmp url must not be empty')
+            }
+            if (localSessionDescription === '') {
+                return alert('local session description must not be empty')
+            }
+
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", '/task', true);
+            xhr.setRequestHeader("Content-type", "application/json");
+            xhr.onload = function () {
+                let remoteSessionDescription = atob(JSON.parse(xhr.response).session_description)
+                try {
+                    pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(remoteSessionDescription)))
+                } catch (e) {
+                    alert(e)
+                }
+            };
+            let requestData = {
+                "rtmp_url": rtmpUrl,
+                "session_description": localSessionDescription
+            }
+            xhr.send(JSON.stringify(requestData));
+        }
+    </script>
+
+</head>
+
+rtmp url:<br />
+<textarea id="idRtmpUrl">rtmp://localhost/live/test110</textarea> <br />
+
+<button onclick="window.startSession()"> Start Session </button><br />
+
+<br />
+
+Video<br />
+<div id="remoteVideos"></div> <br />
+
+Logs<br />
+<div id="div"></div>
+
+</body>
+</html>
