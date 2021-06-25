@@ -33,10 +33,12 @@ func main() {
 		option.Level = nazalog.LevelTrace
 	})
 
-	port := parseFlag()
-	addr := fmt.Sprintf(":%d", port)
+	httpPort, webrtcPort := parseFlag()
+	addr := fmt.Sprintf(":%d", httpPort)
 
 	var m http.ServeMux
+	taskCreator, err := NewTaskCreator(webrtcPort)
+	nazalog.Assert(nil, err)
 
 	var pageFn = func(writer http.ResponseWriter, request *http.Request) {
 		buf, err := ioutil.ReadFile("rtmp2webrtc.html")
@@ -64,7 +66,7 @@ func main() {
 		sessDescChan := make(chan string, 1)
 		errChan := make(chan error, 1)
 		go func() {
-			err = StartTunnelTask(param.RtmpUrl, param.SessionDescription, func(sessDesc string) {
+			err = taskCreator.StartTunnelTask(param.RtmpUrl, param.SessionDescription, func(sessDesc string) {
 				sessDescChan <- sessDesc
 			})
 			errChan <- err
@@ -81,13 +83,14 @@ func main() {
 			nazalog.Assert(nil, err)
 		}
 	})
-	nazalog.Infof("> start listen, open http://127.0.0.1:%d/rtmp2webrtc.html", port)
-	err := http.ListenAndServe(addr, &m)
+	nazalog.Infof("> start listen, open http://127.0.0.1:%d/rtmp2webrtc.html", httpPort)
+	err = http.ListenAndServe(addr, &m)
 	nazalog.Assert(nil, err)
 }
 
-func parseFlag() int {
-	port := flag.Int("p", 8827, "specify listen port")
+func parseFlag() (int, int) {
+	httpPort := flag.Int("p", 8827, "specify listen port")
+	webrtcPort := flag.Int("wp", 8900, "specify webrtc mux port")
 	flag.Parse()
-	return *port
+	return *httpPort, *webrtcPort
 }

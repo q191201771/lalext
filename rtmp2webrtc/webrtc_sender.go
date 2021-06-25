@@ -10,6 +10,8 @@ package main
 
 import (
 	"errors"
+	"github.com/pion/ice/v2"
+	"github.com/pion/interceptor"
 	"github.com/pion/webrtc/v3"
 	"time"
 
@@ -24,9 +26,26 @@ type WebRtcSender struct {
 	videoTrack *webrtc.TrackLocalStaticSample
 }
 
-func (w *WebRtcSender) Init(offer webrtc.SessionDescription, onICEConnectionState func(connectionState webrtc.ICEConnectionState)) (localDesc webrtc.SessionDescription, err error) {
+func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, tcpMux ice.TCPMux, onICEConnectionState func(connectionState webrtc.ICEConnectionState)) (localDesc webrtc.SessionDescription, err error) {
+
 	var peerConnection *webrtc.PeerConnection
-	peerConnection, err = webrtc.NewPeerConnection(webrtc.Configuration{
+
+	m := &webrtc.MediaEngine{}
+	if err = m.RegisterDefaultCodecs(); err != nil {
+		return
+	}
+
+	i := &interceptor.Registry{}
+	if err = webrtc.RegisterDefaultInterceptors(m, i); err != nil {
+		return
+	}
+
+	s := webrtc.SettingEngine{}
+	s.SetICEUDPMux(udpMux)
+	s.SetICETCPMux(tcpMux)
+
+	api := webrtc.NewAPI(webrtc.WithMediaEngine(m), webrtc.WithInterceptorRegistry(i), webrtc.WithSettingEngine(s))
+	peerConnection, err = api.NewPeerConnection(webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
 				URLs: []string{"stun:stun.l.google.com:19302"},
@@ -69,6 +88,9 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription, onICEConnectionStat
 	if err = peerConnection.SetLocalDescription(answer); err != nil {
 		return
 	}
+
+	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
+	<- gatherComplete
 
 	return *peerConnection.LocalDescription(), nil
 }

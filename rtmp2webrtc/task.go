@@ -9,14 +9,44 @@
 package main
 
 import (
+	"github.com/pion/ice/v2"
 	"github.com/pion/webrtc/v3"
 	"github.com/q191201771/lal/pkg/avc"
 	"github.com/q191201771/lal/pkg/base"
 	"github.com/q191201771/lal/pkg/rtmp"
 	"github.com/q191201771/naza/pkg/nazalog"
+	"net"
 )
 
-func StartTunnelTask(rtmpUrl string, sessionDescription string, onLocalSessDesc func(sessDesc string)) error {
+type TaskCreator struct{
+	udpMux ice.UDPMux
+	tcpMux ice.TCPMux
+}
+
+func NewTaskCreator(port int) (*TaskCreator, error) {
+	um, err := net.ListenUDP("udp", &net.UDPAddr{
+		IP:   net.IP{0, 0, 0, 0},
+		Port: port,
+	})
+
+	if err != nil {
+		return nil, err
+	}
+	tm, err := net.ListenTCP("tcp", &net.TCPAddr{
+		IP:   net.IP{0, 0, 0, 0},
+		Port: port,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &TaskCreator{
+		udpMux: webrtc.NewICEUDPMux(nil, um),
+		tcpMux: webrtc.NewICETCPMux(nil, tm, 20),
+	}, nil
+}
+
+func (t *TaskCreator)StartTunnelTask(rtmpUrl string, sessionDescription string, onLocalSessDesc func(sessDesc string)) error {
 	var (
 		iceConnectionStateChan = make(chan webrtc.ICEConnectionState, 1)
 	)
@@ -28,7 +58,7 @@ func StartTunnelTask(rtmpUrl string, sessionDescription string, onLocalSessDesc 
 	}
 
 	var webrtcSender WebRtcSender
-	localSessionDescription, err := webrtcSender.Init(sd, func(connectionState webrtc.ICEConnectionState) {
+	localSessionDescription, err := webrtcSender.Init(sd, t.udpMux, t.tcpMux,func(connectionState webrtc.ICEConnectionState) {
 		nazalog.Debugf("> OnICEConnectionStateChange. state=%s", connectionState.String())
 		switch connectionState {
 		case webrtc.ICEConnectionStateChecking:
