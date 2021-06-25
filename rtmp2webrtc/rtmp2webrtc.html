@@ -62,6 +62,7 @@
             xhr.setRequestHeader("Content-type", "application/json");
             xhr.onload = function () {
                 let remoteSessionDescription = atob(JSON.parse(xhr.response).session_description)
+                console.log(remoteSessionDescription)
                 try {
                     pc.setRemoteDescription(new RTCSessionDescription(JSON.parse(remoteSessionDescription)))
                 } catch (e) {

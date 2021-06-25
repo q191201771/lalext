@@ -9,7 +9,7 @@ rtmp转换webrtc的网关。
 ```
 $cd rtmp2webrtc
 $go build
-$./rtmp2webrtc -p 8827
+$./rtmp2webrtc -p 8827 -wp 8900
 ```
 
 步骤2，使用chrome浏览器打开h5网页： http://127.0.0.1:8827/rtmp2webrtc.html
