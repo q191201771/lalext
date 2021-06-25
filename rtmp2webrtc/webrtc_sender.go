@@ -70,6 +70,9 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription, onICEConnectionStat
 		return
 	}
 
+	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
+	<- gatherComplete
+
 	return *peerConnection.LocalDescription(), nil
 }
 
