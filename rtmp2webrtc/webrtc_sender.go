@@ -13,9 +13,7 @@ import (
 	"github.com/pion/ice/v2"
 	"github.com/pion/interceptor"
 	"github.com/pion/webrtc/v3"
-	"time"
-
-	"github.com/pion/webrtc/v3/pkg/media"
+	"github.com/q191201771/lal/pkg/base"
 )
 
 var (
@@ -23,7 +21,7 @@ var (
 )
 
 type WebRtcSender struct {
-	videoTrack *webrtc.TrackLocalStaticSample
+	vTrack *TrackLocalVideo
 }
 
 func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, tcpMux ice.TCPMux, onICEConnectionState func(connectionState webrtc.ICEConnectionState)) (localDesc webrtc.SessionDescription, err error) {
@@ -56,12 +54,12 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, 
 		return
 	}
 
-	if w.videoTrack, err = webrtc.NewTrackLocalStaticSample(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeH264}, "video", "lal"); err != nil {
+	if w.vTrack, err = NewTrackLocalVideo(webrtc.RTPCodecCapability{MimeType: webrtc.MimeTypeH264}, "video", "lal"); err != nil {
 		return
 	}
 
 	var rtpSender *webrtc.RTPSender
-	if rtpSender, err = peerConnection.AddTrack(w.videoTrack); err != nil {
+	if rtpSender, err = peerConnection.AddTrack(w.vTrack); err != nil {
 		return
 	}
 
@@ -95,7 +93,6 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, 
 	return *peerConnection.LocalDescription(), nil
 }
 
-func (w *WebRtcSender) Write(nal []byte, timestamp uint32) error {
-	//nazalog.Tracef("> W type=%s, len=%d", avc.ParseNALUTypeReadable(nal[0]), len(nal))
-	return w.videoTrack.WriteSample(media.Sample{Data: nal, Duration: time.Duration(timestamp) * time.Millisecond})
+func (w *WebRtcSender) Write(pkt base.AvPacket) error {
+	return w.vTrack.Write(pkt)
 }
