@@ -88,7 +88,6 @@ func (t *TaskCreator)StartTunnelTask(rtmpUrl string, sessionDescription string, 
 	pullSession := rtmp.NewPullSession(func(option *rtmp.PullSessionOption) {
 	})
 
-	prevTimestamp := uint32(0)
 	var sps []byte
 	var pps []byte
 	err = pullSession.Pull(rtmpUrl, func(msg base.RtmpMsg) {
@@ -119,10 +118,6 @@ func (t *TaskCreator)StartTunnelTask(rtmpUrl string, sessionDescription string, 
 			return
 		}
 
-		if prevTimestamp == 0 {
-			prevTimestamp = timestamp
-		}
-
 		var out []byte
 		err = avc.IterateNaluAvcc(msg.Payload[5:], func(nal []byte) {
 			t := avc.ParseNaluType(nal[0])
@@ -144,10 +139,11 @@ func (t *TaskCreator)StartTunnelTask(rtmpUrl string, sessionDescription string, 
 		})
 
 		if len(out) != 0 {
-			_ = webrtcSender.Write(out, timestamp-prevTimestamp)
+			_ = webrtcSender.Write(base.AvPacket{
+				Timestamp:timestamp,
+				Payload:out,
+			})
 		}
-
-		prevTimestamp = timestamp
 	})
 	if err != nil {
 		return err
