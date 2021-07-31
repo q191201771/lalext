@@ -5,6 +5,7 @@
 /thirdparty/fdk-aac-2.0.2
 /thirdparty/FFmpeg-n4.4
 /thirdparty/output
+/learn_ffmpeg/pullrtmp/xcode
 
 /dump
 /pkg

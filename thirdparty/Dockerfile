@@ -7,4 +7,5 @@ RUN yum install unzip -y \
     && yum install gcc+ gcc-c++ -y \
     && yum install make -y \
     && yum install cmake -y \
+    && yum install gdb -y \
     && cd /thirdparty && ./build.sh
