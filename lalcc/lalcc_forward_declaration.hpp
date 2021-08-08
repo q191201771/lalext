@@ -14,6 +14,7 @@
 extern "C" {
 #include "libavformat/avformat.h"
 #include "libavutil/avutil.h"
+#include "libavutil/timestamp.h"
 }
 
 #include "chef_base/chef_env.hpp"
@@ -24,8 +25,15 @@ extern "C" {
 namespace lalcc {
 
 class OpenTimeoutHooker;
+
+class AvPacketT;
+typedef chef::shared_ptr<AvPacketT> AvPacketTPtr;
+
 class RtmpPullSession;
 typedef chef::shared_ptr<RtmpPullSession> RtmpPullSessionPtr;
+
+class RtmpPushSession;
+typedef chef::shared_ptr<RtmpPushSession> RtmpPushSessionPtr;
 
 }
 

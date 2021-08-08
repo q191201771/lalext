@@ -9,14 +9,17 @@
 #define _RTMP_PULL_SESSION_HPP_
 
 #include "lalcc_forward_declaration.hpp"
+#include "lalcc_av_packet_t.hpp"
 #include "lalcc_helper_op.hpp"
 
 namespace lalcc {
 
+  RtmpPullSessionPtr NewRtmpPullSession();
+
   class RtmpPullSession : public chef::enable_shared_from_this<RtmpPullSession> {
     public:
       typedef chef::function<void(AVFormatContext *fmtCtx)> OnStreamInfo;
-      typedef chef::function<void(AVPacket *pkt)> OnAvPacket;
+      typedef chef::function<void(AvPacketTPtr pkt, AVStream *stream)> OnAvPacket;
 
       // 阻塞直到拉流通道建立成功或失败
       //
@@ -67,10 +70,6 @@ namespace lalcc {
 
       AVFormatContext *fmtCtx_=NULL;
   };
-
-  RtmpPullSessionPtr NewRtmpPullSession() {
-    return chef::make_shared<RtmpPullSession>();
-  }
 
 } // namespace lalcc
 
@@ -148,14 +147,12 @@ namespace lalcc {
     onStreamInfo(fmtCtx_);
 
     for (; ; ) {
-      AVPacket *pkt = av_packet_alloc();
+      AvPacketTPtr pkt = chef::make_shared<AvPacketT>();
 
-      ret = av_read_frame(fmtCtx_, pkt);
+      ret = av_read_frame(fmtCtx_, pkt->Core());
       SNIPPET_RTMP_PULL_SESSION_CHECK_RET_AT_SECOND_STAGE(ret);
       SNIPPET_RTMP_PULL_SESSION_CHECK_FLAG_AT_SECOND_STAGE();
-      onAvPacket(pkt);
-
-      av_packet_unref(pkt);
+      onAvPacket(pkt, fmtCtx_->streams[pkt->Core()->stream_index]);
     }
 
     // never reach here
@@ -184,6 +181,10 @@ namespace lalcc {
   inline int RtmpPullSession::waitSecondStage() {
     wecSecondStage_.wait();
     return secondStageResult_;
+  }
+
+  RtmpPullSessionPtr NewRtmpPullSession() {
+    return chef::make_shared<RtmpPullSession>();
   }
 
 } // namespace lalcc

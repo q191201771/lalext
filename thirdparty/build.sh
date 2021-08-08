@@ -18,7 +18,7 @@ echo 'libx264...'
 tar jxvf x264-master.tar.bz2
 cd x264-master
 ./configure --enable-shared --disable-asm
-make -j8 && make install
+make -j8 && make install && make clean
 cd -
 
 ## 注释 libx265
