@@ -20,6 +20,10 @@ namespace lalcc {
       // 具体机制见内容实现的注释说明
       //
       static int AvformatOpenInput(AVFormatContext **ps, const char *url, ff_const59 AVInputFormat *fmt, AVDictionary **options, uint64_t timeoutMsec);
+
+      static std::string StringifyAvStream(AVStream *stream);
+
+      static std::string StringifyAvPacket(AVPacket *pkt);
   };
 
 } // namespace lalcc
@@ -39,17 +43,6 @@ class OpenTimeoutHooker {
       timeoutMsec_ = timeoutMsec;
       openTickMsec_ = chef::stuff_op::tick_msec();
 
-      // 回调只和avformat_open_input阶段相关，avformat_open_input返回前，回调被持续调用，avformat_open_input返回后，回调不再被调用
-      // 所以这个方式只能用来做avformat_open_input的超时逻辑
-      //
-      // case 1
-      // 拉取不存在的rtmp流，avformat_open_input没有返回，回调依然一直被调用
-      //
-      // case 2
-      // 拉取存在的rtmp流，avformat_open_input返回成功后，回调不再被调用
-      //
-      // TODO(chef): 跟ffmpeg的代码
-      //
       fmtCtx->interrupt_callback.callback = OpenTimeoutHooker::interrupt_cb;
       fmtCtx->interrupt_callback.opaque = (void *)this;
     }
@@ -92,6 +85,22 @@ namespace lalcc {
     OpenTimeoutHooker oth;
     oth.CallMeBeforeOpen(*ps, timeoutMsec);
     return avformat_open_input(ps, url, fmt, options);
+  }
+
+  inline std::string HelperOp::StringifyAvStream(AVStream *stream) {
+    char buf[1024] = {0};
+    snprintf(buf, 1023, "%p, index=%d, id=%d, time_base=(%d/%d), start_time=%d, duration=%d",
+        stream, stream->index, stream->id, stream->time_base.num, stream->time_base.den, stream->start_time, stream->duration);
+    return std::string(buf);
+  }
+
+  inline std::string HelperOp::StringifyAvPacket(AVPacket *pkt) {
+    char buf[1024] = {0};
+    snprintf(buf, 1023,
+        "%p, stream_index=%d, pts=%lld, dts=%lld, duration=%lld, data=%p, size=%d, flags=%d, pos=%d, buf=%p, side_data=%p, side_data_elems=%d",
+        pkt, pkt->stream_index, pkt->pts, pkt->dts, pkt->duration, pkt->data, pkt->size,
+        pkt->flags, pkt->pos, pkt->buf, pkt->side_data, pkt->side_data_elems);
+    return std::string(buf);
   }
 
 } // namespace lalcc
