@@ -14,14 +14,16 @@ namespace lalcc {
 
   class HelperOp {
     public:
-      static std::string AvErr2Str(int code);
-
       // 封装avformat_open_input，增加一个参数，提供超时功能
       // 具体机制见内容实现的注释说明
       //
       static int AvformatOpenInput(AVFormatContext **ps, const char *url, ff_const59 AVInputFormat *fmt, AVDictionary **options, uint64_t timeoutMsec);
 
+      static std::string StringifyAvError(int code);
+
       static std::string StringifyAvStream(AVStream *stream);
+
+      static std::string StringifyAvCodecParameters(AVCodecParameters *param);
 
       static std::string StringifyAvPacket(AVPacket *pkt);
   };
@@ -70,14 +72,6 @@ class OpenTimeoutHooker {
 
 namespace lalcc {
 
-  inline std::string HelperOp::AvErr2Str(int code) {
-    std::ostringstream oss;
-    char buf[AV_ERROR_MAX_STRING_SIZE] = {0};
-    av_make_error_string(buf, AV_ERROR_MAX_STRING_SIZE, code);
-    oss << "(" << code << ":" << buf << ")";
-    return oss.str();
-  }
-
   inline int HelperOp::AvformatOpenInput(AVFormatContext **ps, const char *url, ff_const59 AVInputFormat *fmt, AVDictionary **options, uint64_t timeoutMsec) {
     if (*ps == NULL) {
       *ps = avformat_alloc_context();
@@ -87,10 +81,25 @@ namespace lalcc {
     return avformat_open_input(ps, url, fmt, options);
   }
 
+  inline std::string HelperOp::StringifyAvError(int code) {
+    std::ostringstream oss;
+    char buf[AV_ERROR_MAX_STRING_SIZE] = {0};
+    av_make_error_string(buf, AV_ERROR_MAX_STRING_SIZE, code);
+    oss << "(" << code << ":" << buf << ")";
+    return oss.str();
+  }
+
   inline std::string HelperOp::StringifyAvStream(AVStream *stream) {
     char buf[1024] = {0};
     snprintf(buf, 1023, "%p, index=%d, id=%d, time_base=(%d/%d), start_time=%d, duration=%d",
         stream, stream->index, stream->id, stream->time_base.num, stream->time_base.den, stream->start_time, stream->duration);
+    return std::string(buf);
+  }
+
+  inline std::string HelperOp::StringifyAvCodecParameters(AVCodecParameters *param) {
+    char buf[1024] = {0};
+    snprintf(buf, 1024, "%p codec_type=(%d, %s), codec_id=(%d, %s), codec_tag=%d, extradata_size=%d, format=%d",
+        param, param->codec_type, av_get_media_type_string(param->codec_type), param->codec_id, avcodec_get_name(param->codec_id), param->codec_tag, param->extradata_size, param->format);
     return std::string(buf);
   }
 

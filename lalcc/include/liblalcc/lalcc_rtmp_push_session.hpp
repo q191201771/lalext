@@ -77,7 +77,7 @@ namespace lalcc {
 
     //int ret = av_interleaved_write_frame(fmtCtx_, wpkt->Core());
     int ret = av_write_frame(fmtCtx_, wpkt->Core());
-    LALCC_LOG_INFO("< writeframe. ret=%s", HelperOp::AvErr2Str(ret).c_str());
+    LALCC_LOG_INFO("< writeframe. ret=%s", HelperOp::StringifyAvError(ret).c_str());
     if (ret < 0) {
       return ret;
     }

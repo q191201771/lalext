@@ -6,7 +6,7 @@
 //
 // Author: Chef (191201771@qq.com)
 #include <stdio.h>
-#include "lalcc.hpp"
+#include "liblalcc/lalcc.hpp"
 
 // TODO(chef):
 // - RtmpPullSession的配置项

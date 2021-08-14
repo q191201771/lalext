@@ -1,6 +1,21 @@
+/**
+ * @license  this file is a part of libchef. more info see https://github.com/q191201771/libchef
+ * @tag      v1.10.17
+ * @file     chef_debug_mutex.hpp
+ * @deps     nope
+ * @platform linux | macos | xxx
+ *
+ * @author
+ *   chef <191201771@qq.com>
+ *     - initial release xxxx-xx-xx
+ *
+ * @brief    定位互斥锁的问题
+ *
+ */
 #ifndef _CHEF_BASE_DEBUG_MUTEX_HPP_
 #define _CHEF_BASE_DEBUG_MUTEX_HPP_
 
+#include "chef_env.hpp"
 #include "chef_strings_op.hpp"
 #include "chef_stuff_op.hpp"
 
@@ -10,12 +25,12 @@
 #include <sys/time.h>
 #include <execinfo.h>
 #include <map>
-#include <mutex>
 #include <vector>
 #include <thread>
 #include <sstream>
 
 // 使用方式见 libchef/test/chef_base_test/chef_debug_mutex_test.cc
+// link -rdynamic
 // addr2line -e a.out
 
 namespace chef {
@@ -41,6 +56,8 @@ inline std::string dm_srcinfo_by_fileline(const char *srcfile, int srcline) {
 }
 
 inline std::string dm_srcinfo_by_backtrace() {
+  return std::string("ban backtrace");
+
   const int MAX_DEPTH = 8;
   const int SKIP_DEPTH = 1;
   const int BT_BUF_SIZE = 128;
@@ -91,11 +108,12 @@ public:
         dmc->print_interval             = 1000;    // 上面两项检查输出间隔
         dmc->logfd                      = stderr;  // 日志输出文件描述符
         dmc->key_prefix                 = "MUTEX"; // 唯一ID前缀
-        dmc->log_ctor_flag              = true;    // 锁构造时的日志 
-        dmc->log_dector_flag            = false;   // 锁析构时的日志
+        dmc->log_ctor_flag              = true;    // 锁构造时的日志
+        dmc->log_dector_flag            = true;   // 锁析构时的日志
         dmc->log_lock_flag              = false;   // 获取锁的日志
         dmc->log_unlock_flag            = false;   // 释放锁的日志
       }
+      fprintf(debug_mutex_config::instance().logfd, "[ERROR] [%llu] new debug_mutex_config instance.\n", inner::dm_tick_msec());
       mu.unlock();
     }
     return *dmc;
@@ -117,7 +135,13 @@ public:
 
 class debug_mutex_manager {
 public:
-  debug_mutex_manager() : print_thread_(NULL) {}
+  debug_mutex_manager() :
+    bacquire_count_(0),
+    aacquire_count_(0),
+    aunlock_count_(0),
+    print_thread_(NULL)
+    {
+    }
 
   void before_acquire_lock(const std::string &uk, int tid, const std::string &srcinfo) {
     std::ostringstream oss;
@@ -127,6 +151,8 @@ public:
     std::lock_guard<std::mutex> guard(mu_);
 
     start_print_tmp_debug_if_needed();
+
+    bacquire_count_++;
 
     std::map<std::string, item>::iterator iter;
     iter = wait_acquire_container_.find(k);
@@ -157,6 +183,8 @@ public:
 
     start_print_tmp_debug_if_needed();
 
+    aacquire_count_++;
+
     std::map<std::string, item>::iterator iter;
     iter = wait_acquire_container_.find(k);
     // not exist
@@ -186,6 +214,8 @@ public:
     std::lock_guard<std::mutex> guard(mu_);
 
     start_print_tmp_debug_if_needed();
+
+    aunlock_count_++;
 
     std::map<std::string, item>::iterator iter;
     iter = hold_container_.find(k);
@@ -221,7 +251,7 @@ private:
       bool long_flag;
 
       long_flag = false;
-      oss << "long wait acquire:";
+      oss << "[" << now << "] long wait acquire:";
       for (iter = wait_acquire_container_.begin(); iter != wait_acquire_container_.end(); iter++) {
         uint64_t duration = now - iter->second.time_;
         if (duration > debug_mutex_config::instance().long_wait_acquire_duration) {
@@ -236,7 +266,7 @@ private:
 
       long_flag = false;
       oss.str("");
-      oss << "long hold:";
+      oss << "[" << now << "] long hold:";
       for (iter = hold_container_.begin(); iter != hold_container_.end(); iter++) {
         uint64_t duration = now - iter->second.time_;
         if (duration > debug_mutex_config::instance().long_hold_duration) {
@@ -248,6 +278,12 @@ private:
         oss << "nope";
       }
       fprintf(debug_mutex_config::instance().logfd, "[DEBUG] %s\n", oss.str().c_str());
+
+      oss.str("");
+      oss << "[" << now << "] wait num:" << wait_acquire_container_.size() << ", hold num:" << hold_container_.size()
+          << ", count: " << bacquire_count_ << ", "<< aacquire_count_ << ", " << aunlock_count_;
+      fprintf(debug_mutex_config::instance().logfd, "[DEBUG] %s\n", oss.str().c_str());
+
       fflush(debug_mutex_config::instance().logfd);
 
       mu_.unlock();
@@ -267,6 +303,9 @@ private:
   std::map<std::string, item> wait_acquire_container_;
   std::map<std::string, item> hold_container_;
   std::thread *print_thread_;
+  std::uint64_t bacquire_count_;
+  std::uint64_t aacquire_count_;
+  std::uint64_t aunlock_count_;
 };
 
 // --------------------------------------------------------------------------------------------------------------------
@@ -365,7 +404,7 @@ public:
   }
 
 private:
-  std::mutex core_;
+  chef::recursive_mutex core_;
   std::uint64_t ctor_time_;
   std::uint64_t start_hold_time_;
 
@@ -396,3 +435,4 @@ private:
 }
 
 #endif
+
