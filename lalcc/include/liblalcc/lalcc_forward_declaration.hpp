@@ -13,6 +13,7 @@
 
 extern "C" {
 #include "libavformat/avformat.h"
+#include "libavformat/avc.h"
 #include "libavutil/avutil.h"
 #include "libavutil/timestamp.h"
 }
@@ -35,6 +36,8 @@ typedef chef::shared_ptr<RtmpPullSession> RtmpPullSessionPtr;
 class RtmpPushSession;
 typedef chef::shared_ptr<RtmpPushSession> RtmpPushSessionPtr;
 
+class PullSession;
+typedef chef::shared_ptr<PullSession> PullSessionPtr;
 }
 
 #endif

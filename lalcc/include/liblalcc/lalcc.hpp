@@ -14,6 +14,7 @@
 #include "lalcc_log.hpp"
 #include "lalcc_rtmp_pull_session.hpp"
 #include "lalcc_rtmp_push_session.hpp"
+#include "lalcc_pull_session.hpp"
 
 #endif
 
@@ -124,6 +125,11 @@
 //
 
 // --------------------------------------------------------------------------------------------------------------------
+// int ff_avc_write_annexb_extradata(const uint8_t *in, uint8_t **buf, int *size);
+//   将avcc格式的extradata(sps, pps)转换为annexb格式
+//
+
+// --------------------------------------------------------------------------------------------------------------------
 // AVFormatContext
 //   nb_streams: unsigned int 流的数量
 //   streams:    流数组
@@ -153,7 +159,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 // AVCodecParameters
 //   codec_type:     enum AVMediaType 区分是音频还是视频
-//   codec_id:       相关函数 avcodec_get_name, avcodec_get_type, av_get_media_type_string
+//   codec_id:       enum AVCodecID 编码类型
 //   extradata:      rtmp h264: 跳过了前面5个字节的seq header
 //                   rtmp aac:  跳过了前面2个字节的seq header(asc)
 //   extradata_size
