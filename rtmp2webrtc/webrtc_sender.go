@@ -10,6 +10,7 @@ package main
 
 import (
 	"errors"
+
 	"github.com/pion/ice/v2"
 	"github.com/pion/interceptor"
 	"github.com/pion/webrtc/v3"
@@ -88,7 +89,7 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, 
 	}
 
 	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
-	<- gatherComplete
+	<-gatherComplete
 
 	return *peerConnection.LocalDescription(), nil
 }
