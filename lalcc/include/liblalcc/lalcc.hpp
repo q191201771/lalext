@@ -8,13 +8,18 @@
 #ifndef _LALCC_HPP_
 #define _LALCC_HPP_
 
+// lalcc.hpp
+//
+// 包含liblalcc的所有文件，作为对外的统一接口文件
+//
+
 #include "lalcc_av_packet_t.hpp"
 #include "lalcc_forward_declaration.hpp"
 #include "lalcc_helper_op.hpp"
 #include "lalcc_log.hpp"
-#include "lalcc_rtmp_pull_session.hpp"
-#include "lalcc_rtmp_push_session.hpp"
 #include "lalcc_pull_session.hpp"
+#include "lalcc_push_session.hpp"
+#include "lalcc_decode.hpp"
 
 #endif
 
@@ -118,11 +123,75 @@
 //
 
 // --------------------------------------------------------------------------------------------------------------------
-//
 // int av_write_frame(AVFormatContext *s, AVPacket *pkt);
 //
 // int av_interleaved_write_frame(AVFormatContext *s, AVPacket *pkt);
 //
+
+// --------------------------------------------------------------------------------------------------------------------
+// AVCodec *avcodec_find_decoder(enum AVCodecID id);
+
+// --------------------------------------------------------------------------------------------------------------------
+// AVCodecContext *avcodec_alloc_context3(const AVCodec *codec);
+
+// --------------------------------------------------------------------------------------------------------------------
+// int avcodec_parameters_to_context(AVCodecContext *codec, const AVCodecParameters *par);
+
+// --------------------------------------------------------------------------------------------------------------------
+// int avcodec_open2(AVCodecContext *avctx, const AVCodec *codec, AVDictionary **options);
+
+// --------------------------------------------------------------------------------------------------------------------
+// AVFrame *av_frame_alloc(void);
+
+// --------------------------------------------------------------------------------------------------------------------
+// int avcodec_send_packet(AVCodecContext *avctx, const AVPacket *avpkt);
+
+// --------------------------------------------------------------------------------------------------------------------
+// int avcodec_receive_frame(AVCodecContext *avctx, AVFrame *frame);
+
+// --------------------------------------------------------------------------------------------------------------------
+// int av_get_bytes_per_sample(enum AVSampleFormat sample_fmt);
+//
+// int av_sample_fmt_is_planar(enum AVSampleFormat sample_fmt)
+//
+// const char *av_get_sample_fmt_name(enum AVSampleFormat sample_fmt)
+//
+// enum AVSampleFormat av_get_packed_sample_fmt(enum AVSampleFormat sample_fmt)
+
+// --------------------------------------------------------------------------------------------------------------------
+// swr_alloc
+//
+// av_opt_set_int
+//
+// av_opt_set_sample_fmt
+//
+// swr_init
+//
+// av_get_channel_layout_nb_channels
+//
+// av_samples_alloc_array_and_samples
+//
+// av_rescale_rnd
+//
+// swr_get_delay
+//
+// av_rescale_rnd
+//
+// av_samples_alloc
+//
+// av_freep
+//
+// swr_convert
+//
+// av_samples_get_buffer_size
+//
+// int av_get_channel_layout_nb_channels(uint64_t channel_layout);
+//
+// av_frame_get_buffer
+
+// --------------------------------------------------------------------------------------------------------------------
+// av_log_set_level(int level);
+//   设置ffmpeg的日志输出级别
 
 // --------------------------------------------------------------------------------------------------------------------
 // int ff_avc_write_annexb_extradata(const uint8_t *in, uint8_t **buf, int *size);
@@ -142,6 +211,7 @@
 //
 //     case 1
 //     拉取不存在的rtmp流，avformat_open_input没有返回，回调依然一直被调用
+//     这种情况下可在回调中做超时逻辑
 //
 //     case 2
 //     拉取存在的rtmp流，avformat_open_input返回成功后，回调不再被调用
@@ -177,3 +247,7 @@
 // --------------------------------------------------------------------------------------------------------------------
 // AVRational
 //
+
+// --------------------------------------------------------------------------------------------------------------------
+// AVCodec
+//   sample_fmts 包含所有支持的sample_fmt格式

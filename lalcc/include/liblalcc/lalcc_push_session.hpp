@@ -1,30 +1,32 @@
-// Copyright 2021, Chef.  All rights reserved.
+// Copyright 2022, Chef.  All rights reserved.
 // https://github.com/q191201771/lalext
 //
 // Use of this source code is governed by a MIT-style license
 // that can be found in the License file.
 //
 // Author: Chef (191201771@qq.com)
-#ifndef _LALCC_RTMP_PUSH_SESSION_HPP_
-#define _LALCC_RTMP_PUSH_SESSION_HPP_
+#ifndef _LALCC_PUSH_SESSION_HPP_
+#define _LALCC_PUSH_SESSION_HPP_
 
 #include "lalcc_forward_declaration.hpp"
 #include "lalcc_av_packet_t.hpp"
 
 namespace lalcc {
 
-  RtmpPushSessionPtr NewRtmpPushSession();
+  PushSessionPtr NewPushSession();
 
-  class RtmpPushSession {
+  class PushSession {
     public:
       // @param iFmtCtx: 通过输入（比如PullSession）的AVFormatContext来初始化推流信息
       //
       int Push(const char *url, AVFormatContext *iFmtCtx);
 
+      // @param timeBase: 输入`pkt`对应的time base`
+      //
       int Write(AvPacketTPtr pkt, AVMediaType type, AVRational timeBase);
 
     private:
-      AVFormatContext *fmtCtx_=NULL;
+      AVFormatContext *fmtCtx_=nullptr;
   };
 
 } // namespace lalcc
@@ -33,15 +35,15 @@ namespace lalcc {
 
 namespace lalcc {
 
-  inline int RtmpPushSession::Push(const char *url, AVFormatContext *iFmtCtx) {
-    int ret = avformat_alloc_output_context2(&fmtCtx_, NULL, "flv", url);
+  inline int PushSession::Push(const char *url, AVFormatContext *iFmtCtx) {
+    int ret = avformat_alloc_output_context2(&fmtCtx_, nullptr, "flv", url);
     if (ret < 0) {
       return ret;
     }
 
     for (unsigned int i = 0; i < iFmtCtx->nb_streams; i++) {
-      AVStream *ostream = avformat_new_stream(fmtCtx_, NULL);
-      if (ostream == NULL) {
+      AVStream *ostream = avformat_new_stream(fmtCtx_, nullptr);
+      if (ostream == nullptr) {
         return -1;
       }
 
@@ -59,7 +61,7 @@ namespace lalcc {
       }
     }
 
-    ret = avformat_write_header(fmtCtx_, NULL);
+    ret = avformat_write_header(fmtCtx_, nullptr);
     if (ret < 0) {
       return ret;
     }
@@ -67,12 +69,14 @@ namespace lalcc {
     return 0;
   }
 
-  inline int RtmpPushSession::Write(AvPacketTPtr pkt, AVMediaType type, AVRational timeBase) {
-    LALCC_LOG_INFO("> RtmpPushSession::Write");
+  inline int PushSession::Write(AvPacketTPtr pkt, AVMediaType type, AVRational timeBase) {
+    (void)type;(void)timeBase;
+
+    LALCC_LOG_INFO("> PushSession::Write");
     // Clone一下，从而保证我们不修改`pkt`的字段
     AvPacketTPtr wpkt = pkt->Clone();
     // TODO(chef): 如果timeBase和本地stream不一致，还需要调整pts, dts, duration
-    wpkt->Core()->pos = -1;
+    //wpkt->Core()->pos = -1;
     LALCC_LOG_INFO("wpkt=%s", lalcc::HelperOp::StringifyAvPacket(wpkt->Core()).c_str());
 
     //int ret = av_interleaved_write_frame(fmtCtx_, wpkt->Core());
@@ -85,8 +89,8 @@ namespace lalcc {
     return 0;
   }
 
-  RtmpPushSessionPtr NewRtmpPushSession() {
-    return chef::make_shared<RtmpPushSession>();
+  PushSessionPtr NewPushSession() {
+    return chef::make_shared<PushSession>();
   }
 
 }
