@@ -8,14 +8,20 @@
 #ifndef _LALCC_FORWARD_DECLARATION_HPP_
 #define _LALCC_FORWARD_DECLARATION_HPP_
 
+// lalcc_forward_decalaration.hpp
+//
+// 前向声明，供liblalcc内部各文件包含
+//
+
 #include <string>
 #include <sstream>
 
 extern "C" {
 #include "libavformat/avformat.h"
-#include "libavformat/avc.h"
+#include "libswresample/swresample.h"
 #include "libavutil/avutil.h"
 #include "libavutil/timestamp.h"
+#include "libavutil/opt.h"
 }
 
 #include "chef_base/chef_env.hpp"
@@ -30,14 +36,14 @@ class OpenTimeoutHooker;
 class AvPacketT;
 typedef chef::shared_ptr<AvPacketT> AvPacketTPtr;
 
-class RtmpPullSession;
-typedef chef::shared_ptr<RtmpPullSession> RtmpPullSessionPtr;
-
-class RtmpPushSession;
-typedef chef::shared_ptr<RtmpPushSession> RtmpPushSessionPtr;
-
 class PullSession;
 typedef chef::shared_ptr<PullSession> PullSessionPtr;
+
+class PushSession;
+typedef chef::shared_ptr<PushSession> PushSessionPtr;
+
+class Decode;
+typedef chef::shared_ptr<Decode> DecodePtr;
 }
 
 #endif

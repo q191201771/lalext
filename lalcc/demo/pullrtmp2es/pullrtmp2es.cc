@@ -5,6 +5,7 @@
 // that can be found in the License file.
 //
 // Author: Chef (191201771@qq.com)
+
 #include <stdio.h>
 #include "liblalcc/lalcc.hpp"
 
@@ -19,7 +20,7 @@ void onStreamInfo(AVFormatContext *fmtCtx) {
     AVStream *stream = fmtCtx->streams[i];
     LALCC_LOG_INFO("stream=%s", lalcc::HelperOp::StringifyAvStream(stream).c_str());
     LALCC_LOG_INFO("codec param=%s", lalcc::HelperOp::StringifyAvCodecParameters(stream->codecpar).c_str());
-    LALCC_LOG_INFO("%s", chef::stuff_op::bytes_to_hex(stream->codecpar->extradata, std::min(stream->codecpar->extradata_size, 16)).c_str());
+    LALCC_LOG_INFO("%s", chef::stuff_op::bytes_to_hex(stream->codecpar->extradata, std::min(stream->codecpar->extradata_size, 128)).c_str());
 
   }
 }
@@ -27,7 +28,7 @@ void onStreamInfo(AVFormatContext *fmtCtx) {
 void onAvPacket(lalcc::AvPacketTPtr pkt, AVStream *stream) {
   LALCC_LOG_INFO("stream=%s", lalcc::HelperOp::StringifyAvStream(stream).c_str());
   LALCC_LOG_INFO("pkt=%s", lalcc::HelperOp::StringifyAvPacket(pkt->Core()).c_str());
-  LALCC_LOG_INFO("%s", chef::stuff_op::bytes_to_hex(pkt->Core()->data, std::min(pkt->Core()->size, 16)).c_str());
+  //LALCC_LOG_INFO("%s", chef::stuff_op::bytes_to_hex(pkt->Core()->data, std::min(pkt->Core()->size, 16)).c_str());
   if (count++ > maxCount) {
     pullSession->Dispose();
   }

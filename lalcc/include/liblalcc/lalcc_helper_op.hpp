@@ -8,16 +8,17 @@
 #ifndef _LALCC_HELPER_HPP_
 #define _LALCC_HELPER_HPP_
 
+// lalcc_helper_op.hpp
+//
+// 静态的独立的帮助函数
+//
+
 #include "lalcc_forward_declaration.hpp"
 
 namespace lalcc {
 
   class HelperOp {
     public:
-      // 封装avformat_open_input，增加一个参数，提供超时功能
-      // 具体机制见内容实现的注释说明
-      //
-      static int AvformatOpenInput(AVFormatContext **ps, const char *url, ff_const59 AVInputFormat *fmt, AVDictionary **options, uint64_t timeoutMsec);
 
       static std::string StringifyAvError(int code);
 
@@ -26,6 +27,14 @@ namespace lalcc {
       static std::string StringifyAvCodecParameters(AVCodecParameters *param);
 
       static std::string StringifyAvPacket(AVPacket *pkt);
+
+      //static int ParseSpsPpsFromSeqHeaderWithoutMalloc(uint8_t *in, int inLen, uint8_t **sps, int *spsLen, uint8_t **pps, int *ppsLen);
+
+      //static int ParseVpsSpsPpsFromSeqHeaderWithoutMalloc(uint8_t *in, int inLen, uint8_t **vps, int *vpsLen, uint8_t **sps, int *spsLen, uint8_t **pps, int *ppsLen);
+
+      //static int parseSpsPpsFromSeqHeader(uint8_t *in, int inLen, uint8_t **sps, int *spsLen, uint8_t **pps, int *ppsLen);
+
+      //static int parseVpsSpsPpsFromSeqHeader(uint8_t *in, int inLen, uint8_t **vps, int *vpsLen, uint8_t **sps, int *spsLen, uint8_t **pps, int *ppsLen);
   };
 
 } // namespace lalcc
@@ -72,15 +81,6 @@ class OpenTimeoutHooker {
 
 namespace lalcc {
 
-  inline int HelperOp::AvformatOpenInput(AVFormatContext **ps, const char *url, ff_const59 AVInputFormat *fmt, AVDictionary **options, uint64_t timeoutMsec) {
-    if (*ps == NULL) {
-      *ps = avformat_alloc_context();
-    }
-    OpenTimeoutHooker oth;
-    oth.CallMeBeforeOpen(*ps, timeoutMsec);
-    return avformat_open_input(ps, url, fmt, options);
-  }
-
   inline std::string HelperOp::StringifyAvError(int code) {
     std::ostringstream oss;
     char buf[AV_ERROR_MAX_STRING_SIZE] = {0};
@@ -91,7 +91,7 @@ namespace lalcc {
 
   inline std::string HelperOp::StringifyAvStream(AVStream *stream) {
     char buf[1024] = {0};
-    snprintf(buf, 1023, "%p, index=%d, id=%d, time_base=(%d/%d), start_time=%d, duration=%d",
+    snprintf(buf, 1023, "%p, index=%d, id=%d, time_base=(%d/%d), start_time=%lld, duration=%lld",
         stream, stream->index, stream->id, stream->time_base.num, stream->time_base.den, stream->start_time, stream->duration);
     return std::string(buf);
   }
@@ -106,11 +106,29 @@ namespace lalcc {
   inline std::string HelperOp::StringifyAvPacket(AVPacket *pkt) {
     char buf[1024] = {0};
     snprintf(buf, 1023,
-        "%p, stream_index=%d, pts=%lld, dts=%lld, duration=%lld, data=%p, size=%d, flags=%d, pos=%d, buf=%p, side_data=%p, side_data_elems=%d",
+        "%p, stream_index=%d, pts=%lld, dts=%lld, duration=%lld, data=%p, size=%d, flags=%d, pos=%lld, buf=%p, side_data=%p, side_data_elems=%d",
         pkt, pkt->stream_index, pkt->pts, pkt->dts, pkt->duration, pkt->data, pkt->size,
         pkt->flags, pkt->pos, pkt->buf, pkt->side_data, pkt->side_data_elems);
     return std::string(buf);
   }
+
+  //inline int HelperOp::ParseVpsSpsPpsFromSeqHeaderWithoutMalloc(uint8_t *in, int inLen, uint8_t **vps, int *vpsLen, uint8_t **sps, int *spsLen, uint8_t **pps, int *ppsLen) {
+
+  //}
+
+  //inline int HelperOp::parseVpsSpsPpsFromSeqHeader(uint8_t *in, int inLen, uint8_t **vps, int *vpsLen, uint8_t **sps, int *spsLen, uint8_t **pps, int *ppsLen) {
+  //  if (inLen < 33 - 5) {
+  //    return -1;
+  //  }
+
+  //  int index = 27 - 5;
+  //  int numOfArrays = in[index];
+  //  if (numOfArrays != 3 && numOfArrays != 4) {
+  //    return -1;
+  //  }
+  //  index++;
+
+  //}
 
 } // namespace lalcc
 

@@ -8,6 +8,11 @@
 #ifndef _LALCC_LOG_HPP_
 #define _LALCC_LOG_HPP_
 
+// lalcc_log.hpp
+//
+// 日志
+//
+
 #include "logger.hpp"
 
 #define LALCC_LOG_INFO(...) CHEF_DEFAULT_LOGGER_INFO(__VA_ARGS__);
