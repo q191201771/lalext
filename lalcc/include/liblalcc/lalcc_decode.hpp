@@ -105,19 +105,19 @@ namespace lalcc {
 
     AVCodecParameters *param = avcodec_parameters_alloc();
     param->codec_type = AVMEDIA_TYPE_AUDIO;
-	param->codec_id = AV_CODEC_ID_AAC;
-	param->extradata = new uint8_t[2];
-	param->extradata[0] = 0x11;
-	param->extradata[1] = 0x90;
-	param->extradata_size = 2;
-    param->channels = 2;
+	param->channels = 2;
 	param->sample_rate = 48000;
-
-	param->codec_tag = 0;
-	param->format = AV_SAMPLE_FMT_FLTP;
-	param->bits_per_coded_sample = 16;
-	param->channel_layout = 3;
-	param->frame_size = 1024;
+//	param->codec_id = AV_CODEC_ID_AAC;
+//	param->extradata = new uint8_t[2];
+//	param->extradata[0] = 0x11;
+//	param->extradata[1] = 0x90;
+//	param->extradata_size = 2;
+//
+//	param->codec_tag = 0;
+//	param->format = AV_SAMPLE_FMT_FLTP;
+//	param->bits_per_coded_sample = 16;
+//	param->channel_layout = 3;
+//	param->frame_size = 1024;
 
 	ret = avcodec_parameters_to_context(codecCtx_, param);
 	if (ret < 0) {
@@ -143,10 +143,12 @@ namespace lalcc {
     int ret;
 
     auto pkt = lalcc::NewAvPacketT();
-    ret = av_parser_parse2(parser_, codecCtx_, &(pkt->Core()->data), &(pkt->Core()->size), data, dataSize, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
-    if (ret < 0) {
-      return ret;
-    }
+    pkt->Core()->data = data;
+    pkt->Core()->size = dataSize;
+//    ret = av_parser_parse2(parser_, codecCtx_, &(pkt->Core()->data), &(pkt->Core()->size), data, dataSize, AV_NOPTS_VALUE, AV_NOPTS_VALUE, 0);
+//    if (ret < 0) {
+//      return ret;
+//    }
 	if (pkt->Core()->size > 0) {
 	  return Push(pkt);
 	}
@@ -154,6 +156,8 @@ namespace lalcc {
   }
 
   inline int Decode::Push(AvPacketTPtr pkt) {
+    printf("> Push. inSize=%d %s\n", pkt->Core()->size, chef::stuff_op::bytes_to_hex(pkt->Core()->data, 16).c_str());
+
     AVFrame *frame = av_frame_alloc();
     int ret = avcodec_send_packet(codecCtx_, pkt->Core());
     if (ret < 0) {
