@@ -9,16 +9,17 @@
 package main
 
 import (
+	"net"
+
 	"github.com/pion/ice/v2"
 	"github.com/pion/webrtc/v3"
 	"github.com/q191201771/lal/pkg/avc"
 	"github.com/q191201771/lal/pkg/base"
 	"github.com/q191201771/lal/pkg/rtmp"
 	"github.com/q191201771/naza/pkg/nazalog"
-	"net"
 )
 
-type TaskCreator struct{
+type TaskCreator struct {
 	udpMux ice.UDPMux
 	tcpMux ice.TCPMux
 }
@@ -46,7 +47,7 @@ func NewTaskCreator(port int) (*TaskCreator, error) {
 	}, nil
 }
 
-func (t *TaskCreator)StartTunnelTask(rtmpUrl string, sessionDescription string, onLocalSessDesc func(sessDesc string)) error {
+func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string, onLocalSessDesc func(sessDesc string)) error {
 	var (
 		iceConnectionStateChan = make(chan webrtc.ICEConnectionState, 1)
 	)
@@ -58,7 +59,7 @@ func (t *TaskCreator)StartTunnelTask(rtmpUrl string, sessionDescription string, 
 	}
 
 	var webrtcSender WebRtcSender
-	localSessionDescription, err := webrtcSender.Init(sd, t.udpMux, t.tcpMux,func(connectionState webrtc.ICEConnectionState) {
+	localSessionDescription, err := webrtcSender.Init(sd, t.udpMux, t.tcpMux, func(connectionState webrtc.ICEConnectionState) {
 		nazalog.Debugf("> OnICEConnectionStateChange. state=%s", connectionState.String())
 		switch connectionState {
 		case webrtc.ICEConnectionStateChecking:
@@ -140,8 +141,8 @@ func (t *TaskCreator)StartTunnelTask(rtmpUrl string, sessionDescription string, 
 
 		if len(out) != 0 {
 			_ = webrtcSender.Write(base.AvPacket{
-				Timestamp:timestamp,
-				Payload:out,
+				Timestamp: timestamp,
+				Payload:   out,
 			})
 		}
 	})

@@ -1,21 +1,40 @@
+/hlsdownloader
+
 /rtmp2webrtc/rtmp2webrtc
+
 /thirdparty/x264-master
 /thirdparty/x265-master
 /thirdparty/opus-1.3.1
 /thirdparty/fdk-aac-2.0.2
 /thirdparty/FFmpeg-n4.4
+/thirdparty/mod_ffmpeg_to_support_rtmp_hevc
 /thirdparty/output
 
 /dump
 /pkg
 /app
 
-/.idea
+/lalcc/.cache
+/lalcc/output
+/lalcc/CMakeCache.txt
+/lalcc/CMakeFiles
+/lalcc/Makefile
+/lalcc/Testing
+/lalcc/bin
+/lalcc/cmake-build-debug
+/lalcc/cmake_install.cmake
+/lalcc/compile_commands.json
+/lalcc/lalcc_demo.cbp
+
+.idea
 
 /test.sh
+
 /outRecord.h264
 /*.ivf
 /*.ogg
 /*.h264
 /*.flv
 /*.mp4
+/*.m3u8
+/*.ts
