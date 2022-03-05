@@ -1,3 +1,11 @@
+// Copyright 2022, Chef.  All rights reserved.
+// https://github.com/q191201771/lalext
+//
+// Use of this source code is governed by a MIT-style license
+// that can be found in the License file.
+//
+// Author: Chef (191201771@qq.com)
+
 package main
 
 import (
@@ -10,12 +18,12 @@ import (
 
 type TrackLocalVideo struct {
 	rtpPacker *rtprtcp.RtpPacker
-	rtpTrack *webrtc.TrackLocalStaticRTP
+	rtpTrack  *webrtc.TrackLocalStaticRTP
 }
 
 func NewTrackLocalVideo(c webrtc.RTPCodecCapability, id, streamID string) (*TrackLocalVideo, error) {
 	pp := rtprtcp.NewRtpPackerPayloadAvc(func(option *rtprtcp.RtpPackerPayloadAvcHevcOption) {
-		option.Typ = rtprtcp.RtpPackerPayloadHevcTypeAnnexb
+		option.Typ = rtprtcp.RtpPackerPayloadAvcHevcTypeAnnexb
 	})
 	// ssrc可以不填
 	packer := rtprtcp.NewRtpPacker(pp, 90000, 0)
@@ -26,8 +34,8 @@ func NewTrackLocalVideo(c webrtc.RTPCodecCapability, id, streamID string) (*Trac
 	}
 
 	return &TrackLocalVideo{
-		rtpPacker:packer,
-		rtpTrack: rtpTrack,
+		rtpPacker: packer,
+		rtpTrack:  rtpTrack,
 	}, nil
 }
 
