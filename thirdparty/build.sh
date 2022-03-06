@@ -16,47 +16,47 @@ PREFIX=/usr/local
 ##      https://www.videolan.org/developers/x264.html
 ##      https://code.videolan.org/videolan/x264/-/archive/master/x264-master.tar.bz2
 ##
-#echo 'libx264...'
-#tar jxvf x264-master.tar.bz2
-#cd x264-master
-#./configure --prefix=${PREFIX} --enable-shared --disable-asm --enable-pic --extra-cflags="-fno-stack-check"
-#make -j8 && make install && make clean
-#cd -
+echo 'libx264...'
+tar jxvf x264-master.tar.bz2
+cd x264-master
+./configure --prefix=${PREFIX} --enable-shared --disable-asm --enable-pic --extra-cflags="-fno-stack-check"
+make -j8 && make install && make clean
+cd -
 
 ## 注释 libx265
 ##
 ##      https://github.com/videolan/x265/archive/refs/heads/master.zip
 ##
-#echo 'x265...'
-#unzip x265-master.zip
-#cd x265-master/build
-#cmake -DCMAKE_INSTALL_PREFIX=${PREFIX} ../source
-#make -j8 && make install && make clean
-#cd -
+echo 'x265...'
+unzip x265-master.zip
+cd x265-master/build
+cmake -DCMAKE_INSTALL_PREFIX=${PREFIX} ../source
+make -j8 && make install && make clean
+cd -
 
 ## 注释 fdk-aac
 ##
 ##      https://www.linuxfromscratch.org/blfs/view/svn/multimedia/fdk-aac.html
 ##      https://downloads.sourceforge.net/opencore-amr/fdk-aac-2.0.2.tar.gz
 ##
-#echo 'fdk-aac...'
-#tar zxvf fdk-aac-2.0.2.tar.gz
-#cd fdk-aac-2.0.2
-#./configure --prefix=${PREFIX}
-#make -j8 && make install && make clean
-#cd -
+echo 'fdk-aac...'
+tar zxvf fdk-aac-2.0.2.tar.gz
+cd fdk-aac-2.0.2
+./configure --prefix=${PREFIX}
+make -j8 && make install && make clean
+cd -
 
 ## 注释 opus
 ##
 ##      https://opus-codec.org/downloads/
 ##      https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz
 ##
-#echo 'opus...'
-#tar zxvf opus-1.3.1.tar.gz
-#cd opus-1.3.1
-#./configure --prefix=${PREFIX}
-#make -j8 && make install && make clean
-#cd -
+echo 'opus...'
+tar zxvf opus-1.3.1.tar.gz
+cd opus-1.3.1
+./configure --prefix=${PREFIX}
+make -j8 && make install && make clean
+cd -
 
 ## 注释 ffmpeg
 ##
@@ -87,9 +87,9 @@ cd -
 
 ## 注释 验证ffmpeg以及库是否能正常使用
 ##
-#export LD_LIBRARY_PATH=/usr/local/lib/
-#cd FFmpeg-n4.4
-#./ffmpeg
-#cd doc/example
-#gcc filtering_video.c -lavfilter -lavformat -lavdevice -lavcodec -lavutil -lpostproc -lswresample -lswscale -lm -lz -lx264 -lx265 -lfdk-aac -lopus -lpthread
-#./a.out
+export LD_LIBRARY_PATH=/usr/local/lib/
+cd FFmpeg-n4.4
+./ffmpeg
+cd doc/example
+gcc filtering_video.c -lavfilter -lavformat -lavdevice -lavcodec -lavutil -lpostproc -lswresample -lswscale -lm -lz -lx264 -lx265 -lfdk-aac -lopus -lpthread
+./a.out
