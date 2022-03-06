@@ -47,10 +47,9 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription) (localDesc webrtc.S
 	s.SetICEUDPMux(w.UdpMux)
 	s.SetICETCPMux(w.TcpMux)
 
-	s.SetLite(true)
-
 	webrtcConf := webrtc.Configuration{}
 	if w.HostIp != "" {
+		s.SetLite(true)
 		s.SetNAT1To1IPs([]string{w.HostIp}, webrtc.ICECandidateTypeHost)
 	} else {
 		webrtcConf.ICEServers = []webrtc.ICEServer{
