@@ -48,12 +48,20 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription) (localDesc webrtc.S
 	s.SetICETCPMux(w.TcpMux)
 
 	s.SetLite(true)
+
+	webrtcConf := webrtc.Configuration{}
 	if w.HostIp != "" {
 		s.SetNAT1To1IPs([]string{w.HostIp}, webrtc.ICECandidateTypeHost)
+	} else {
+		webrtcConf.ICEServers = []webrtc.ICEServer{
+			{
+				URLs: []string{"stun:stun.l.google.com:19302"},
+			},
+		}
 	}
 
 	api := webrtc.NewAPI(webrtc.WithMediaEngine(m), webrtc.WithInterceptorRegistry(i), webrtc.WithSettingEngine(s))
-	peerConnection, err = api.NewPeerConnection(webrtc.Configuration{})
+	peerConnection, err = api.NewPeerConnection(webrtcConf)
 	if err != nil {
 		return
 	}
