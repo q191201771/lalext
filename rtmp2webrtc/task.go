@@ -22,9 +22,10 @@ import (
 type TaskCreator struct {
 	udpMux ice.UDPMux
 	tcpMux ice.TCPMux
+	hostIp string
 }
 
-func NewTaskCreator(port int) (*TaskCreator, error) {
+func NewTaskCreator(port int, hostIp string) (*TaskCreator, error) {
 	um, err := net.ListenUDP("udp", &net.UDPAddr{
 		IP:   net.IP{0, 0, 0, 0},
 		Port: port,
@@ -44,6 +45,7 @@ func NewTaskCreator(port int) (*TaskCreator, error) {
 	return &TaskCreator{
 		udpMux: webrtc.NewICEUDPMux(nil, um),
 		tcpMux: webrtc.NewICETCPMux(nil, tm, 20),
+		hostIp: hostIp,
 	}, nil
 }
 
@@ -58,8 +60,7 @@ func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string,
 		return err
 	}
 
-	var webrtcSender WebRtcSender
-	localSessionDescription, err := webrtcSender.Init(sd, t.udpMux, t.tcpMux, func(connectionState webrtc.ICEConnectionState) {
+	iceConnectionStateCB := func(connectionState webrtc.ICEConnectionState) {
 		nazalog.Debugf("> OnICEConnectionStateChange. state=%s", connectionState.String())
 		switch connectionState {
 		case webrtc.ICEConnectionStateChecking:
@@ -71,7 +72,15 @@ func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string,
 		default:
 			nazalog.Errorf("NOTICEME %s", connectionState.String())
 		}
-	})
+	}
+
+	webrtcSender := WebRtcSender{
+		UdpMux:               t.udpMux,
+		TcpMux:               t.tcpMux,
+		ICEConnectionStateCB: iceConnectionStateCB,
+		HostIp:               t.hostIp,
+	}
+	localSessionDescription, err := webrtcSender.Init(sd)
 	if err != nil {
 		return err
 	}

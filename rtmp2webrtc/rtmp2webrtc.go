@@ -33,11 +33,11 @@ func main() {
 		option.Level = nazalog.LevelTrace
 	})
 
-	httpPort, webrtcPort := parseFlag()
+	httpPort, webrtcPort, hostIp := parseFlag()
 	addr := fmt.Sprintf(":%d", httpPort)
 
 	var m http.ServeMux
-	taskCreator, err := NewTaskCreator(webrtcPort)
+	taskCreator, err := NewTaskCreator(webrtcPort, hostIp)
 	nazalog.Assert(nil, err)
 
 	var pageFn = func(writer http.ResponseWriter, request *http.Request) {
@@ -88,9 +88,10 @@ func main() {
 	nazalog.Assert(nil, err)
 }
 
-func parseFlag() (int, int) {
+func parseFlag() (int, int, string) {
 	httpPort := flag.Int("p", 8827, "specify listen port")
 	webrtcPort := flag.Int("wp", 8900, "specify webrtc mux port")
+	hostIp := flag.String("ip", "", "specify host ip")
 	flag.Parse()
-	return *httpPort, *webrtcPort
+	return *httpPort, *webrtcPort, *hostIp
 }
