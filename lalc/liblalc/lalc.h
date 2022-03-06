@@ -7,13 +7,16 @@
 #include <libavutil/frame.h>
 // 包含这两个文件用于提供AVPacket和AVFrame
 
-// TODO(chef): LalcDecoderOpen with asc
+// TODO(chef): [feat] LalcDecoderOpen with asc
+// TODO(chef): [opt] 所有release增加NULL判断
+// TODO(chef): [refactor] 全部typedef
 
-struct LalcDecoder;
-struct LalcPcmFileWriter;
-
-struct LalcAudioEncoder;
-struct LalcVideoEncoder;
+typedef struct LalcDecoder       LalcDecoder;
+typedef struct LalcAudioEncoder  LalcAudioEncoder;
+typedef struct LalcPcmFileWriter LalcPcmFileWriter;
+typedef struct LalcFrameList     LalcFrameList;
+typedef struct LalcVideoDecoder  LalcVideoDecoder;
+typedef struct LalcVideoEncoder  LalcVideoEncoder;
 
 // ----- 音频解码 -------------------------------------------------------------------------------------------------------
 
@@ -28,6 +31,8 @@ struct LalcDecoder *LalcDecoderAlloc();
 int LalcDecoderOpen(struct LalcDecoder *decoder, int channels, int sampleRate);
 
 // LalcDecoderDecode
+//
+// @param inData: TODO(chef): 内部是否引用inData
 //
 // @param inSize: 输入数据。注意，传入裸数据即可，不需要ADTS头
 //
@@ -49,6 +54,42 @@ int LalcAudioEncoderEncode(struct LalcAudioEncoder *encoder, AVFrame *frame, AVP
 
 int LalcAudioEncoderRelease(struct LalcAudioEncoder*);
 
+// ----- 音频PCM写文件 ---------------------------------------------------------------------------------------------------
+
+struct LalcPcmFileWriter *LalcPcmFileWriterAlloc();
+
+int LalcPcmFileWriterOpen(struct LalcPcmFileWriter *writer, char *filename);
+
+int LalcPcmFileWriterWrite(struct LalcPcmFileWriter *writer, AVFrame *frame);
+
+int LalcPcmFileWriterClose(struct LalcPcmFileWriter *writer);
+
+int LalcPcmFileWriterRelease(struct LalcPcmFileWriter *writer);
+
+// ----- 音频混音 -------------------------------------------------------------------------------------------------------
+
+int LalcOpAudioMix(AVFrame **frameList, int frameListSize, AVFrame *outFrame);
+
+LalcFrameList *LalcFrameListAlloc(int size);
+
+void LalcFrameListAdd(LalcFrameList *list, AVFrame *frame);
+
+void LalcFrameListClear(LalcFrameList *list);
+
+int LalcFrameListRelease(LalcFrameList *list);
+
+int LalcOpAudioMixWithFrameList(LalcFrameList *list, AVFrame *outFrame);
+
+// ----- 视频解码 -------------------------------------------------------------------------------------------------------
+
+struct LalcVideoDecoder *LalcVideoDecoderAlloc();
+
+int LalcVideoDecoderOpen(struct LalcVideoDecoder *decoder);
+
+int LalcVideoDecoderDecode(struct LalcVideoDecoder *decoder, uint8_t *inData, int inSize, AVFrame *outFrame);
+
+void LalcVideoDecoderRelease(struct LalcVideoDecoder *decoder);
+
 // ----- 视频编码 -------------------------------------------------------------------------------------------------------
 
 struct LalcVideoEncoder *LalcVideoEncoderAlloc();
@@ -58,10 +99,6 @@ int LalcVideoEncoderOpen(struct LalcVideoEncoder *encoder, int channels, int sam
 int LalcVideoEncoderEncode(struct LalcVideoEncoder *encoder, AVFrame frame, AVPacket *outPacket);
 
 int LalcVideoEncoderRelease(struct LalcVideoEncoder);
-
-// ----- 音频混音 -------------------------------------------------------------------------------------------------------
-
-int LalcAudioMix(AVFrame *frameList, int frameListSize, AVFrame *outFrame);
 
 // ----- 视频缩放 -------------------------------------------------------------------------------------------------------
 
@@ -75,16 +112,18 @@ int LalcVideoCut(AVFrame frame, int x, int y, int width, int height, AVFrame *ou
 
 int LalcVideoMix(AVFrame *frameList, int frameListSize, int *xList, int *yList, AVFrame *bg);
 
-// ----- 音频PCM写文件----------------------------------------------------------------------------------------------------
+// ----- 拉流 -----------------------------------------------------------------------------------------------------------
 
-struct LalcPcmFileWriter *LalcPcmFileWriterAlloc();
+#include "libavformat/avformat.h"
 
-int LalcPcmFileWriterOpen(struct LalcPcmFileWriter *writer, char *filename);
+typedef void (*LalcOpPullOnPacket)(AVFormatContext *fmtCtx, AVPacket *packet);
 
-int LalcPcmFileWriterWrite(struct LalcPcmFileWriter *writer, AVFrame *frame);
-
-int LalcPcmFileWriterClose(struct LalcPcmFileWriter *writer);
-
-int LalcPcmFileWriterRelease(struct LalcPcmFileWriter *writer);
+// LalcOpPull
+//
+// @param onPacket 收到数据的回调
+//                 对于rtmp AAC，packet data中存储raw数据，不包含adts头，也不包含asc
+//                 对于rtmp H264，packet data中存储avcc格式数据，不包含其他头
+//
+int LalcOpPull(const char *url, LalcOpPullOnPacket onPacket);
 
 #endif
