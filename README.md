@@ -11,6 +11,7 @@ $cd rtmp2webrtc
 $go build
 $./rtmp2webrtc -p 8827 -wp 8900
 ```
+也可以使用`./rtmp2webrtc -p 8827 -wp 8900 -ip x.x.x.x`，`x.x.x.x`是你机器ip地址。这样不用依赖外部stun服务，也可以减少建链时间。 
 
 步骤2，使用chrome浏览器打开h5网页： http://127.0.0.1:8827/rtmp2webrtc.html
 
@@ -21,7 +22,7 @@ $./rtmp2webrtc -p 8827 -wp 8900
 - 目前只能播放rtmp中的H264格式的视频，音频会被过滤掉，H265不支持
 - 如果失败：
   1. 确保你的rtmp流是正常的。比如可以通过ffmpeg、vlc等rtmp客户端正常播放
-  2. 确保网络能使用`stun.l.google.com:19302`
+  2. 在没有指定`ip`参数时，确保网络能使用`stun.l.google.com:19302`
   3. 这只是一个演示协议转换的demo，不会过多的判断边界错误条件，你可以尝试重启rtmp2webrtc，重新刷新页面，更换新的流名称就行测试
 - 我测试过的浏览器：macos下的chrome和firefox
 

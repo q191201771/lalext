@@ -22,10 +22,14 @@ var (
 )
 
 type WebRtcSender struct {
-	vTrack *TrackLocalVideo
+	vTrack               *TrackLocalVideo
+	UdpMux               ice.UDPMux
+	TcpMux               ice.TCPMux
+	HostIp               string
+	ICEConnectionStateCB func(connectionState webrtc.ICEConnectionState)
 }
 
-func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, tcpMux ice.TCPMux, onICEConnectionState func(connectionState webrtc.ICEConnectionState)) (localDesc webrtc.SessionDescription, err error) {
+func (w *WebRtcSender) Init(offer webrtc.SessionDescription) (localDesc webrtc.SessionDescription, err error) {
 
 	var peerConnection *webrtc.PeerConnection
 
@@ -40,17 +44,23 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, 
 	}
 
 	s := webrtc.SettingEngine{}
-	s.SetICEUDPMux(udpMux)
-	s.SetICETCPMux(tcpMux)
+	s.SetICEUDPMux(w.UdpMux)
+	s.SetICETCPMux(w.TcpMux)
 
-	api := webrtc.NewAPI(webrtc.WithMediaEngine(m), webrtc.WithInterceptorRegistry(i), webrtc.WithSettingEngine(s))
-	peerConnection, err = api.NewPeerConnection(webrtc.Configuration{
-		ICEServers: []webrtc.ICEServer{
+	webrtcConf := webrtc.Configuration{}
+	if w.HostIp != "" {
+		s.SetLite(true)
+		s.SetNAT1To1IPs([]string{w.HostIp}, webrtc.ICECandidateTypeHost)
+	} else {
+		webrtcConf.ICEServers = []webrtc.ICEServer{
 			{
 				URLs: []string{"stun:stun.l.google.com:19302"},
 			},
-		},
-	})
+		}
+	}
+
+	api := webrtc.NewAPI(webrtc.WithMediaEngine(m), webrtc.WithInterceptorRegistry(i), webrtc.WithSettingEngine(s))
+	peerConnection, err = api.NewPeerConnection(webrtcConf)
 	if err != nil {
 		return
 	}
@@ -73,7 +83,7 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription, udpMux ice.UDPMux, 
 		}
 	}()
 
-	peerConnection.OnICEConnectionStateChange(onICEConnectionState)
+	peerConnection.OnICEConnectionStateChange(w.ICEConnectionStateCB)
 
 	if err = peerConnection.SetRemoteDescription(offer); err != nil {
 		return
