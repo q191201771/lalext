@@ -41,7 +41,7 @@ func (ic *inCtx) Pull(url string) error {
 	ret := C.LalcDecoderOpen(ic.decoder, 2, 48000)
 	nazalog.Assert(0, int(ret))
 
-    ret = C.LalcVideoDecoder(ic.videoDecoder)
+    ret = C.LalcVideoDecoderOpen(ic.videoDecoder)
 	nazalog.Assert(0, int(ret))
 
 	err := ic.session.Pull(url, func(msg base.RtmpMsg) {

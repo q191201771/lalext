@@ -13,10 +13,10 @@
 #define PRINT_AV_ERROR(errnum) { \
 char b[AV_ERROR_MAX_STRING_SIZE] = {0}; \
 av_make_error_string(b, AV_ERROR_MAX_STRING_SIZE, (errnum)); \
-printf("[AVERROR] %d(%s) %s:%d", errnum, b, __FUNCTION__, __LINE__); \
-}
+printf("[AVERROR] %d(%s) %s:%d\n", errnum, b, __FUNCTION__, __LINE__); \
+};
 
-// ----- 音频解码 -------------------------------------------------------------------------------------------------------
+// ----- 1. 音频解码 ----------------------------------------------------------------------------------------------------
 
 typedef struct LalcDecoder {
   AVCodecContext *codecCtx_;
@@ -30,6 +30,11 @@ struct LalcDecoder *LalcDecoderAlloc() {
 
 int LalcDecoderOpen(struct LalcDecoder *decoder, int channels, int sampleRate) {
   enum AVCodecID codecId = AV_CODEC_ID_AAC;
+  AVCodecParameters *param = avcodec_parameters_alloc();
+  param->codec_type = AVMEDIA_TYPE_AUDIO;
+  param->channels = channels;
+  param->sample_rate = sampleRate;
+
   int ret;
 
   AVCodec *codec = avcodec_find_decoder(codecId);
@@ -43,11 +48,6 @@ int LalcDecoderOpen(struct LalcDecoder *decoder, int channels, int sampleRate) {
     printf("[AVERROR] avcodec_alloc_context3 failed.");
     return -1;
   }
-
-  AVCodecParameters *param = avcodec_parameters_alloc();
-  param->codec_type = AVMEDIA_TYPE_AUDIO;
-  param->channels = channels;
-  param->sample_rate = sampleRate;
 
   ret = avcodec_parameters_to_context(decoder->codecCtx_, param);
   if (ret < 0) {
@@ -89,8 +89,10 @@ int LalcDecoderDecode(struct LalcDecoder *decoder, uint8_t *inData, int inSize, 
 }
 
 void LalcDecoderRelease(struct LalcDecoder *decoder) {
+  if (!decoder) { return; }
+
   if (decoder->codecCtx_) {
-	avcodec_free_context(decoder->codecCtx_);
+	avcodec_free_context(&decoder->codecCtx_);
 	decoder->codecCtx_ = NULL;
   }
   free(decoder);
@@ -110,6 +112,15 @@ struct LalcAudioEncoder *LalcAudioEncoderAlloc() {
 
 int LalcAudioEncoderOpen(struct LalcAudioEncoder *encoder, int channels, int sampleRate) {
   enum AVCodecID codecId = AV_CODEC_ID_AAC;
+  // TODO(chef): [fix] free me
+  AVCodecParameters *param = avcodec_parameters_alloc();
+  param->codec_type = AVMEDIA_TYPE_AUDIO;
+  param->channels = channels;
+  param->sample_rate = sampleRate;
+
+  param->format = AV_SAMPLE_FMT_FLTP;
+  param->channel_layout = AV_CH_FRONT_LEFT | AV_CH_FRONT_RIGHT;
+
   int ret;
 
   AVCodec *codec = avcodec_find_encoder(codecId);
@@ -123,14 +134,6 @@ int LalcAudioEncoderOpen(struct LalcAudioEncoder *encoder, int channels, int sam
     printf("[AVERROR] avcodec_alloc_context3 failed.");
     return -1;
   }
-
-  AVCodecParameters *param = avcodec_parameters_alloc();
-  param->codec_type = AVMEDIA_TYPE_AUDIO;
-  param->channels = channels;
-  param->sample_rate = sampleRate;
-
-  param->format = AV_SAMPLE_FMT_FLTP;
-  param->channel_layout = AV_CH_FRONT_LEFT | AV_CH_FRONT_RIGHT;
 
   ret = avcodec_parameters_to_context(encoder->codecCtx_, param);
   if (ret < 0) {
@@ -157,6 +160,7 @@ int LalcAudioEncoderEncode(struct LalcAudioEncoder *encoder, AVFrame *frame, AVP
   ret = avcodec_receive_packet(encoder->codecCtx_, outPacket);
   if (ret < 0) {
     if (ret == AVERROR(EAGAIN)) {
+	  PRINT_AV_ERROR(ret);
       return 0;
     }
     PRINT_AV_ERROR(ret);
@@ -166,12 +170,14 @@ int LalcAudioEncoderEncode(struct LalcAudioEncoder *encoder, AVFrame *frame, AVP
   return 0;
 }
 
-int LalcAudioEncoderRelease(struct LalcAudioEncoder *encoder) {
-	if (encoder->codecCtx_) {
-	  avcodec_free_context(encoder->codecCtx_);
-	  encoder->codecCtx_ = NULL;
-	}
-	free(encoder);
+void LalcAudioEncoderRelease(struct LalcAudioEncoder *encoder) {
+  if (!encoder) { return; }
+
+  if (encoder->codecCtx_) {
+	avcodec_free_context(&encoder->codecCtx_);
+	encoder->codecCtx_ = NULL;
+  }
+  free(encoder);
 }
 
 // ----- 音频PCM写文件 ---------------------------------------------------------------------------------------------------
@@ -336,6 +342,7 @@ int LalcVideoDecoderOpen(struct LalcVideoDecoder *decoder) {
 
   AVCodecParameters *param = avcodec_parameters_alloc();
   param->codec_type = AVMEDIA_TYPE_VIDEO;
+  param->format = AV_PIX_FMT_YUV420P;
 
   ret = avcodec_parameters_to_context(decoder->codecCtx_, param);
   if (ret < 0) {
@@ -352,8 +359,7 @@ int LalcVideoDecoderOpen(struct LalcVideoDecoder *decoder) {
   return 0;
 }
 
-int LalcVideoDecoderDecode(struct LalcVideoDecoder *decoder, uint8_t *inData, int inSize, AVFrame *outFrame) {
-  //  printf("> LalcVideoDecoder. inSize=%d, %d %d\n", inSize, (int)inData[0], (int)inData[1]);
+int LalcVideoDecoderSend(struct LalcVideoDecoder *decoder, uint8_t *inData, int inSize) {
   AVPacket *packet = av_packet_alloc();
   packet->data = inData;
   packet->size = inSize;
@@ -363,11 +369,14 @@ int LalcVideoDecoderDecode(struct LalcVideoDecoder *decoder, uint8_t *inData, in
     PRINT_AV_ERROR(ret);
     return ret;
   }
+}
 
-  ret = avcodec_receive_frame(decoder->codecCtx_, outFrame);
+int LalcVideoDecoderTryReceive(struct LalcVideoDecoder *decoder, AVFrame *outFrame) {
+  int ret = avcodec_receive_frame(decoder->codecCtx_, outFrame);
   if (ret < 0) {
     if (ret == AVERROR(EAGAIN)) {
-      return 0;
+      // 依然返回错误，供调用方判断
+      return ret;
     }
     PRINT_AV_ERROR(ret);
     return ret;
@@ -375,6 +384,248 @@ int LalcVideoDecoderDecode(struct LalcVideoDecoder *decoder, uint8_t *inData, in
 
   return 0;
 }
+
+void LalcVideoDecoderRelease(struct LalcVideoDecoder *decoder) {
+
+}
+
+// ----- 视频编码 -------------------------------------------------------------------------------------------------------
+
+typedef struct LalcVideoEncoder {
+  AVCodecContext *codecCtx_;
+} LalcVideoEncoder;
+
+struct LalcVideoEncoder *LalcVideoEncoderAlloc() {
+	LalcVideoEncoder *encoder = (LalcVideoEncoder *)malloc(sizeof(LalcVideoEncoder));
+	encoder->codecCtx_ = NULL;
+	return encoder;
+}
+
+int LalcVideoEncoderOpen(struct LalcVideoEncoder *encoder, int width, int height) {
+  enum AVCodecID codecId = AV_CODEC_ID_H264;
+  // TODO(chef): [fix] free me
+  AVCodecParameters *param = avcodec_parameters_alloc();
+  param->codec_type = AVMEDIA_TYPE_VIDEO;
+  param->width = width;
+  param->height = height;
+  param->format = AV_PIX_FMT_YUV420P;
+
+  AVRational timebase;
+  timebase.num = 1;
+  timebase.den = 1000;
+
+  int ret;
+
+  AVCodec *codec = avcodec_find_encoder(codecId);
+  if (!codec) {
+    printf("[AVERROR] avcodec_find_encoder failed.");
+    return -1;
+  }
+
+  encoder->codecCtx_ = avcodec_alloc_context3(codec);
+  if (!encoder->codecCtx_) {
+    printf("[AVERROR] avcodec_alloc_context3 failed.");
+    return -1;
+  }
+
+  ret = avcodec_parameters_to_context(encoder->codecCtx_, param);
+  if (ret < 0) {
+    PRINT_AV_ERROR(ret);
+    return ret;
+  }
+  encoder->codecCtx_->time_base = timebase;
+
+  ret = avcodec_open2(encoder->codecCtx_, codec, NULL);
+  if (ret < 0) {
+    PRINT_AV_ERROR(ret);
+    return ret;
+  }
+
+  return 0;
+}
+
+int LalcVideoEncoderSend(struct LalcVideoEncoder *encoder, AVFrame *frame) {
+  printf("> LalcVideoEncoderSend\n");
+  int ret = avcodec_send_frame(encoder->codecCtx_, frame);
+  if (ret < 0) {
+    PRINT_AV_ERROR(ret);
+  }
+  return ret;
+}
+
+
+int LalcVideoEncoderTryReceive(struct LalcVideoEncoder *encoder, AVPacket *outPacket) {
+  printf("> LalcVideoEncoderTryReceive\n");
+  int ret = avcodec_receive_packet(encoder->codecCtx_, outPacket);
+  if (ret < 0) {
+    if (ret == AVERROR(EAGAIN)) {
+      return ret;
+    }
+    PRINT_AV_ERROR(ret);
+    return ret;
+  }
+
+  return 0;
+}
+
+void LalcVideoEncoderRelease(struct LalcVideoEncoder *encoder) {
+  if (!encoder) { return; }
+
+  if (encoder->codecCtx_) {
+	avcodec_free_context(&encoder->codecCtx_);
+	encoder->codecCtx_ = NULL;
+  }
+  free(encoder);
+}
+
+// ----- 写JPEG文件 -----------------------------------------------------------------------------------------------------
+
+int LalcDumpMjpeg(AVFrame *frame, const char *filename) {
+  int ret = 0;
+
+  AVFormatContext *fmt_ctx = NULL;
+  AVCodec *codec = NULL;
+  AVStream *stream = NULL;
+  AVCodecContext *cc = NULL;
+  AVPacket packet;
+  enum AVCodecID codec_id = AV_CODEC_ID_MJPEG;
+
+  ret = avformat_alloc_output_context2(&fmt_ctx, NULL, NULL, filename);
+  if (ret < 0) {
+	PRINT_AV_ERROR(ret);
+    goto END;
+  }
+
+  fmt_ctx->oformat->video_codec = codec_id;
+
+  codec = avcodec_find_encoder(codec_id);
+  if (!codec) {
+    printf("[AVERROR] avcodec_find_encoder failed.");
+    ret = -1;
+    goto END;
+  }
+
+  stream = avformat_new_stream(fmt_ctx, NULL);
+  if (!stream) {
+    printf("[AVERROR] avformat_new_stream failed.");
+	ret = -1;
+    goto END;
+  }
+
+  stream->id = 0;
+
+  cc = avcodec_alloc_context3(codec);
+  if (!cc) {
+    printf("[AVERROR] avcodec_alloc_context3 failed.");
+	ret = -1;
+    goto END;
+  }
+
+  cc->codec_id = codec_id;
+  cc->codec_type = AVMEDIA_TYPE_VIDEO;
+  cc->pix_fmt = AV_PIX_FMT_YUVJ420P;
+  cc->width = frame->width;
+  cc->height = frame->height;
+  cc->flags |= AV_CODEC_FLAG_QSCALE;
+  cc->global_quality = FF_QP2LAMBDA * 1;
+
+  stream->time_base = (AVRational){1, 25};
+  cc->time_base = stream->time_base;
+
+  ret = avcodec_open2(cc, codec, NULL);
+  if (ret < 0) {
+	PRINT_AV_ERROR(ret);
+	goto END;
+  }
+
+  ret = avcodec_parameters_from_context(stream->codecpar, cc);
+  if (ret < 0) {
+	PRINT_AV_ERROR(ret);
+    goto END;
+  }
+
+  ret = avformat_write_header(fmt_ctx, NULL);
+  if (ret < 0) {
+	PRINT_AV_ERROR(ret);
+    goto END;
+  }
+
+  av_new_packet(&packet, cc->width * cc->height * 4);
+
+  ret = avcodec_send_frame(cc, frame);
+  if (ret < 0) {
+	PRINT_AV_ERROR(ret);
+    goto END;
+  }
+
+  while (ret >= 0) {
+    ret = avcodec_receive_packet(cc, &packet);
+    if (ret < 0) {
+      if (ret != AVERROR(EAGAIN)) {
+		PRINT_AV_ERROR(ret);
+      }
+      goto END;
+    }
+    ret = av_interleaved_write_frame(fmt_ctx, &packet);
+    if (ret < 0) {
+	  PRINT_AV_ERROR(ret);
+      goto END;
+    }
+  }
+
+  av_write_trailer(fmt_ctx);
+
+  ret = 0;
+  goto END;
+
+  END:
+  if (cc) { avcodec_close(cc); }
+  if (fmt_ctx) { avformat_free_context(fmt_ctx); }
+
+  return ret;
+}
+
+// ----- 写文件 ---------------------------------------------------------------------------------------------------------
+
+typedef struct LalcFileWriter {
+  FILE *fp;
+} LalcFileWriter;
+
+struct LalcFileWriter *LalcFileWriterAlloc() {
+  LalcFileWriter *writer = (struct LalcFileWriter *)malloc(sizeof(LalcFileWriter));
+  writer->fp = NULL;
+  return writer;
+}
+
+int LalcFileWriterOpen(struct LalcFileWriter *writer, char *filename) {
+  writer->fp = fopen(filename, "wb+");
+  if (!writer->fp) {
+    printf("[AVERROR] fopen failed.\n");
+    return -1;
+  }
+  return 0;
+}
+
+int LalcFileWriterWrite(struct LalcFileWriter *writer,  const void *data, int size) {
+  fwrite(data, size, 1, writer->fp);
+  fflush(writer->fp);
+  return 0;
+}
+
+int LalcFileWriterClose(struct LalcFileWriter *writer) {
+  if (writer->fp) {
+    int ret = fclose(writer->fp);
+    writer->fp = NULL;
+    return ret;
+  }
+  return 0;
+}
+
+int LalcFileWriterRelease(struct LalcFileWriter *writer) {
+  LalcPcmFileWriterClose(writer);
+  free(writer);
+}
+
 
 // ----- 拉流 -----------------------------------------------------------------------------------------------------------
 
@@ -407,4 +658,16 @@ int LalcOpPull(const char *url, LalcOpPullOnPacket onPacket) {
 
     av_packet_free(&pkt);
   }
+}
+
+int LalcVideoScale(AVFrame frame, int width, int height, AVFrame *outFrame) {
+  return 0;
+}
+
+int LalcVideoCut(AVFrame frame, int x, int y, int width, int height, AVFrame *outFrame) {
+  return 0;
+}
+
+int LalcVideoMix(AVFrame *frameList, int frameListSize, int *xList, int *yList, AVFrame *bg) {
+  return 0;
 }

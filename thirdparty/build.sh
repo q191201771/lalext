@@ -90,6 +90,6 @@ cd -
 export LD_LIBRARY_PATH=/usr/local/lib/
 cd FFmpeg-n4.4
 ./ffmpeg
-cd doc/example
+cd doc/examples
 gcc filtering_video.c -lavfilter -lavformat -lavdevice -lavcodec -lavutil -lpostproc -lswresample -lswscale -lm -lz -lx264 -lx265 -lfdk-aac -lopus -lpthread
 ./a.out
