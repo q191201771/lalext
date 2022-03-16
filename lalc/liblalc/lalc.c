@@ -10,6 +10,8 @@
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+void log_hex_dump(const char *b, int l);
+
 #define PRINT_AV_ERROR(errnum) { \
 char b[AV_ERROR_MAX_STRING_SIZE] = {0}; \
 av_make_error_string(b, AV_ERROR_MAX_STRING_SIZE, (errnum)); \
@@ -30,6 +32,7 @@ struct LalcDecoder *LalcDecoderAlloc() {
 
 int LalcDecoderOpen(struct LalcDecoder *decoder, int channels, int sampleRate) {
   enum AVCodecID codecId = AV_CODEC_ID_AAC;
+  // TODO(chef): [fix] free me
   AVCodecParameters *param = avcodec_parameters_alloc();
   param->codec_type = AVMEDIA_TYPE_AUDIO;
   param->channels = channels;
@@ -98,7 +101,7 @@ void LalcDecoderRelease(struct LalcDecoder *decoder) {
   free(decoder);
 }
 
-// ----- 音频编码 -------------------------------------------------------------------------------------------------------
+// ----- 2. 音频编码 ----------------------------------------------------------------------------------------------------
 
 typedef struct LalcAudioEncoder {
   AVCodecContext *codecCtx_;
@@ -180,72 +183,7 @@ void LalcAudioEncoderRelease(struct LalcAudioEncoder *encoder) {
   free(encoder);
 }
 
-// ----- 音频PCM写文件 ---------------------------------------------------------------------------------------------------
-
-typedef struct LalcPcmFileWriter {
-  FILE *fp;
-} LalcPcmFileWriter;
-
-struct LalcPcmFileWriter *LalcPcmFileWriterAlloc() {
-  LalcPcmFileWriter *writer = (struct LalcPcmFileWriter *)malloc(sizeof(LalcPcmFileWriter));
-  writer->fp = NULL;
-  return writer;
-}
-
-int LalcPcmFileWriterOpen(struct LalcPcmFileWriter *writer, char *filename) {
-  writer->fp = fopen(filename, "wb+");
-  if (!writer->fp) {
-    printf("[AVERROR] fopen failed.\n");
-    return -1;
-  }
-  return 0;
-}
-
-int LalcPcmFileWriterWrite(struct LalcPcmFileWriter *writer, AVFrame *frame) {
-  // libavutil/samplefmt.h
-
-  int nbSamples = frame->nb_samples;
-  int channels = frame->channels;
-  int sampleSize = av_get_bytes_per_sample(frame->format);
-
-  //  printf("LalcPcmFileWriterWrite. %d %d %d\n", nbSamples, channels, sampleSize);
-
-  int isplanar = av_sample_fmt_is_planar(frame->format);
-
-  if (isplanar) {
-    //存储方式1 只存一个通道
-    //	 for (int i = 0; i < frame->nb_samples; i++) {
-    //	   fwrite(frame->data[0]+sampleSize * i, sampleSize, 1, writer->fp);
-    //	 }
-
-    // 存储方式2 存两个通道。planar转换成packed存储
-    for (int i = 0; i < nbSamples; i++) {
-      for (int j = 0; j < channels; j++) {
-        fwrite(frame->data[j]+sampleSize * i, sampleSize, 1, writer->fp);
-      }
-    }
-
-    fflush(writer->fp);
-  }
-
-  return 0;
-}
-
-int LalcPcmFileWriterClose(struct LalcPcmFileWriter *writer) {
-  if (writer->fp) {
-    int ret = fclose(writer->fp);
-    writer->fp = NULL;
-    return ret;
-  }
-  return 0;
-}
-
-int LalcPcmFileWriterRelease(struct LalcPcmFileWriter *writer) {
-  LalcPcmFileWriterClose(writer);
-  free(writer);
-}
-
-// ----- 音频混音 -------------------------------------------------------------------------------------------------------
+// ----- 3. 音频混音 ----------------------------------------------------------------------------------------------------
 
 int LalcOpAudioMix(AVFrame **frameList, int frameListSize, AVFrame *outFrame) {
   AVFrame *frame = frameList[0];
@@ -260,10 +198,10 @@ int LalcOpAudioMix(AVFrame **frameList, int frameListSize, AVFrame *outFrame) {
   outFrame->sample_rate = frame->sample_rate;
   outFrame->format = frame->format;
   if (isplanar) {
-	outFrame->linesize[0] = frame->linesize[0];
+    outFrame->linesize[0] = frame->linesize[0];
     for (int i = 0; i < channels; i++) {
-	  outFrame->data[i] = av_malloc(outFrame->linesize[0]);
-	  memcpy(outFrame->data[i], frame->data[i], outFrame->linesize[0]);
+      outFrame->data[i] = av_malloc(outFrame->linesize[0]);
+      memcpy(outFrame->data[i], frame->data[i], outFrame->linesize[0]);
     }
   }
 
@@ -271,12 +209,12 @@ int LalcOpAudioMix(AVFrame **frameList, int frameListSize, AVFrame *outFrame) {
     for (int j = 0; j < channels; j++) {
       float *dest = (float *)(outFrame->data[j] + sampleSize + i);
       *dest = 0;
-	  for (int k = 0; k < frameListSize; k++) {
-	    float *src = (float *)(frameList[k]->data[j] + sampleSize + i);
-//	    printf("%0.2f\n", *src);
-	    *dest += *src;
+      for (int k = 0; k < frameListSize; k++) {
+        float *src = (float *)(frameList[k]->data[j] + sampleSize + i);
+        //	    printf("%0.2f\n", *src);
+        *dest += *src;
       }
-	  *dest /= frameListSize;
+      *dest /= frameListSize;
     }
   }
 }
@@ -310,6 +248,70 @@ int LalcFrameListRelease(LalcFrameList *list) {
 
 int LalcOpAudioMixWithFrameList(LalcFrameList *list, AVFrame *outFrame) {
   LalcOpAudioMix(list->list, list->size, outFrame);
+}
+
+// ----- 音频PCM写文件 ---------------------------------------------------------------------------------------------------
+
+typedef struct LalcPcmFileWriter {
+  FILE *fp;
+} LalcPcmFileWriter;
+
+struct LalcPcmFileWriter *LalcPcmFileWriterAlloc() {
+  LalcPcmFileWriter *writer = (struct LalcPcmFileWriter *)malloc(sizeof(LalcPcmFileWriter));
+  writer->fp = NULL;
+  return writer;
+}
+
+int LalcPcmFileWriterOpen(struct LalcPcmFileWriter *writer, char *filename) {
+  writer->fp = fopen(filename, "wb+");
+  if (!writer->fp) {
+    printf("[AVERROR] fopen failed.\n");
+    return -1;
+  }
+  return 0;
+}
+
+int LalcPcmFileWriterWrite(struct LalcPcmFileWriter *writer, AVFrame *frame) {
+  // libavutil/samplefmt.h
+
+  int nbSamples = frame->nb_samples;
+  int channels = frame->channels;
+  int sampleSize = av_get_bytes_per_sample(frame->format);
+
+  int isplanar = av_sample_fmt_is_planar(frame->format);
+  printf("LalcPcmFileWriterWrite. %d %d %d %d\n", nbSamples, channels, sampleSize, isplanar);
+
+  if (isplanar) {
+    //存储方式1 只存一个通道
+    //	 for (int i = 0; i < frame->nb_samples; i++) {
+    //	   fwrite(frame->data[0]+sampleSize * i, sampleSize, 1, writer->fp);
+    //	 }
+
+    // 存储方式2 存两个通道。planar转换成packed存储
+    for (int i = 0; i < nbSamples; i++) {
+      for (int j = 0; j < channels; j++) {
+        fwrite(frame->data[j]+sampleSize * i, sampleSize, 1, writer->fp);
+      }
+    }
+
+    fflush(writer->fp);
+  }
+
+  return 0;
+}
+
+int LalcPcmFileWriterClose(struct LalcPcmFileWriter *writer) {
+  if (writer->fp) {
+    int ret = fclose(writer->fp);
+    writer->fp = NULL;
+    return ret;
+  }
+  return 0;
+}
+
+int LalcPcmFileWriterRelease(struct LalcPcmFileWriter *writer) {
+  LalcPcmFileWriterClose(writer);
+  free(writer);
 }
 
 // ----- 视频解码 -------------------------------------------------------------------------------------------------------
@@ -476,6 +478,37 @@ void LalcVideoEncoderRelease(struct LalcVideoEncoder *encoder) {
 	encoder->codecCtx_ = NULL;
   }
   free(encoder);
+}
+
+// ----- 视频拼接合并 ----------------------------------------------------------------------------------------------------
+
+int LalcVideoPin(AVFrame *bg, AVFrame *part, int x, int y) {
+  int bgw = bg->width;
+  int bgh = bg->height;
+  int ptw = part->width;
+  int pth = part->height;
+  if (x < 0 || y < 0 || (x+ptw) > bgw || (y+pth) > bgh) {
+    printf("[AVERROR] LalcVideoPin failed. x=%d, y=%d, bgw=%d, bgh=%d, ptw=%d, pth=%d", x, y, bgw, bgh, ptw, pth);
+    return -1;
+  }
+
+  for (int i = 0; i < pth; i++) {
+    memcpy(bg->data[0] + bg->linesize[0]*(y+i) + x,
+		   part->data[0] + part->linesize[0]*i,
+		   ptw);
+  }
+
+  for (int i = 0; i < pth/2; i++) {
+    memcpy(bg->data[1] + bg->linesize[1]*(y/2+i) + x/2,
+		   part->data[1] + part->linesize[1]*i,
+		   ptw/2);
+
+    memcpy(bg->data[2] + bg->linesize[2]*(y/2+i) + x/2,
+		   part->data[2] + part->linesize[2]*i,
+		   ptw/2);
+  }
+
+  return 0;
 }
 
 // ----- 写JPEG文件 -----------------------------------------------------------------------------------------------------
@@ -668,6 +701,27 @@ int LalcVideoCut(AVFrame frame, int x, int y, int width, int height, AVFrame *ou
   return 0;
 }
 
-int LalcVideoMix(AVFrame *frameList, int frameListSize, int *xList, int *yList, AVFrame *bg) {
-  return 0;
+
+// --------------------------------------------------------------------------------------------------------------------
+
+void LalcLogAvFrame(AVFrame *frame) {
+  printf("nb_samples=%d, channels=%d, channel_layout=%d, sample_rate=%d, format=%d, sampleSize=%d, isplanar=%d\n",
+      frame->nb_samples, frame->channels, frame->channel_layout, frame->sample_rate, frame->format,
+      av_get_bytes_per_sample(frame->format), av_sample_fmt_is_planar(frame->format));
+}
+
+void LalcLogAvPacket(AVPacket *packet) {
+  printf("size=%d\n", packet->size);
+  int l = packet->size;
+  if (l > 16) {
+    l = 16;
+  }
+  log_hex_dump(packet->data, l);
+}
+
+void log_hex_dump(const char *b, int l) {
+  for (int i = 0; i < l; i++) {
+    printf("%02x ", b[i]);
+  }
+  printf("\n");
 }

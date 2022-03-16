@@ -15,6 +15,8 @@
 
 typedef struct LalcDecoder LalcDecoder;
 
+// LalcDecoderAlloc
+//
 struct LalcDecoder *LalcDecoderAlloc();
 
 // LalcDecoderOpen
@@ -29,7 +31,7 @@ int LalcDecoderOpen(struct LalcDecoder *decoder, int channels, int sampleRate);
 //
 // @param inData: TODO(chef): 内部是否引用inData
 //
-// @param inSize: 输入数据。注意，传入裸数据即可，不需要ADTS头
+// @param inSize: 输入数据。格式是裸数据，不需要ADTS头
 //
 // @param outFrame:
 //  - 用于接收解码后的数据.
@@ -39,26 +41,52 @@ int LalcDecoderOpen(struct LalcDecoder *decoder, int channels, int sampleRate);
 //
 int LalcDecoderDecode(struct LalcDecoder *decoder, uint8_t *inData, int inSize, AVFrame *outFrame);
 
+// LalcDecoderRelease
+//
 void LalcDecoderRelease(struct LalcDecoder *decoder);
 
-// ----- 音频编码 -------------------------------------------------------------------------------------------------------
+// ----- 2. 音频编码 ----------------------------------------------------------------------------------------------------
 
 typedef struct LalcAudioEncoder  LalcAudioEncoder;
 
+// LalcAudioEncoderAlloc
+//
 struct LalcAudioEncoder *LalcAudioEncoderAlloc();
 
+// LalcAudioEncoderOpen
+//
 int LalcAudioEncoderOpen(struct LalcAudioEncoder *encoder, int channels, int sampleRate);
 
+// LalcAudioEncoderEncode
+//
+// @param outPacket: 输出数据。格式是裸数据，不需要adts头
+//
 int LalcAudioEncoderEncode(struct LalcAudioEncoder *encoder, AVFrame *frame, AVPacket *outPacket);
 
+// LalcAudioEncoderRelease
+//
 void LalcAudioEncoderRelease(struct LalcAudioEncoder *encoder);
 
-// ----- 音频混音 -------------------------------------------------------------------------------------------------------
+// ----- 3. 音频混音 ----------------------------------------------------------------------------------------------------
 
 typedef struct LalcFrameList LalcFrameList;
 
+// LalcOpAudioMix
+//
+// 混音方式一
+//
+// @param frameList: 输入，AVFrame* 数组
+//
+// @param frameListSize: 数组大小
+//
+// @param outFrame: 输出，混音后数据
+//
 int LalcOpAudioMix(AVFrame **frameList, int frameListSize, AVFrame *outFrame);
 
+// LalcFrameListAlloc LalcFrameListAdd LalcFrameListClear LalcFrameListRelease
+//
+// 构建管理 LalcFrameList
+//
 LalcFrameList *LalcFrameListAlloc(int size);
 
 void LalcFrameListAdd(LalcFrameList *list, AVFrame *frame);
@@ -67,6 +95,10 @@ void LalcFrameListClear(LalcFrameList *list);
 
 int LalcFrameListRelease(LalcFrameList *list);
 
+// LalcOpAudioMixWithFrameList
+//
+// 混音方式二，使用 LalcFrameList 作为输入
+//
 int LalcOpAudioMixWithFrameList(LalcFrameList *list, AVFrame *outFrame);
 
 
@@ -127,6 +159,10 @@ int LalcVideoEncoderTryReceive(struct LalcVideoEncoder *encoder, AVPacket *outPa
 
 void LalcVideoEncoderRelease(struct LalcVideoEncoder *encoder);
 
+// ----- 视频拼接合并 ----------------------------------------------------------------------------------------------------
+
+int LalcVideoPin(AVFrame *bg, AVFrame *part, int x, int y);
+
 // ----- 视频缩放 -------------------------------------------------------------------------------------------------------
 
 int LalcVideoScale(AVFrame frame, int width, int height, AVFrame *outFrame);
@@ -135,9 +171,6 @@ int LalcVideoScale(AVFrame frame, int width, int height, AVFrame *outFrame);
 
 int LalcVideoCut(AVFrame frame, int x, int y, int width, int height, AVFrame *outFrame);
 
-// ----- 视频拼接合并 ----------------------------------------------------------------------------------------------------
-
-int LalcVideoMix(AVFrame *frameList, int frameListSize, int *xList, int *yList, AVFrame *bg);
 
 // ----- 音频PCM写文件 ---------------------------------------------------------------------------------------------------
 
@@ -200,5 +233,10 @@ typedef void (*LalcOpPullOnPacket)(AVFormatContext *fmtCtx, AVPacket *packet);
 //       对应的返回avpacket格式: (sps, pps, I) (P) (P)
 //
 int LalcOpPull(const char *url, LalcOpPullOnPacket onPacket);
+
+// --------------------------------------------------------------------------------------------------------------------
+
+void LalcLogAvFrame(AVFrame *frame);
+void LalcLogAvPacket(AVPacket *packet);
 
 #endif

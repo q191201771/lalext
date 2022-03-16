@@ -129,9 +129,9 @@ void onPullAudioPacket(AVFormatContext *fmtCtx, AVPacket *pkt) {
 void onPullPacket(AVFormatContext *fmtCtx, AVPacket *pkt) {
   enum AVCodecID id = fmtCtx->streams[pkt->stream_index]->codecpar->codec_id;
   if (id == AV_CODEC_ID_AAC) {
-//	onPullAudioPacket(fmtCtx, pkt);
+	onPullAudioPacket(fmtCtx, pkt);
   } else if (id == AV_CODEC_ID_H264) {
-	onPullVideoPacket(fmtCtx, pkt);
+//	onPullVideoPacket(fmtCtx, pkt);
   }
 }
 
