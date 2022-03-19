@@ -4,10 +4,27 @@ package main
 //
 import "C"
 import (
+	"github.com/q191201771/lal/pkg/avc"
+	"github.com/q191201771/naza/pkg/bele"
+	"github.com/q191201771/naza/pkg/nazabytes"
 	"reflect"
 	"unsafe"
 )
 
+// TODO(chef): [refactor] to lal
+// TODO(chef): pkt2rtmp: avcc的输入是否改为annexb更合适，或者弄成配置项，可选
+// TODO(chef): [perf] 输出可从外部传入，复用buffer
+
+func Annexb2Avcc(nals []byte) ([]byte, error) {
+	var buf nazabytes.Buffer
+	buf.Grow(len(nals))
+	err := avc.IterateNaluAnnexb(nals, func(nal []byte) {
+		bele.BePutUint32(buf.ReserveBytes(4), uint32(len(nal)))
+		buf.Flush(4)
+		_, _ = buf.Write(nal)
+	})
+	return buf.Bytes(), err
+}
 
 // TODO(chef): [refactor] to nazaext
 

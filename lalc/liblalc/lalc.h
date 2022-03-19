@@ -11,7 +11,7 @@
 // TODO(chef): [opt] 所有release增加NULL判断
 // TODO(chef): [refactor] 全部typedef
 
-// ----- 1. 音频解码 ----------------------------------------------------------------------------------------------------
+// ----- 1. 音频解码 ---------------------------------------------------------------------------------------------------
 
 typedef struct LalcDecoder LalcDecoder;
 
@@ -34,10 +34,12 @@ int LalcDecoderOpen(struct LalcDecoder *decoder, int channels, int sampleRate);
 // @param inSize: 输入数据。格式是裸数据，不需要ADTS头
 //
 // @param outFrame:
-//  - 用于接收解码后的数据.
-//  - 传入 av_frame_alloc() 生成的AVFrame.
-//  - 函数调用结束后，内部不再持有该AVFrame.
-//    上层可自由使用，并在不再需要时调用 av_frame_unref() 释放.
+//  用于接收解码后的数据。
+//
+//  传入 av_frame_alloc() 生成的AVFrame。
+//
+//  函数调用结束后，内部不再持有该AVFrame。
+//  上层可自由使用，并在不再需要时调用 av_frame_unref() 释放。
 //
 int LalcDecoderDecode(struct LalcDecoder *decoder, uint8_t *inData, int inSize, AVFrame *outFrame);
 
@@ -45,7 +47,7 @@ int LalcDecoderDecode(struct LalcDecoder *decoder, uint8_t *inData, int inSize, 
 //
 void LalcDecoderRelease(struct LalcDecoder *decoder);
 
-// ----- 2. 音频编码 ----------------------------------------------------------------------------------------------------
+// ----- 2. 音频编码 ---------------------------------------------------------------------------------------------------
 
 typedef struct LalcAudioEncoder  LalcAudioEncoder;
 
@@ -67,7 +69,7 @@ int LalcAudioEncoderEncode(struct LalcAudioEncoder *encoder, AVFrame *frame, AVP
 //
 void LalcAudioEncoderRelease(struct LalcAudioEncoder *encoder);
 
-// ----- 3. 音频混音 ----------------------------------------------------------------------------------------------------
+// ----- 3. 音频混音 ---------------------------------------------------------------------------------------------------
 
 typedef struct LalcFrameList LalcFrameList;
 
@@ -102,18 +104,23 @@ int LalcFrameListRelease(LalcFrameList *list);
 int LalcOpAudioMixWithFrameList(LalcFrameList *list, AVFrame *outFrame);
 
 
-// ----- 视频解码 -------------------------------------------------------------------------------------------------------
+// ----- 4. 视频解码 --------------------------------------------------------------------------------------------------
 
 typedef struct LalcVideoDecoder  LalcVideoDecoder;
 
+// LalcVideoDecoderAlloc
+//
 struct LalcVideoDecoder *LalcVideoDecoderAlloc();
 
+// LalcVideoDecoderOpen
+//
 int LalcVideoDecoderOpen(struct LalcVideoDecoder *decoder);
 
 // LalcVideoDecoderSend
 //
 // @param inData:
-//  annexb格式.
+//  annexb格式
+//
 //  验证可行的输入顺序:
 //  - (sps pps I) (P) (P) ...
 //
@@ -125,45 +132,58 @@ int LalcVideoDecoderSend(struct LalcVideoDecoder *decoder, uint8_t *inData, int 
 // 尝试获取解码后的数据
 //
 // @return:
-//  - 如果返回0，表示获取已解码数据成功，调用方应继续循环获取.
-//  - 如果返回-35，表示当前没有已解码数据，应在下次LalcVideoDecoderSend之后调用LalcVideoDecoderTryReceive.
-//  - 如果返回其他值，表示解码发生错误.
+//  - 如果返回0，表示获取已解码数据成功，调用方应继续循环获取
+//  - 如果返回-35，表示当前没有已解码数据，应在下次LalcVideoDecoderSend之后调用LalcVideoDecoderTryReceive
+//  - 如果返回其他值，表示解码发生错误
 //
 // @param outFrame:
-//  - 用于接收解码后的数据.
-//  - 传入 av_frame_alloc() 生成的AVFrame.
-//  - 函数调用结束后，内部不再持有该AVFrame.
-//    上层可自由使用，并在不再需要时调用 av_frame_unref() 释放.
+//  用于接收解码后的数据。
+//  传入 av_frame_alloc() 生成的AVFrame。
+//  函数调用结束后，内部不再持有该AVFrame。
+//  上层可自由使用，并在不再需要时调用 av_frame_unref() 释放。
 //
 int LalcVideoDecoderTryReceive(struct LalcVideoDecoder *decoder, AVFrame *outFrame);
 
+// LalcVideoDecoderRelease
+//
 void LalcVideoDecoderRelease(struct LalcVideoDecoder *decoder);
 
-// ----- 视频编码 -------------------------------------------------------------------------------------------------------
+// ----- 5. 视频编码 ---------------------------------------------------------------------------------------------------
 
 typedef struct LalcVideoEncoder LalcVideoEncoder;
 
+// LalcVideoEncoderAlloc
+//
 struct LalcVideoEncoder *LalcVideoEncoderAlloc();
 
+// LalcVideoEncoderOpen
+//
 int LalcVideoEncoderOpen(struct LalcVideoEncoder *encoder, int width, int height);
 
+// LalcVideoEncoderSend
+//
 int LalcVideoEncoderSend(struct LalcVideoEncoder *encoder, AVFrame *frame);
 
 // LalcVideoEncoderTryReceive
 //
 // @param outPacket:
-//  annexb格式.
+//  annexb格式
+//
 //  输出顺序是: (sps pps I) (P) (P)...
 //
 int LalcVideoEncoderTryReceive(struct LalcVideoEncoder *encoder, AVPacket *outPacket);
 
+// LalcVideoEncoderRelease
+//
 void LalcVideoEncoderRelease(struct LalcVideoEncoder *encoder);
 
-// ----- 视频拼接合并 ----------------------------------------------------------------------------------------------------
+// ----- 6. 视频拼接合并 ----------------------------------------------------------------------------------------------
 
+// LalcVideoPin
+//
 int LalcVideoPin(AVFrame *bg, AVFrame *part, int x, int y);
 
-// ----- 视频缩放 -------------------------------------------------------------------------------------------------------
+// ----- 视频缩放 -----------------------------------------------------------------------------------------------------
 
 int LalcVideoScale(AVFrame frame, int width, int height, AVFrame *outFrame);
 
