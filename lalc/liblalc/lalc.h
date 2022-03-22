@@ -148,7 +148,7 @@ int LalcVideoDecoderTryReceive(struct LalcVideoDecoder *decoder, AVFrame *outFra
 //
 void LalcVideoDecoderRelease(struct LalcVideoDecoder *decoder);
 
-// ----- 5. 视频编码 ---------------------------------------------------------------------------------------------------
+// ----- 5. 视频编码 --------------------------------------------------------------------------------------------------
 
 typedef struct LalcVideoEncoder LalcVideoEncoder;
 
@@ -183,9 +183,11 @@ void LalcVideoEncoderRelease(struct LalcVideoEncoder *encoder);
 //
 int LalcVideoPin(AVFrame *bg, AVFrame *part, int x, int y);
 
-// ----- 视频缩放 -----------------------------------------------------------------------------------------------------
+// ----- 7. 视频缩放 --------------------------------------------------------------------------------------------------
 
-int LalcVideoScale(AVFrame frame, int width, int height, AVFrame *outFrame);
+// LalcVideoScale
+//
+AVFrame *LalcVideoScale(AVFrame *src, int width, int height);
 
 // ----- 视频裁剪 -------------------------------------------------------------------------------------------------------
 
@@ -258,5 +260,17 @@ int LalcOpPull(const char *url, LalcOpPullOnPacket onPacket);
 
 void LalcLogAvFrame(AVFrame *frame);
 void LalcLogAvPacket(AVPacket *packet);
+
+// LalcAllocAvFrameAudio LalcAllocAvFrameVideo
+//
+//
+AVFrame *LalcAllocAvFrameAudio(int format, int nbSamples, int channel_layout);
+
+// LalcAllocAvFrameVideo
+//
+// @param format:
+//  0 AV_PIX_FMT_YUV420P
+//
+AVFrame *LalcAllocAvFrameVideo(int format, int width, int height);
 
 #endif

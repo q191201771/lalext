@@ -2,6 +2,7 @@
 
 ## 注释 MacOS或CentOS下安装ffmpeg
 ##
+##      注意，执行需要root权限，比如 sudo ./build.sh
 
 set -x
 

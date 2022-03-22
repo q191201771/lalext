@@ -25,6 +25,8 @@ var (
 	oc outCtx
 )
 
+// ---------------------------------------------------------------------------------------------------------------------
+
 // inCtx
 //
 // 输入rtmp 拉流url，得到解码后的音频、视频数据
@@ -36,14 +38,9 @@ type inCtx struct {
 
     videoDecoder *C.LalcVideoDecoder
 	spspps []byte
-
-	m sync.Mutex
-	audioQueue []*C.AVFrame
-	videoQueue []*C.AVFrame
 }
 
-
-func (ic *inCtx) Pull(url string) error {
+func (ic *inCtx) Pull(url string, onAudio func(frame *C.AVFrame), onVideo func(frame *C.AVFrame)) error {
 	// CHEFGREPME 1. 拉流
 	ic.session = rtmp.NewPullSession()
 
@@ -88,7 +85,8 @@ func (ic *inCtx) Pull(url string) error {
 				if ret < 0 {
 					break
 				}
-				ic.PushVideo(frame)
+
+				onVideo(frame)
 			}
 		}
 
@@ -104,7 +102,7 @@ func (ic *inCtx) Pull(url string) error {
 			ret = C.LalcDecoderDecode(ic.audioDecoder, xx, C.int(len(p)), frame)
 			nazalog.Assert(0, int(ret))
 
-			ic.PushAudio(frame)
+			onAudio(frame)
 
 			C.free(x)
 			//C.av_frame_unref(frame)
@@ -113,46 +111,79 @@ func (ic *inCtx) Pull(url string) error {
 	return err
 }
 
-// TODO(chef): [refactor] 再重新一个合的模块，把这部分弄过去
+// ---------------------------------------------------------------------------------------------------------------------
 
-func (ic *inCtx) EmptyAudio() bool {
-	ic.m.Lock()
-	defer ic.m.Unlock()
-	return len(ic.audioQueue) == 0
+// mixCtx
+//
+// CHEFGREPME 3. 合流
+//
+type mixCtx struct {
+	m sync.Mutex
+	num int
+	audioQueue [][]*C.AVFrame
+	videoQueue [][]*C.AVFrame
 }
 
-func (ic *inCtx) PushAudio(f *C.AVFrame) {
-	ic.m.Lock()
-	defer ic.m.Unlock()
-	ic.audioQueue = append(ic.audioQueue, f)
+func (ctx *mixCtx) Init(num int) {
+	ctx.num = num
+	ctx.audioQueue = make([][]*C.AVFrame, num)
+	ctx.videoQueue = make([][]*C.AVFrame, num)
 }
 
-func (ic *inCtx) PopAudio() *C.AVFrame {
-	ic.m.Lock()
-	defer ic.m.Unlock()
-	f := ic.audioQueue[0]
-	ic.audioQueue = ic.audioQueue[1:]
-	return f
+func (ctx *mixCtx) FeedAudio(frame *C.AVFrame, index int) {
+	ctx.m.Lock()
+	defer ctx.m.Unlock()
+
+	ctx.audioQueue[index] = append(ctx.audioQueue[index], frame)
+
+	ctx.mixAudio()
 }
 
-func (ic *inCtx) EmptyVideo() bool {
-	ic.m.Lock()
-	defer ic.m.Unlock()
-	return len(ic.videoQueue) == 0
+func (ctx *mixCtx) FeedVideo(frame *C.AVFrame, index int) {
+	ctx.m.Lock()
+	defer ctx.m.Unlock()
+
+	ctx.videoQueue[index] = append(ctx.videoQueue[index], frame)
 }
 
-func (ic *inCtx) PushVideo(f *C.AVFrame) {
-	ic.m.Lock()
-	defer ic.m.Unlock()
-	ic.videoQueue = append(ic.videoQueue, f)
+func (ctx *mixCtx) mixAudio() {
+	for i := 0; i < ctx.num; i++ {
+		if len(ctx.audioQueue[i]) == 0 {
+			return
+		}
+	}
+
+	fl := C.LalcFrameListAlloc(ctx.num)
+	for i := 0; i < ctx.num; i++ {
+		f := ctx.audioQueue[i][0]
+		ctx.audioQueue[i] = ctx.audioQueue[i][1:]
+		C.LalcFrameListAdd(fl, f)
+	}
+
+	frame := C.av_frame_alloc()
+	C.LalcOpAudioMixWithFrameList(fl, frame)
+	C.LalcFrameListClear(fl)
+
+	oc.FeedAudio(frame)
 }
 
-func (ic *inCtx) PopVideo() *C.AVFrame {
-	ic.m.Lock()
-	defer ic.m.Unlock()
-	f := ic.videoQueue[0]
-	ic.videoQueue = ic.videoQueue[1:]
-	return f
+func (ctx *mixCtx) mixVideo() {
+	for i := 0; i < ctx.num; i++ {
+		if len(ctx.videoQueue[i]) == 0 {
+			return
+		}
+	}
+
+	f1 := ctx.videoQueue[0][0]
+	f2 := ctx.videoQueue[1][0]
+	ctx.videoQueue[0] = ctx.videoQueue[0][1:]
+	ctx.videoQueue[1] = ctx.videoQueue[1][1:]
+
+	f := C.LalcAllocAvFrameVideo(0, f1.width * 2, f2.height)
+	C.LalcVideoPin(f, f1, 0, 0)
+	C.LalcVideoPin(f, f2, f1.width, 0)
+
+	oc.FeedVideo(f)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -265,28 +296,6 @@ func loop() {
 	for {
 		select{
 		case <- t:
-			// CHEFGREPME 3. 合流
-			if !ic1.EmptyAudio() && !ic2.EmptyAudio() {
-				f1 := ic1.PopAudio()
-				f2 := ic2.PopAudio()
-
-				fl := C.LalcFrameListAlloc(2)
-				C.LalcFrameListAdd(fl, f1)
-				C.LalcFrameListAdd(fl, f2)
-				frame := C.av_frame_alloc()
-				C.LalcOpAudioMixWithFrameList(fl, frame)
-				C.LalcFrameListClear(fl)
-				oc.FeedAudio(f1)
-			}
-
-			if !ic1.EmptyVideo() && !ic2.EmptyVideo() {
-				f1 := ic1.PopVideo()
-				//f2 := ic2.PopAudio()
-
-				//C.LalcLogAvFrame(f1)
-				oc.FeedVideo(f1)
-			}
-
 		case <- ic1.session.WaitChan():
 			return
 		case <- ic2.session.WaitChan():
@@ -307,10 +316,25 @@ func main() {
 
 	var err error
 
-	err = ic1.Pull(url1)
+	var mixCtx mixCtx
+	mixCtx.Init(2)
+
+	err = ic1.Pull(url1,
+		func(frame *C.AVFrame) {
+			mixCtx.FeedAudio(frame, 0)
+		},
+		func(frame *C.AVFrame) {
+			mixCtx.FeedVideo(frame, 0)
+		})
 	nazalog.Assert(nil, err)
 
-	err = ic2.Pull(url2)
+	err = ic2.Pull(url2,
+		func(frame *C.AVFrame) {
+			mixCtx.FeedAudio(frame, 1)
+		},
+		func(frame *C.AVFrame) {
+			mixCtx.FeedVideo(frame, 1)
+		})
 	nazalog.Assert(nil, err)
 
 	loop()

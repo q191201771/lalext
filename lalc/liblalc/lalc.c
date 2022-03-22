@@ -5,6 +5,7 @@
 #include "libavutil/avutil.h"
 #include "libavutil/timestamp.h"
 #include "libavutil/opt.h"
+#include "libswscale/swscale.h"
 
 #include <stdlib.h>
 
@@ -192,6 +193,7 @@ int LalcOpAudioMix(AVFrame **frameList, int frameListSize, AVFrame *outFrame) {
   int sampleSize = av_get_bytes_per_sample(frame->format);
   int isplanar = av_sample_fmt_is_planar(frame->format);
 
+  // TODO(chef): use LalcAllocAvFrameAudio
   outFrame->nb_samples = frame->nb_samples;
   outFrame->channels = frame->channels;
   outFrame->channel_layout = frame->channel_layout;
@@ -447,6 +449,23 @@ int LalcVideoPin(AVFrame *bg, AVFrame *part, int x, int y) {
   return 0;
 }
 
+// ----- 7. 视频缩放 --------------------------------------------------------------------------------------------------
+
+AVFrame *LalcVideoScale(AVFrame *src, int width, int height) {
+  AVFrame *dst = LalcAllocAvFrameVideo(src->format, width, height);
+  dst->pts=src->pts;
+  dst->pkt_dts=src->pkt_dts;
+
+  struct SwsContext *sws_ctx = sws_getContext(src->width, src->height, (enum AVPixelFormat)src->format,
+      width, height, (enum AVPixelFormat)src->format,
+      SWS_BICUBIC, NULL, NULL, NULL);
+
+  sws_scale(sws_ctx, (const uint8_t * const*)src->data, src->linesize, 0, src->height, dst->data, dst->linesize);
+  sws_freeContext(sws_ctx);
+
+  return dst;
+}
+
 // ----- 写JPEG文件 -----------------------------------------------------------------------------------------------------
 
 int LalcDumpMjpeg(AVFrame *frame, const char *filename) {
@@ -629,10 +648,6 @@ int LalcOpPull(const char *url, LalcOpPullOnPacket onPacket) {
   }
 }
 
-int LalcVideoScale(AVFrame frame, int width, int height, AVFrame *outFrame) {
-  return 0;
-}
-
 int LalcVideoCut(AVFrame frame, int x, int y, int width, int height, AVFrame *outFrame) {
   return 0;
 }
@@ -735,4 +750,11 @@ int LalcPcmFileWriterRelease(struct LalcPcmFileWriter *writer) {
   free(writer);
 }
 
-
+AVFrame *LalcAllocAvFrameVideo(int format, int width, int height) {
+  AVFrame *frame = av_frame_alloc();
+  frame->format = format;
+  frame->width = width;
+  frame->height = height;
+  av_frame_get_buffer(frame, 0);
+  return frame;
+}
