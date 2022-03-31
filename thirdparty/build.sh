@@ -2,7 +2,9 @@
 
 ## 注释 MacOS或CentOS下安装ffmpeg
 ##
-##      注意，执行需要root权限，比如 sudo ./build.sh
+##      注意：
+##      1. 执行需要root权限，比如 sudo ./build.sh
+##      2. 依赖 cmake
 
 set -x
 
