@@ -37,7 +37,7 @@ Accept-Encoding: gzip
 
 ### 1 `on_update`
 
-定时汇报所有group、session的信息
+定时汇报所有group、session的信息，间隔时间由配置文件的配置决定
 
 ```
 {
@@ -106,7 +106,7 @@ $wget http://127.0.0.1:8080/live/test110.flv\?token\=1111
     "stream_name": "test110",
     "url_param": "token=1111",
     "session_id": "FLVSUB1",
-    "remotet_addr": "127.0.0.1:51889"
+    "remotet_addr": "127.0.0.1:51889",
     "has_in_session": false,
     "has_out_session": true
 }
@@ -132,7 +132,7 @@ RTMP、RTSP类似，不再赘述。
 
 关于按需回源拉流：
 
-- 业务方可以在收到`on_sub_start`事件，并且`has_in_session`为false时（说人话：有人来看，但是流不存在），通过HTTP API接口触发lalserver从第三方拉流
+- 业务方可以在收到`on_sub_start`事件，并且`has_in_session`为false时（说人话：有人来看，但是流不存在），通过HTTP API接口start_relay_pull触发lalserver从第三方拉流
 - 业务方可以在收到`on_sub_stop`事件，并且`has_out_session`为false时（说人话：人走了，没人看了），通过HTTP API接口触发lalserver停止从第三方拉流
 
 ### 5 `on_sub_stop`
@@ -155,13 +155,3 @@ RTMP、RTSP类似，不再赘述。
 ### 7 `on_server_start`
 
 字段同HTTP API中`/api/stat/lal_info`中的data字段。
-
-## 其他
-
-```
-本文档基于版本：
-lal tag: v0.19.0+
-tag之后的commit id:
-http api version:
-http notify version:
-```

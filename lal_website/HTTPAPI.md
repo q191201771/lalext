@@ -14,15 +14,13 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 1.2. /api/stat/all_group // 查询所有group的信息
 1.3. /api/stat/lal_info  // 查询服务器信息
 
-2.1. /api/ctrl/start_pull       // 控制服务器从远端拉流至本地
+2.1. /api/ctrl/start_relay_pull // 控制服务器从远端拉流至本地
 2.2. /api/ctrl/kick_out_session // 强行踢出关闭指定session，比如rtmp pub推流会话、http-flv sub拉流会话等
 ```
 
 ## 二. 名词解释：
 
-<!-- more -->
-
-- group: lal中的group是群组的概念，lal作为流媒体服务器，通过流名称将每1路输入流转发给1~n路输出流，流名称相同的输入输出流被同1个group群组管理。
+- group: lal中的group是群组的概念，lal作为流媒体服务器，通过流名称将每1路输入流转发给`1~n`路输出流，流名称相同的输入输出流被同1个group群组管理。
 
 ## 三. 接口规则
 
@@ -38,12 +36,13 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 
 `2 error_code`列表：
 
-| `error_code` | desp | 说明|
-| - | - | - |
-| 0 | succ | 调用成功 |
-| 1001 | group not found | group不存在 |
-| 1002 | param missing | 必填参数缺失 |
-| 1003 | session not found | session不存在 |
+| `error_code` | desp                     | 说明                |
+| -            | -                        | -                  |
+| 0            | succ                     | 调用成功            |
+| 1001         | group not found          | group不存在         |
+| 1002         | param missing            | 必填参数缺失         |
+| 1003         | session not found        | session不存在        |
+| 2001         | 多种值，表示失败的具体原因 | start_relay_pull失败 |
 
 
 ## 四. 接口详情
@@ -92,7 +91,7 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
         "read_bytes_sum": 134,                   // 累计读取数据大小（从拉流开始时计算）
         "wrote_bytes_sum": 2944020,              // 累计发送数据大小
         "bitrate": 439,                          // 最近5秒码率，单位kbit/s。对于sub类型，如无特殊声明，等价于`write_bitrate`
-        "read_bitrate": ,                        // 最近5秒读取数据码率
+        "read_bitrate": 0,                        // 最近5秒读取数据码率
         "write_bitrate": 439                     // 最近5秒发送数据码率
       }
     ],
@@ -151,7 +150,7 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 }
 ```
 
-### 2.1 `/api/ctrl/start_pull`
+### 2.1 `/api/ctrl/start_relay_pull`
 
 - 简要描述： 控制服务器主动从远端拉流至本地
 - 请求方式： `HTTP POST`
@@ -159,25 +158,35 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 请求示例：
 
 ```
-$curl -H "Content-Type:application/json" -X POST -d '{"protocol": "rtmp", "addr":"127.0.0.1:19550", "app_name":"live", "stream_name":"test110", "url_param":"token=aaa&p2=bbb"}' http://127.0.0.1:8083/api/ctrl/start_pull
+$curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb"}' http://127.0.0.1:8083/api/ctrl/start_relay_pull
 ```
 
 请求参数说明：
 
 ```
 {
-  "protocol": "rtmp",            // 必填项，目前只支持 rtmp
-  "addr":"127.0.0.1:1935",       // 必填项，远端地址
-  "app_name":"live",             // 必填项，app name
-  "stream_name":"test110",       // 必填项，流名称
-  "url_param":"token=aaa&p2=bbb" // 选填项，url参数
+    "url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb", // 必填项，回源拉流的完整url地址，目前支持rtmp和rtsp
+    "stream_name": "test110"                                 // 选填项，如果不指定，则从`url`参数中解析获取
 }
 ```
 
 返回值`error_code`可能取值：
 
-- 0    请求接口成功。注意，返回成功并不保证从远端拉流成功
+- 0    请求接口成功。注意，返回成功表示lalserver收到命令并开始从远端拉流，并不保证从远端拉流成功
 - 1002 参数错误
+- 2001 请求接口失败，失败描述参考desp
+
+返回示例：
+
+```
+{
+  "error_code": 0,
+  "desp": "succ",
+  "data": {
+    "session_id": "RTMPPULL1"
+  }
+}
+```
 
 ### 2.2 `/api/ctrl/kick_out_session`
 
@@ -205,17 +214,4 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
 - 1001 指定流名称对应的group不存在
 - 1003 指定会话不存在
 
-## 其他
-
-HTTP API模块还提供一个API列表页面，地址为`http://127.0.0.1:8083/api/list`
-
-```
-本文档基于版本：
-lal tag: v0.17.0
-tag之后的commit id: 3ca25a22d2b6553ff3ef76199c6ce7a2e3c4e842 [doc] fix demo chart
-http api version: v0.1.3
-http notify version: v0.0.5
-
-文档最后修改时间：20201213
-```
-
+yoko, 20220508
