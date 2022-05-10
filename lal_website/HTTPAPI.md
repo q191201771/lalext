@@ -15,6 +15,7 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 1.3. /api/stat/lal_info  // 查询服务器信息
 
 2.1. /api/ctrl/start_relay_pull // 控制服务器从远端拉流至本地
+2.2. /api/ctrl/stop_relay_pull  // 停止relay pull
 2.2. /api/ctrl/kick_out_session // 强行踢出关闭指定session，比如rtmp pub推流会话、http-flv sub拉流会话等
 ```
 
@@ -165,8 +166,24 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
 
 ```
 {
-    "url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb", // 必填项，回源拉流的完整url地址，目前支持rtmp和rtsp
-    "stream_name": "test110"                                 // 选填项，如果不指定，则从`url`参数中解析获取
+    "url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb", //. 必填项，回源拉流的完整url地址，目前支持rtmp和rtsp
+
+    "stream_name": "test110",                                //. 选填项，如果不指定，则从`url`参数中解析获取
+                                                             //
+    "pull_timeout_ms": 5000,                                 //. 选填项，pull建立会话的超时时间，单位毫秒。
+                                                             //  默认值是5000
+                                                             //
+    "pull_retry_num": -1,                                    //. 选填项，pull连接失败或者中途断开连接的重试次数
+                                                             //  默认值是-1
+                                                             //  -1  表示一直重试，直到收到stop请求，或者开启并触发下面的自动关闭功能
+                                                             //  = 0 表示不重试
+                                                             //  > 0 表示重试次数
+                                                             //
+    "auto_stop_pull_after_no_out_ms": 10000                  //. 选填项，没有观看者时，自动关闭pull会话，节约资源
+                                                             //  默认值是-1
+                                                             //  -1  表示不启动该功能
+                                                             //  = 0 表示没有观看者时，立即关闭pull会话
+                                                             //  > 0 表示没有观看者持续多长时间，关闭pull会话，单位毫秒
 }
 ```
 
@@ -188,7 +205,34 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
 }
 ```
 
-### 2.2 `/api/ctrl/kick_out_session`
+提示，start_relay_pull可以和下面的stop_relay_pull，以及HTTP Notify事件回调配合，完成更多的拉流控制方式。
+
+### 2.2 `/api/ctrl/stop_relay_pull`
+
+- 简要描述： 查询指定group的信息
+- 请求URL： `http://127.0.0.1:8083/api/ctrl/stop_relay_pull?stream_name=test110`
+- 请求方式： `HTTP GET`
+- 请求参数：
+    - stream_name | 必填项 | 需要关闭relay pull的流名称
+- 返回值`error_code`可能取值：
+    - 0    group存在，查询成功
+    - 1001 group不存在
+    - 1002 必填参数缺失
+    - 1003 pull session不存在
+
+返回示例：
+
+```
+{
+  "error_code": 0,
+  "desp": "succ",
+  "data": {
+    "session_id": "RTMPPULL1"
+  }
+}
+```
+
+### 2.3 `/api/ctrl/kick_out_session`
 
 - 简要描述： 强行踢出关闭指定session，比如rtmp pub推流会话、http-flv sub拉流会话等
 - 请求方式： `HTTP POST`
