@@ -2,6 +2,8 @@
 
 lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lalserver的一些状态，以及控制一些行为。
 
+## ▌ 相关配置
+
 HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文件说明](https://pengrl.com/lal/#/ConfigBrief)  这个文档为准）：
 
 ```
@@ -11,9 +13,7 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
   },
 ```
 
-文档中，搜索http_api
-
-## 一. 接口列表
+## ▌ 接口列表
 
 接口分为两大类：
 
@@ -30,11 +30,11 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
 2.3. /api/ctrl/kick_session     // 强行踢出关闭指定session，session可以是pub、sub、pull类型
 ```
 
-## 二. 名词解释：
+## ▌ 名词解释：
 
 - group: lal中的group是群组的概念，lal作为流媒体服务器，通过流名称将每1路输入流转发给`1~n`路输出流，流名称相同的输入输出流被同1个group群组管理。
 
-## 三. 接口规则
+## ▌ 接口规则
 
 1 所有接口的返回结果中，必含的一级参数：
 
@@ -58,7 +58,7 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
 
 3 注意，有的接口使用HTTP GET+url参数的形式调用，有的接口使用HTTP POST+json body的形式调用，请仔细查看文档说明。
 
-## 四. 接口详情
+## ▌ 接口详情
 
 ### 1.1 `/api/stat/group`
 
@@ -328,6 +328,3 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
   "desp": "succ"
 }
 ```
-
-
-yoko, 20220508
