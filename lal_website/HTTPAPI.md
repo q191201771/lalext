@@ -2,6 +2,17 @@
 
 lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lalserver的一些状态，以及控制一些行为。
 
+HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文件说明](https://pengrl.com/lal/#/ConfigBrief)  这个文档为准）：
+
+```
+  "http_api": {
+    "enable": true, //. 是否开启HTTP API接口
+    "addr": ":8083" //. 监听地址
+  },
+```
+
+文档中，搜索http_api
+
 ## 一. 接口列表
 
 接口分为两大类：
@@ -16,7 +27,7 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 
 2.1. /api/ctrl/start_relay_pull // 控制服务器从远端拉流至本地
 2.2. /api/ctrl/stop_relay_pull  // 停止relay pull
-2.2. /api/ctrl/kick_out_session // 强行踢出关闭指定session，比如rtmp pub推流会话、http-flv sub拉流会话等
+2.3. /api/ctrl/kick_session     // 强行踢出关闭指定session，session可以是pub、sub、pull类型
 ```
 
 ## 二. 名词解释：
@@ -35,32 +46,43 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 }
 ```
 
-`2 error_code`列表：
+2 `error_code`列表：
 
-| `error_code` | desp                     | 说明                |
-| -            | -                        | -                  |
+| error_code   | desp                     | 说明                |
+| ----         | -----                    | -----              |
 | 0            | succ                     | 调用成功            |
 | 1001         | group not found          | group不存在         |
 | 1002         | param missing            | 必填参数缺失         |
 | 1003         | session not found        | session不存在        |
-| 2001         | 多种值，表示失败的具体原因 | start_relay_pull失败 |
+| 2001         | 多种值，表示失败的具体原因    | start_relay_pull失败 |
 
+3 注意，有的接口使用HTTP GET+url参数的形式调用，有的接口使用HTTP POST+json body的形式调用，请仔细查看文档说明。
 
 ## 四. 接口详情
 
 ### 1.1 `/api/stat/group`
 
-- 简要描述： 查询指定group的信息
-- 请求URL： `http://127.0.0.1:8083/api/stat/group?stream_name=test110`
-- 请求方式： `HTTP GET`
-- 请求参数：
-    - stream_name | 必填项 | 指定group的流名称
-- 返回值`error_code`可能取值：
-    - 0    group存在，查询成功
-    - 1001 group不存在
-    - 1002 必填参数缺失
+✸ 简要描述： 查询指定group的信息
 
-返回示例：
+✸ 请求示例：
+
+```
+$curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
+```
+
+✸ 请求方式： `HTTP GET`+url参数
+
+✸ 请求参数：
+
+- stream_name | 必填项 | 指定group的流名称
+
+✸ 返回值`error_code`可能取值：
+
+- 0    group存在，查询成功
+- 1001 group不存在
+- 1002 必填参数缺失
+
+✸ 返回示例：
 
 ```
 {
@@ -92,7 +114,7 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
         "read_bytes_sum": 134,                   // 累计读取数据大小（从拉流开始时计算）
         "wrote_bytes_sum": 2944020,              // 累计发送数据大小
         "bitrate": 439,                          // 最近5秒码率，单位kbit/s。对于sub类型，如无特殊声明，等价于`write_bitrate`
-        "read_bitrate": 0,                        // 最近5秒读取数据码率
+        "read_bitrate": 0,                       // 最近5秒读取数据码率
         "write_bitrate": 439                     // 最近5秒发送数据码率
       }
     ],
@@ -104,14 +126,23 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 
 ### 1.2 `/api/stat/all_group`
 
-- 简要描述： 查询所有group的信息
-- 请求URL示例： `http://127.0.0.1:8083/api/stat/all_group`
-- 请求方式： `HTTP GET`
-- 请求参数： 无
-- 返回值`error_code`可能取值：
-    - 0 查询成功
+✸ 简要描述： 查询所有group的信息
 
-返回示例：
+✸ 请求示例：
+
+```
+$curl http://127.0.0.1:8083/api/stat/all_group
+```
+
+✸ 请求方式： `HTTP GET`
+
+✸ 请求参数： 无
+
+✸ 返回值`error_code`可能取值：
+
+- 0 查询成功
+
+✸ 返回示例：
 
 ```
 {
@@ -127,14 +158,23 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 
 ### 1.3 `/api/stat/lal_info`
 
-- 简要描述： 查询服务器信息
-- 请求URL示例： `http://127.0.0.1:8083/api/stat/lal_info`
-- 请求方式： `HTTP GET`
-- 请求参数： 无
-- 返回值`error_code`可能取值：
-    - 0 查询成功
+✸ 简要描述： 查询服务器信息
 
-返回示例：
+✸ 请求示例：
+
+```
+$curl http://127.0.0.1:8083/api/stat/lal_info
+```
+
+✸ 请求方式： `HTTP GET`
+
+✸ 请求参数： 无
+
+✸ 返回值`error_code`可能取值：
+
+- 0 查询成功
+
+✸ 返回示例：
 
 ```
 {
@@ -153,21 +193,22 @@ lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lals
 
 ### 2.1 `/api/ctrl/start_relay_pull`
 
-- 简要描述： 控制服务器主动从远端拉流至本地
-- 请求方式： `HTTP POST`
+✸ 简要描述： 控制服务器主动从远端拉流至本地
 
-请求示例：
+✸ 请求示例：
 
 ```
 $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb"}' http://127.0.0.1:8083/api/ctrl/start_relay_pull
 ```
 
-请求参数说明：
+✸ 请求方式： `HTTP POST`
+
+✸ 请求参数：
 
 ```
 {
     "url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb", //. 必填项，回源拉流的完整url地址，目前支持rtmp和rtsp
-
+                                                             //
     "stream_name": "test110",                                //. 选填项，如果不指定，则从`url`参数中解析获取
                                                              //
     "pull_timeout_ms": 5000,                                 //. 选填项，pull建立会话的超时时间，单位毫秒。
@@ -179,7 +220,7 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
                                                              //  = 0 表示不重试
                                                              //  > 0 表示重试次数
                                                              //
-    "auto_stop_pull_after_no_out_ms": 10000                  //. 选填项，没有观看者时，自动关闭pull会话，节约资源
+    "auto_stop_pull_after_no_out_ms": -1                     //. 选填项，没有观看者时，自动关闭pull会话，节约资源
                                                              //  默认值是-1
                                                              //  -1  表示不启动该功能
                                                              //  = 0 表示没有观看者时，立即关闭pull会话
@@ -187,40 +228,57 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
 }
 ```
 
-返回值`error_code`可能取值：
+✸ 返回值`error_code`可能取值：
 
 - 0    请求接口成功。注意，返回成功表示lalserver收到命令并开始从远端拉流，并不保证从远端拉流成功
 - 1002 参数错误
 - 2001 请求接口失败，失败描述参考desp
 
-返回示例：
+✸ 返回示例：
 
 ```
 {
   "error_code": 0,
   "desp": "succ",
   "data": {
+    "stream_name": "test110",
     "session_id": "RTMPPULL1"
   }
 }
 ```
 
-提示，start_relay_pull可以和下面的stop_relay_pull，以及HTTP Notify事件回调配合，完成更多的拉流控制方式。
+> 提示：  
+>
+> 使用start_relay_pull命令开启回源拉流。  
+> 使用stop_relay_pull命令关闭回源拉流。  
+> 或者使用start_relay_pull中的auto_stop_pull_after_no_out_ms参数自动结束拉流。
+>
+> 还可以结合HTTP Notify事件回调，在合适的时机开启或者关闭回源拉流。  
 
 ### 2.2 `/api/ctrl/stop_relay_pull`
 
-- 简要描述： 查询指定group的信息
-- 请求URL： `http://127.0.0.1:8083/api/ctrl/stop_relay_pull?stream_name=test110`
-- 请求方式： `HTTP GET`
-- 请求参数：
-    - stream_name | 必填项 | 需要关闭relay pull的流名称
-- 返回值`error_code`可能取值：
-    - 0    group存在，查询成功
-    - 1001 group不存在
-    - 1002 必填参数缺失
-    - 1003 pull session不存在
+✸ 简要描述： 关闭特定的relay pull
 
-返回示例：
+✸ 请求示例：
+
+```
+$curl http://127.0.0.1:8083/api/ctrl/stop_relay_pull?stream_name=test110
+```
+
+✸ 请求方式： `HTTP GET`+url参数
+
+✸ 请求参数：
+
+- stream_name | 必填项 | 需要关闭relay pull的流名称
+
+✸ 返回值`error_code`可能取值：
+
+- 0    group存在，查询成功
+- 1001 group不存在
+- 1002 必填参数缺失
+- 1003 pull session不存在
+
+✸ 返回示例：
 
 ```
 {
@@ -232,18 +290,21 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
 }
 ```
 
-### 2.3 `/api/ctrl/kick_out_session`
+> 提示，除了stop_relay_pull，也可以使用kick_session关闭relay pull回源拉流。
 
-- 简要描述： 强行踢出关闭指定session，比如rtmp pub推流会话、http-flv sub拉流会话等
-- 请求方式： `HTTP POST`
+### 2.3 `/api/ctrl/kick_session`
 
-请求示例：
+✸ 简要描述： 强行踢出关闭指定session。session可以是pub、sub、pull类型。
+
+✸ 请求示例：
 
 ```
-$curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", "session_id": "FLVSUB1"}' http://127.0.0.1:8083/api/ctrl/kick_out_session
+$curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", "session_id": "FLVSUB1"}' http://127.0.0.1:8083/api/ctrl/kick_session
 ```
 
-请求参数说明：
+✸ 请求方式： `HTTP POST`
+
+✸ 请求参数：
 
 ```
 {
@@ -252,10 +313,21 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
 }
 ```
 
-返回值`error_code`可能取值：
+✸ 返回值`error_code`可能取值：
 
 - 0    请求接口成功。指定会话被关闭
 - 1001 指定流名称对应的group不存在
+- 1002 参数错误
 - 1003 指定会话不存在
+
+✸ 返回示例：
+
+```
+{
+  "error_code": 0,
+  "desp": "succ"
+}
+```
+
 
 yoko, 20220508

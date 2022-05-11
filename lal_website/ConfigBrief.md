@@ -138,7 +138,7 @@
   "server_id": "1", //. 当前lalserver唯一ID。多个lalserver HTTP Notify同一个地址时，可通过该ID区分
   "http_notify": {
     "enable": true,                                              //. 是否开启HTTP Notify事件回调
-    "update_interval_sec": 5,                                    //. update事件回调间隔，单位毫秒
+    "update_interval_sec": 5,                                    //. update事件回调间隔，单位秒
     "on_server_start": "http://127.0.0.1:10101/on_server_start", //. 各事件HTTP Notify事件回调地址
     "on_update": "http://127.0.0.1:10101/on_update",
     "on_pub_start": "http://127.0.0.1:10101/on_pub_start",

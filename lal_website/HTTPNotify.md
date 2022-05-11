@@ -2,7 +2,22 @@
 
 lalserver作为流媒体服务器，可将内部的一些事件通过HTTP POST的方式，传递给业务方。  
 业务方结合lalserver的HTTP Notify和[《HTTP API接口》](HTTPAPI.md)，可以更好的实现自己的定制化业务。  
-业务方的URL地址在配置文件中`http_notify`块中配置，具体见：[《配置文件说明》](CommonBrief.md)
+
+HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文件说明](https://pengrl.com/lal/#/ConfigBrief)  这个文档为准）：
+
+```
+  "http_notify": {
+    "enable": true,                                              //. 是否开启HTTP Notify事件回调
+    "update_interval_sec": 5,                                    //. update事件回调间隔，单位秒
+    "on_server_start": "http://127.0.0.1:10101/on_server_start", //. 各事件HTTP Notify事件回调地址
+    "on_update": "http://127.0.0.1:10101/on_update",
+    "on_pub_start": "http://127.0.0.1:10101/on_pub_start",
+    "on_pub_stop": "http://127.0.0.1:10101/on_pub_stop",
+    "on_sub_start": "http://127.0.0.1:10101/on_sub_start",
+    "on_sub_stop": "http://127.0.0.1:10101/on_sub_stop",
+    "on_rtmp_connect": "http://127.0.0.1:10101/on_rtmp_connect"
+  },
+```
 
 ## 一. HTTP Notify列表
 
