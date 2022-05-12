@@ -9,7 +9,18 @@
 
 #### ▌
 
-##### Q: 使用lalext/rtmp2webrtc时，观看画面卡住不动，画面跳跃？鬼畜？
+##### Q: 使用lalext/rtmp2webrtc时，观看画面跳跃？鬼畜？
+
+因为webrtc不支持B帧，所以会在播放B帧的时候有部分帧回退的现象。
+
+你可以通过以下方法检查你的rtmp流是否有带B帧：
+1. 使用命令`ffprobe -show_frames -select_streams v -show_entries frame=pict_type -i rtmp://xxxx`
+2. 如果输出如下信息，代表rtmp流有B帧：
+```shell
+[FRAME]
+pict_type=B
+[/FRAME]
+```
 
 ##### Q: 为什么使用vlc等播放器播放h265 rtmp失败了？
 
