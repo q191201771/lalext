@@ -1,6 +1,6 @@
 # lal FAQ
 
-> FAQ 展示地址： https://pengrl.com/lal/#/FAQ
+> FAQ 展示地址： https://pengrl.com/lal/#/FAQ  
 > FAQ 文档存放地址：github [lalext项目](https://github.com/q191201771/lalext) 的 [lal_website/FAQ.md](https://github.com/q191201771/lalext/blob/master/lal_website/FAQ.md)
 >
 > 欢迎大家添加自己的问题，或者自问自答，或者回答文档里最下面待整理的问题。  
