@@ -3,7 +3,7 @@
 ```
 {
   "# doc of config": "https://pengrl.com/lal/#/ConfigBrief", //. 配置文件对应的文档说明链接，在程序中没实际用途
-  "conf_version": "0.3.0",                                   //. 配置文件版本号，业务方不应该手动修改，程序中会检查该版本
+  "conf_version": "0.3.1",                                   //. 配置文件版本号，业务方不应该手动修改，程序中会检查该版本
                                                              //  号是否与代码中声明的一致
   "rtmp": {
     "enable": true,                      //. 是否开启rtmp服务的监听
@@ -135,16 +135,18 @@
     "enable": true, //. 是否开启HTTP API接口
     "addr": ":8083" //. 监听地址
   },
-  "server_id": "1", //. 当前lalserver唯一ID。多个lalserver HTTP Notify同一个地址时，可通过该ID区分
+  "server_id": "1", //. 当前lalserver唯一ID。多个lalserver HTTP Notify向同一个地址回调时，可通过该ID区分lalserver节点
   "http_notify": {
     "enable": true,                                              //. 是否开启HTTP Notify事件回调
     "update_interval_sec": 5,                                    //. update事件回调间隔，单位秒
     "on_server_start": "http://127.0.0.1:10101/on_server_start", //. 各事件HTTP Notify事件回调地址
-    "on_update": "http://127.0.0.1:10101/on_update",
+    "on_update": "http://127.0.0.1:10101/on_update",             //  注意，对于不关心的事件，可以设置为空
     "on_pub_start": "http://127.0.0.1:10101/on_pub_start",
     "on_pub_stop": "http://127.0.0.1:10101/on_pub_stop",
     "on_sub_start": "http://127.0.0.1:10101/on_sub_start",
     "on_sub_stop": "http://127.0.0.1:10101/on_sub_stop",
+    "on_relay_pull_start": "http://127.0.0.1:10101/on_relay_pull_start",
+    "on_relay_pull_stop": "http://127.0.0.1:10101/on_relay_pull_stop",
     "on_rtmp_connect": "http://127.0.0.1:10101/on_rtmp_connect"
   },
   "simple_auth": {                    // 鉴权文档见： https://pengrl.com/lal/#/auth

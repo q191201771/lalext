@@ -2,7 +2,7 @@
 
 lalserver提供了一些HTTP的API接口，通过这些接口，可以获取lalserver的一些状态，以及控制一些行为。
 
-## ▌ 相关配置
+## ▌ 一. 相关配置
 
 HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文件说明](https://pengrl.com/lal/#/ConfigBrief)  这个文档为准）：
 
@@ -13,7 +13,7 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
   },
 ```
 
-## ▌ 接口列表
+## ▌ 二. 接口列表
 
 接口分为两大类：
 
@@ -30,11 +30,11 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
 2.3. /api/ctrl/kick_session     // 强行踢出关闭指定session，session可以是pub、sub、pull类型
 ```
 
-## ▌ 名词解释：
+## ▌ 三. 名词解释：
 
 - group: lal中的group是群组的概念，lal作为流媒体服务器，通过流名称将每1路输入流转发给`1~n`路输出流，流名称相同的输入输出流被同1个group群组管理。
 
-## ▌ 接口规则
+## ▌ 四. 接口规则
 
 1 所有接口的返回结果中，必含的一级参数：
 
@@ -58,7 +58,7 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
 
 3 注意，有的接口使用HTTP GET+url参数的形式调用，有的接口使用HTTP POST+json body的形式调用，请仔细查看文档说明。
 
-## ▌ 接口详情
+## ▌ 五. 接口详情
 
 ### 1.1 `/api/stat/group`
 
@@ -214,25 +214,35 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
     "pull_timeout_ms": 5000,                                 //. 选填项，pull建立会话的超时时间，单位毫秒。
                                                              //  默认值是5000
                                                              //
-    "pull_retry_num": -1,                                    //. 选填项，pull连接失败或者中途断开连接的重试次数
-                                                             //  默认值是-1
+    "pull_retry_num": 0,                                     //. 选填项，pull连接失败或者中途断开连接的重试次数
                                                              //  -1  表示一直重试，直到收到stop请求，或者开启并触发下面的自动关闭功能
                                                              //  = 0 表示不重试
                                                              //  > 0 表示重试次数
+                                                             //  默认值是0
+                                                             //  提示：不开启自动重连，你可以在收到HTTP-Notify on_relay_pull_stop, on_update等消息时决定是否重连
                                                              //
-    "auto_stop_pull_after_no_out_ms": -1                     //. 选填项，没有观看者时，自动关闭pull会话，节约资源
-                                                             //  默认值是-1
+    "auto_stop_pull_after_no_out_ms": -1,                    //. 选填项，没有观看者时，自动关闭pull会话，节约资源
                                                              //  -1  表示不启动该功能
                                                              //  = 0 表示没有观看者时，立即关闭pull会话
                                                              //  > 0 表示没有观看者持续多长时间，关闭pull会话，单位毫秒
+                                                             //  默认值是-1
+                                                             //  提示：不开启该功能，你可以在收到HTTP-Notify on_sub_stop, on_update等消息时决定是否关闭relay pull
+                                                             //
+    "rtsp_mode": 0                                           //. 选填项，使用rtsp时的连接方式
+                                                             //  0 tcp
+                                                             //  1 udp
+                                                             //  默认值是0
 }
 ```
 
 ✸ 返回值`error_code`可能取值：
 
-- 0    请求接口成功。注意，返回成功表示lalserver收到命令并开始从远端拉流，并不保证从远端拉流成功
+- 0    请求接口成功。
 - 1002 参数错误
 - 2001 请求接口失败，失败描述参考desp
+  - "lal.logic: in stream already exist in group": 输入流已经存在了
+
+> 注意：返回成功表示lalserver收到命令并开始从远端拉流，并不保证从远端拉流成功。判断是否拉流成功，可以使用HTTP-Notify的on_relay_pull_start回调事件
 
 ✸ 返回示例：
 
@@ -246,14 +256,6 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
   }
 }
 ```
-
-> 提示：  
->
-> 使用start_relay_pull命令开启回源拉流。  
-> 使用stop_relay_pull命令关闭回源拉流。  
-> 或者使用start_relay_pull中的auto_stop_pull_after_no_out_ms参数自动结束拉流。
->
-> 还可以结合HTTP Notify事件回调，在合适的时机开启或者关闭回源拉流。  
 
 ### 2.2 `/api/ctrl/stop_relay_pull`
 
