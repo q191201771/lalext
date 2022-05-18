@@ -22,6 +22,11 @@ pict_type=B
 [/FRAME]
 ```
 
+去除B帧需要对视频进行重编码,命令行如下:
+```bash
+ffmpeg -i input.mp4 -codec:v libx264 -bf 0 -codec:a copy -f mp4 input_no_b_frame.mp4
+```
+
 ##### Q: 为什么使用vlc等播放器播放h265 rtmp失败了？
 
 因为rtmp标准不支持h265，所以原生的ffmpeg和vlc都无法直接播放h265 rtmp/flv，可以使用 [lalext](https://github.com/q191201771/lalext) 项目里`thirdparty/build.sh`编译一个支持h265的ffmpeg。
