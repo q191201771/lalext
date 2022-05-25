@@ -60,6 +60,9 @@ func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string,
 		return err
 	}
 
+	pullSession := rtmp.NewPullSession(func(option *rtmp.PullSessionOption) {
+	})
+
 	iceConnectionStateCB := func(connectionState webrtc.ICEConnectionState) {
 		nazalog.Debugf("> OnICEConnectionStateChange. state=%s", connectionState.String())
 		switch connectionState {
@@ -69,6 +72,13 @@ func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string,
 			iceConnectionStateChan <- connectionState
 		case webrtc.ICEConnectionStateFailed:
 			iceConnectionStateChan <- connectionState
+		case webrtc.ICEConnectionStateDisconnected:
+			if pullSession != nil {
+				readAlive, writeAlive := pullSession.IsAlive()
+				if readAlive || writeAlive {
+					pullSession.Dispose()
+				}
+			}
 		default:
 			nazalog.Errorf("NOTICEME %s", connectionState.String())
 		}
@@ -94,9 +104,6 @@ func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string,
 	if ics == webrtc.ICEConnectionStateFailed {
 		return ErrRtmp2WebRtc
 	}
-
-	pullSession := rtmp.NewPullSession(func(option *rtmp.PullSessionOption) {
-	})
 
 	var sps []byte
 	var pps []byte
