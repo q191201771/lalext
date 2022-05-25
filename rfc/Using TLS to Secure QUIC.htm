@@ -1,0 +1,1752 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- saved from url=(0053)https://tools.ietf.org/id/draft-ietf-quic-tls-20.html -->
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><head profile="http://www.w3.org/2006/03/hcard http://dublincore.org/documents/2008/08/04/dc-html/"><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+
+  <title>Using TLS to Secure QUIC</title>
+
+  <style type="text/css" title="Xml2Rfc (sans serif)">
+  /*<![CDATA[*/
+	  a {
+	  text-decoration: none;
+	  }
+      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+      a.info {
+          /* This is the key. */
+          position: relative;
+          z-index: 24;
+          text-decoration: none;
+      }
+      a.info:hover {
+          z-index: 25;
+          color: #FFF; background-color: #900;
+      }
+      a.info span { display: none; }
+      a.info:hover span.info {
+          /* The span will display just on :hover state. */
+          display: block;
+          position: absolute;
+          font-size: smaller;
+          top: 2em; left: -5em; width: 15em;
+          padding: 2px; border: 1px solid #333;
+          color: #900; background-color: #EEE;
+          text-align: left;
+      }
+	  a.smpl {
+	  color: black;
+	  }
+	  a:hover {
+	  text-decoration: underline;
+	  }
+	  a:active {
+	  text-decoration: underline;
+	  }
+	  address {
+	  margin-top: 1em;
+	  margin-left: 2em;
+	  font-style: normal;
+	  }
+	  body {
+	  color: black;
+	  font-family: verdana, helvetica, arial, sans-serif;
+	  font-size: 10pt;
+	  max-width: 55em;
+	  
+	  }
+	  cite {
+	  font-style: normal;
+	  }
+	  dd {
+	  margin-right: 2em;
+	  }
+	  dl {
+	  margin-left: 2em;
+	  }
+	
+	  ul.empty {
+	  list-style-type: none;
+	  }
+	  ul.empty li {
+	  margin-top: .5em;
+	  }
+	  dl p {
+	  margin-left: 0em;
+	  }
+	  dt {
+	  margin-top: .5em;
+	  }
+	  h1 {
+	  font-size: 14pt;
+	  line-height: 21pt;
+	  page-break-after: avoid;
+	  }
+	  h1.np {
+	  page-break-before: always;
+	  }
+	  h1 a {
+	  color: #333333;
+	  }
+	  h2 {
+	  font-size: 12pt;
+	  line-height: 15pt;
+	  page-break-after: avoid;
+	  }
+	  h3, h4, h5, h6 {
+	  font-size: 10pt;
+	  page-break-after: avoid;
+	  }
+	  h2 a, h3 a, h4 a, h5 a, h6 a {
+	  color: black;
+	  }
+	  img {
+	  margin-left: 3em;
+	  }
+	  li {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  ol p {
+	  margin-left: 0em;
+	  }
+	  p {
+	  margin-left: 2em;
+	  margin-right: 2em;
+	  }
+	  pre {
+	  margin-left: 3em;
+	  background-color: lightyellow;
+	  padding: .25em;
+	  }
+	  pre.text2 {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f0f0f0;
+	  width: 69em;
+	  }
+	  pre.inline {
+	  background-color: white;
+	  padding: 0em;
+	  }
+	  pre.text {
+	  border-style: dotted;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  width: 69em;
+	  }
+	  pre.drawing {
+	  border-style: solid;
+	  border-width: 1px;
+	  background-color: #f8f8f8;
+	  padding: 2em;
+	  }
+	  table {
+	  margin-left: 2em;
+	  }
+	  table.tt {
+	  vertical-align: top;
+	  }
+	  table.full {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.headers {
+	  border-style: outset;
+	  border-width: 1px;
+	  }
+	  table.tt td {
+	  vertical-align: top;
+	  }
+	  table.full td {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.tt th {
+	  vertical-align: top;
+	  }
+	  table.full th {
+	  border-style: inset;
+	  border-width: 1px;
+	  }
+	  table.headers th {
+	  border-style: none none inset none;
+	  border-width: 1px;
+	  }
+	  table.left {
+	  margin-right: auto;
+	  }
+	  table.right {
+	  margin-left: auto;
+	  }
+	  table.center {
+	  margin-left: auto;
+	  margin-right: auto;
+	  }
+	  caption {
+	  caption-side: bottom;
+	  font-weight: bold;
+	  font-size: 9pt;
+	  margin-top: .5em;
+	  }
+	
+	  table.header {
+	  border-spacing: 1px;
+	  width: 95%;
+	  font-size: 10pt;
+	  color: white;
+	  }
+	  td.top {
+	  vertical-align: top;
+	  }
+	  td.topnowrap {
+	  vertical-align: top;
+	  white-space: nowrap; 
+	  }
+	  table.header td {
+	  background-color: gray;
+	  width: 50%;
+	  }
+	  table.header a {
+	  color: white;
+	  }
+	  td.reference {
+	  vertical-align: top;
+	  white-space: nowrap;
+	  padding-right: 1em;
+	  }
+	  thead {
+	  display:table-header-group;
+	  }
+	  ul.toc, ul.toc ul {
+	  list-style: none;
+	  margin-left: 1.5em;
+	  margin-right: 0em;
+	  padding-left: 0em;
+	  }
+	  ul.toc li {
+	  line-height: 150%;
+	  font-weight: bold;
+	  font-size: 10pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  ul.toc li li {
+	  line-height: normal;
+	  font-weight: normal;
+	  font-size: 9pt;
+	  margin-left: 0em;
+	  margin-right: 0em;
+	  }
+	  li.excluded {
+	  font-size: 0pt;
+	  }
+	  ul p {
+	  margin-left: 0em;
+	  }
+	
+	  .comment {
+	  background-color: yellow;
+	  }
+	  .center {
+	  text-align: center;
+	  }
+	  .error {
+	  color: red;
+	  font-style: italic;
+	  font-weight: bold;
+	  }
+	  .figure {
+	  font-weight: bold;
+	  text-align: center;
+	  font-size: 9pt;
+	  }
+	  .filename {
+	  color: #333333;
+	  font-weight: bold;
+	  font-size: 12pt;
+	  line-height: 21pt;
+	  text-align: center;
+	  }
+	  .fn {
+	  font-weight: bold;
+	  }
+	  .hidden {
+	  display: none;
+	  }
+	  .left {
+	  text-align: left;
+	  }
+	  .right {
+	  text-align: right;
+	  }
+	  .title {
+	  color: #990000;
+	  font-size: 18pt;
+	  line-height: 18pt;
+	  font-weight: bold;
+	  text-align: center;
+	  margin-top: 36pt;
+	  }
+	  .vcardline {
+	  display: block;
+	  }
+	  .warning {
+	  font-size: 14pt;
+	  background-color: yellow;
+	  }
+	
+	
+	  @media print {
+	  .noprint {
+		display: none;
+	  }
+	
+	  a {
+		color: black;
+		text-decoration: none;
+	  }
+	
+	  table.header {
+		width: 90%;
+	  }
+	
+	  td.header {
+		width: 50%;
+		color: black;
+		background-color: white;
+		vertical-align: top;
+		font-size: 12pt;
+	  }
+	
+	  ul.toc a::after {
+		content: leader('.') target-counter(attr(href), page);
+	  }
+	
+	  ul.ind li li a {
+		content: target-counter(attr(href), page);
+	  }
+	
+	  .print2col {
+		column-count: 2;
+		-moz-column-count: 2;
+		column-fill: auto;
+	  }
+	  }
+	
+	  @page {
+	  @top-left {
+		   content: "Internet-Draft"; 
+	  } 
+	  @top-right {
+		   content: "December 2010"; 
+	  } 
+	  @top-center {
+		   content: "Abbreviated Title";
+	  } 
+	  @bottom-left {
+		   content: "Doe"; 
+	  } 
+	  @bottom-center {
+		   content: "Expires June 2011"; 
+	  } 
+	  @bottom-right {
+		   content: "[Page " counter(page) "]"; 
+	  } 
+	  }
+	
+	  @page:first { 
+		@top-left {
+		  content: normal;
+		}
+		@top-right {
+		  content: normal;
+		}
+		@top-center {
+		  content: normal;
+		}
+	  }
+  /*]]>*/
+  </style>
+
+  <link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.toc" rel="Contents">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.1" rel="Chapter" title="1 Introduction">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.2" rel="Chapter" title="2 Notational Conventions">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.2.1" rel="Chapter" title="2.1 TLS Overview">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.3" rel="Chapter" title="3 Protocol Overview">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4" rel="Chapter" title="4 Carrying TLS Messages">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1" rel="Chapter" title="4.1 Interface to TLS">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.1" rel="Chapter" title="4.1.1 Sending and Receiving Handshake Messages">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.2" rel="Chapter" title="4.1.2 Encryption Level Changes">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.3" rel="Chapter" title="4.1.3 TLS Interface Summary">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.2" rel="Chapter" title="4.2 TLS Version">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.3" rel="Chapter" title="4.3 ClientHello Size">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.4" rel="Chapter" title="4.4 Peer Authentication">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.5" rel="Chapter" title="4.5 Enabling 0-RTT">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.6" rel="Chapter" title="4.6 Rejecting 0-RTT">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.7" rel="Chapter" title="4.7 HelloRetryRequest">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.8" rel="Chapter" title="4.8 TLS Errors">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.9" rel="Chapter" title="4.9 Discarding Unused Keys">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.10" rel="Chapter" title="4.10 Discarding Initial Keys">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5" rel="Chapter" title="5 Packet Protection">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.1" rel="Chapter" title="5.1 Packet Protection Keys">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.2" rel="Chapter" title="5.2 Initial Secrets">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.3" rel="Chapter" title="5.3 AEAD Usage">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4" rel="Chapter" title="5.4 Header Protection">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.1" rel="Chapter" title="5.4.1 Header Protection Application">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.2" rel="Chapter" title="5.4.2 Header Protection Sample">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.3" rel="Chapter" title="5.4.3 AES-Based Header Protection">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.4" rel="Chapter" title="5.4.4 ChaCha20-Based Header Protection">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.5" rel="Chapter" title="5.5 Receiving Protected Packets">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.6" rel="Chapter" title="5.6 Use of 0-RTT Keys">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.7" rel="Chapter" title="5.7 Receiving Out-of-Order Protected Frames">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.6" rel="Chapter" title="6 Key Update">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.7" rel="Chapter" title="7 Security of Initial Messages">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8" rel="Chapter" title="8 QUIC-Specific Additions to the TLS Handshake">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.1" rel="Chapter" title="8.1 Protocol and Version Negotiation">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.2" rel="Chapter" title="8.2 QUIC Transport Parameters Extension">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.3" rel="Chapter" title="8.3 Removing the EndOfEarlyData Message">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9" rel="Chapter" title="9 Security Considerations">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.1" rel="Chapter" title="9.1 Replay Attacks with 0-RTT">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.2" rel="Chapter" title="9.2 Packet Reflection Attack Mitigation">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.3" rel="Chapter" title="9.3 Peer Denial of Service">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.4" rel="Chapter" title="9.4 Header Protection Analysis">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.5" rel="Chapter" title="9.5 Key Diversity">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.10" rel="Chapter" title="10 IANA Considerations">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references" rel="Chapter" title="11 References">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references.1" rel="Chapter" title="11.1 Normative References">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references.2" rel="Chapter" title="11.2 Informative References">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A" rel="Chapter" title="A Sample Initial Packet Protection">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.1" rel="Chapter" title="A.1 Keys">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.2" rel="Chapter" title="A.2 Client Initial">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.3" rel="Chapter" title="A.3 Server Initial">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B" rel="Chapter" title="B Change Log">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.1" rel="Chapter" title="B.1 Since draft-ietf-quic-tls-18">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.2" rel="Chapter" title="B.2 Since draft-ietf-quic-tls-17">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.3" rel="Chapter" title="B.3 Since draft-ietf-quic-tls-14">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.4" rel="Chapter" title="B.4 Since draft-ietf-quic-tls-13">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.5" rel="Chapter" title="B.5 Since draft-ietf-quic-tls-12">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.6" rel="Chapter" title="B.6 Since draft-ietf-quic-tls-11">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.7" rel="Chapter" title="B.7 Since draft-ietf-quic-tls-10">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.8" rel="Chapter" title="B.8 Since draft-ietf-quic-tls-09">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.9" rel="Chapter" title="B.9 Since draft-ietf-quic-tls-08">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.10" rel="Chapter" title="B.10 Since draft-ietf-quic-tls-07">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.11" rel="Chapter" title="B.11 Since draft-ietf-quic-tls-05">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.12" rel="Chapter" title="B.12 Since draft-ietf-quic-tls-04">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.13" rel="Chapter" title="B.13 Since draft-ietf-quic-tls-03">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.14" rel="Chapter" title="B.14 Since draft-ietf-quic-tls-02">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.15" rel="Chapter" title="B.15 Since draft-ietf-quic-tls-01">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.16" rel="Chapter" title="B.16 Since draft-ietf-quic-tls-00">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.17" rel="Chapter" title="B.17 Since draft-thomson-quic-tls-01">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.acknowledgments" rel="Chapter">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.contributors" rel="Chapter">
+<link href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.authors" rel="Chapter">
+
+
+  <meta name="generator" content="xml2rfc version 2.22.3 - https://tools.ietf.org/tools/xml2rfc">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+<meta name="viewport" content="width=600;">
+  <link rel="schema.dct" href="http://purl.org/dc/terms/">
+
+  <meta name="dct.creator" content="Thomson, M., Ed. and S. Turner, Ed.">
+  <meta name="dct.identifier" content="urn:ietf:id:draft-ietf-quic-tls-20">
+  <meta name="dct.issued" scheme="ISO8601" content="2019-04-23">
+  <meta name="dct.abstract" content="This document describes how Transport Layer Security (TLS) is used to secure QUIC.">
+  <meta name="description" content="This document describes how Transport Layer Security (TLS) is used to secure QUIC.">
+
+<style id="holderjs-style" type="text/css"></style></head>
+
+<body class=" __plain_text_READY__" data-new-gr-c-s-check-loaded="14.996.0" data-gr-ext-installed="">
+
+  <table class="header">
+    <tbody>
+    
+    	<tr>
+<td class="left">QUIC</td>
+<td class="right">M. Thomson, Ed.</td>
+</tr>
+<tr>
+<td class="left">Internet-Draft</td>
+<td class="right">Mozilla</td>
+</tr>
+<tr>
+<td class="left">Intended status: Standards Track</td>
+<td class="right">S. Turner, Ed.</td>
+</tr>
+<tr>
+<td class="left">Expires: October 25, 2019</td>
+<td class="right">sn3rd</td>
+</tr>
+<tr>
+<td class="left"></td>
+<td class="right">April 23, 2019</td>
+</tr>
+
+    	
+    </tbody>
+  </table>
+
+  <p class="title">Using TLS to Secure QUIC<br>
+  <span class="filename">draft-ietf-quic-tls-20</span></p>
+  
+  <h1 id="rfc.abstract"><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.abstract">Abstract</a></h1>
+<p>This document describes how Transport Layer Security (TLS) is used to secure QUIC.</p>
+<h1><a>Note to Readers</a></h1>
+<p>Discussion of this draft takes place on the QUIC working group mailing list (quic@ietf.org), which is archived at <a href="https://mailarchive.ietf.org/arch/search/?email_list=quic">https://mailarchive.ietf.org/arch/search/?email_list=quic</a>.</p>
+<p>Working Group information can be found at <a href="https://github.com/quicwg">https://github.com/quicwg</a>; source code and issues list for this draft can be found at <a href="https://github.com/quicwg/base-drafts/labels/-tls">https://github.com/quicwg/base-drafts/labels/-tls</a>.</p>
+<h1 id="rfc.status"><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.status">Status of This Memo</a></h1>
+<p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
+<p>This Internet-Draft will expire on October 25, 2019.</p>
+<h1 id="rfc.copyrightnotice"><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.copyrightnotice">Copyright Notice</a></h1>
+<p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+
+  
+  <hr class="noprint">
+  <h1 class="np" id="rfc.toc"><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.toc">Table of Contents</a></h1>
+  <ul class="toc">
+
+  	<li>1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.1">Introduction</a>
+</li>
+<li>2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.2">Notational Conventions</a>
+</li>
+<ul><li>2.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.2.1">TLS Overview</a>
+</li>
+</ul><li>3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.3">Protocol Overview</a>
+</li>
+<li>4.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4">Carrying TLS Messages</a>
+</li>
+<ul><li>4.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1">Interface to TLS</a>
+</li>
+<ul><li>4.1.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.1">Sending and Receiving Handshake Messages</a>
+</li>
+<li>4.1.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.2">Encryption Level Changes</a>
+</li>
+<li>4.1.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.3">TLS Interface Summary</a>
+</li>
+</ul><li>4.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.2">TLS Version</a>
+</li>
+<li>4.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.3">ClientHello Size</a>
+</li>
+<li>4.4.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.4">Peer Authentication</a>
+</li>
+<li>4.5.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.5">Enabling 0-RTT</a>
+</li>
+<li>4.6.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.6">Rejecting 0-RTT</a>
+</li>
+<li>4.7.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.7">HelloRetryRequest</a>
+</li>
+<li>4.8.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.8">TLS Errors</a>
+</li>
+<li>4.9.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.9">Discarding Unused Keys</a>
+</li>
+<li>4.10.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.10">Discarding Initial Keys</a>
+</li>
+</ul><li>5.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5">Packet Protection</a>
+</li>
+<ul><li>5.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.1">Packet Protection Keys</a>
+</li>
+<li>5.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.2">Initial Secrets</a>
+</li>
+<li>5.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.3">AEAD Usage</a>
+</li>
+<li>5.4.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4">Header Protection</a>
+</li>
+<ul><li>5.4.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.1">Header Protection Application</a>
+</li>
+<li>5.4.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.2">Header Protection Sample</a>
+</li>
+<li>5.4.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.3">AES-Based Header Protection</a>
+</li>
+<li>5.4.4.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.4">ChaCha20-Based Header Protection</a>
+</li>
+</ul><li>5.5.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.5">Receiving Protected Packets</a>
+</li>
+<li>5.6.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.6">Use of 0-RTT Keys</a>
+</li>
+<li>5.7.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.7">Receiving Out-of-Order Protected Frames</a>
+</li>
+</ul><li>6.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.6">Key Update</a>
+</li>
+<li>7.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.7">Security of Initial Messages</a>
+</li>
+<li>8.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8">QUIC-Specific Additions to the TLS Handshake</a>
+</li>
+<ul><li>8.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.1">Protocol and Version Negotiation</a>
+</li>
+<li>8.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.2">QUIC Transport Parameters Extension</a>
+</li>
+<li>8.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.3">Removing the EndOfEarlyData Message</a>
+</li>
+</ul><li>9.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9">Security Considerations</a>
+</li>
+<ul><li>9.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.1">Replay Attacks with 0-RTT</a>
+</li>
+<li>9.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.2">Packet Reflection Attack Mitigation</a>
+</li>
+<li>9.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.3">Peer Denial of Service</a>
+</li>
+<li>9.4.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.4">Header Protection Analysis</a>
+</li>
+<li>9.5.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.5">Key Diversity</a>
+</li>
+</ul><li>10.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.10">IANA Considerations</a>
+</li>
+<li>11.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references">References</a>
+</li>
+<ul><li>11.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references.1">Normative References</a>
+</li>
+<li>11.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references.2">Informative References</a>
+</li>
+</ul><li>Appendix A.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A">Sample Initial Packet Protection</a>
+</li>
+<ul><li>A.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.1">Keys</a>
+</li>
+<li>A.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.2">Client Initial</a>
+</li>
+<li>A.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.3">Server Initial</a>
+</li>
+</ul><li>Appendix B.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B">Change Log</a>
+</li>
+<ul><li>B.1.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.1">Since draft-ietf-quic-tls-18</a>
+</li>
+<li>B.2.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.2">Since draft-ietf-quic-tls-17</a>
+</li>
+<li>B.3.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.3">Since draft-ietf-quic-tls-14</a>
+</li>
+<li>B.4.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.4">Since draft-ietf-quic-tls-13</a>
+</li>
+<li>B.5.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.5">Since draft-ietf-quic-tls-12</a>
+</li>
+<li>B.6.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.6">Since draft-ietf-quic-tls-11</a>
+</li>
+<li>B.7.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.7">Since draft-ietf-quic-tls-10</a>
+</li>
+<li>B.8.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.8">Since draft-ietf-quic-tls-09</a>
+</li>
+<li>B.9.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.9">Since draft-ietf-quic-tls-08</a>
+</li>
+<li>B.10.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.10">Since draft-ietf-quic-tls-07</a>
+</li>
+<li>B.11.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.11">Since draft-ietf-quic-tls-05</a>
+</li>
+<li>B.12.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.12">Since draft-ietf-quic-tls-04</a>
+</li>
+<li>B.13.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.13">Since draft-ietf-quic-tls-03</a>
+</li>
+<li>B.14.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.14">Since draft-ietf-quic-tls-02</a>
+</li>
+<li>B.15.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.15">Since draft-ietf-quic-tls-01</a>
+</li>
+<li>B.16.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.16">Since draft-ietf-quic-tls-00</a>
+</li>
+<li>B.17.   <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.17">Since draft-thomson-quic-tls-01</a>
+</li>
+</ul><li><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.acknowledgments">Acknowledgments</a>
+</li>
+<li><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.contributors">Contributors</a>
+</li>
+<li><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.authors">Authors' Addresses</a>
+</li>
+
+
+  </ul>
+
+  <h1 id="rfc.section.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.1">1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#introduction" id="introduction">Introduction</a>
+</h1>
+<p id="rfc.section.1.p.1">This document describes how QUIC <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a> is secured using TLS <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>.</p>
+<p id="rfc.section.1.p.2">TLS 1.3 provides critical latency improvements for connection establishment over previous versions.  Absent packet loss, most new connections can be established and secured within a single round trip; on subsequent connections between the same client and server, the client can often send application data immediately, that is, using a zero round trip setup.</p>
+<p id="rfc.section.1.p.3">This document describes how TLS acts as a security component of QUIC.</p>
+<h1 id="rfc.section.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.2">2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#notational-conventions" id="notational-conventions">Notational Conventions</a>
+</h1>
+<p id="rfc.section.2.p.1">The key words “MUST”, “MUST NOT”, “REQUIRED”, “SHALL”, “SHALL NOT”, “SHOULD”, “SHOULD NOT”, “RECOMMENDED”, “NOT RECOMMENDED”, “MAY”, and “OPTIONAL” in this document are to be interpreted as described in BCP 14 <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#RFC2119" class="xref">[RFC2119]</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#RFC8174" class="xref">[RFC8174]</a> when, and only when, they appear in all capitals, as shown here.</p>
+<p id="rfc.section.2.p.2">This document uses the terminology established in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a>.</p>
+<p id="rfc.section.2.p.3">For brevity, the acronym TLS is used to refer to TLS 1.3, though a newer version could be used (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-version" class="xref">Section 4.2</a>).</p>
+<h2 id="rfc.section.2.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.2.1">2.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-overview" id="tls-overview">TLS Overview</a>
+</h2>
+<p id="rfc.section.2.1.p.1">TLS provides two endpoints with a way to establish a means of communication over an untrusted medium (that is, the Internet) that ensures that messages they exchange cannot be observed, modified, or forged.</p>
+<p id="rfc.section.2.1.p.2">Internally, TLS is a layered protocol, with the structure shown below:</p>
+<pre>+--------------+--------------+--------------+
+|  Handshake   |    Alerts    |  Application |
+|    Layer     |              |     Data     |
+|              |              |              |
++--------------+--------------+--------------+
+|                                            |
+|               Record Layer                 |
+|                                            |
++--------------------------------------------+
+</pre>
+<p id="rfc.section.2.1.p.3">Each upper layer (handshake, alerts, and application data) is carried as a series of typed TLS records. Records are individually cryptographically protected and then transmitted over a reliable transport (typically TCP) which provides sequencing and guaranteed delivery.</p>
+<p id="rfc.section.2.1.p.4">Change Cipher Spec records cannot be sent in QUIC.</p>
+<p id="rfc.section.2.1.p.5">The TLS authenticated key exchange occurs between two entities: client and server.  The client initiates the exchange and the server responds.  If the key exchange completes successfully, both client and server will agree on a secret.  TLS supports both pre-shared key (PSK) and Diffie-Hellman (DH) key exchanges.  PSK is the basis for 0-RTT; the latter provides perfect forward secrecy (PFS) when the DH keys are destroyed.</p>
+<p id="rfc.section.2.1.p.6">After completing the TLS handshake, the client will have learned and authenticated an identity for the server and the server is optionally able to learn and authenticate an identity for the client.  TLS supports X.509 <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#RFC5280" class="xref">[RFC5280]</a> certificate-based authentication for both server and client.</p>
+<p id="rfc.section.2.1.p.7">The TLS key exchange is resistant to tampering by attackers and it produces shared secrets that cannot be controlled by either participating peer.</p>
+<p id="rfc.section.2.1.p.8">TLS provides two basic handshake modes of interest to QUIC:</p>
+<p></p>
+
+<ul>
+<li>A full 1-RTT handshake in which the client is able to send application data after one round trip and the server immediately responds after receiving the first handshake message from the client.</li>
+<li>A 0-RTT handshake in which the client uses information it has previously learned about the server to send application data immediately.  This application data can be replayed by an attacker so it MUST NOT carry a self-contained trigger for any non-idempotent action.</li>
+</ul>
+<p id="rfc.section.2.1.p.10">A simplified TLS handshake with 0-RTT application data is shown in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-full" class="xref">Figure 1</a>.  Note that this omits the EndOfEarlyData message, which is not used in QUIC (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#remove-eoed" class="xref">Section 8.3</a>).</p>
+<div id="rfc.figure.1"></div>
+<div id="tls-full"></div>
+<pre>    Client                                             Server
+
+    ClientHello
+   (0-RTT Application Data)  --------&gt;
+                                                  ServerHello
+                                         {EncryptedExtensions}
+                                                    {Finished}
+                             &lt;--------      [Application Data]
+   {Finished}                --------&gt;
+
+   [Application Data]        &lt;-------&gt;      [Application Data]
+
+    () Indicates messages protected by early data (0-RTT) keys
+    {} Indicates messages protected using handshake keys
+    [] Indicates messages protected using application data
+       (1-RTT) keys
+</pre>
+<p class="figure">Figure 1: TLS Handshake with 0-RTT</p>
+<p id="rfc.section.2.1.p.11">Data is protected using a number of encryption levels:</p>
+<p></p>
+
+<ul>
+<li>Initial Keys</li>
+<li>Early Data (0-RTT) Keys</li>
+<li>Handshake Keys</li>
+<li>Application Data (1-RTT) Keys</li>
+</ul>
+<p id="rfc.section.2.1.p.13">Application data may appear only in the early data and application data levels. Handshake and Alert messages may appear in any level.</p>
+<p id="rfc.section.2.1.p.14">The 0-RTT handshake is only possible if the client and server have previously communicated.  In the 1-RTT handshake, the client is unable to send protected application data until it has received all of the handshake messages sent by the server.</p>
+<h1 id="rfc.section.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.3">3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#protocol-overview" id="protocol-overview">Protocol Overview</a>
+</h1>
+<p id="rfc.section.3.p.1">QUIC <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a> assumes responsibility for the confidentiality and integrity protection of packets.  For this it uses keys derived from a TLS handshake <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>, but instead of carrying TLS records over QUIC (as with TCP), TLS Handshake and Alert messages are carried directly over the QUIC transport, which takes over the responsibilities of the TLS record layer, as shown below.</p>
+<pre>+--------------+--------------+ +-------------+
+|     TLS      |     TLS      | |    QUIC     |
+|  Handshake   |    Alerts    | | Applications|
+|              |              | |  (h3, etc.) |
++--------------+--------------+-+-------------+
+|                                             |
+|                QUIC Transport               |
+|   (streams, reliability, congestion, etc.)  |
+|                                             |
++---------------------------------------------+
+|                                             |
+|            QUIC Packet Protection           |
+|                                             |
++---------------------------------------------+
+</pre>
+<p id="rfc.section.3.p.2">QUIC also relies on TLS for authentication and negotiation of parameters that are critical to security and performance.</p>
+<p id="rfc.section.3.p.3">Rather than a strict layering, these two protocols are co-dependent: QUIC uses the TLS handshake; TLS uses the reliability, ordered delivery, and record layer provided by QUIC.</p>
+<p id="rfc.section.3.p.4">At a high level, there are two main interactions between the TLS and QUIC components:</p>
+<p></p>
+
+<ul>
+<li>The TLS component sends and receives messages via the QUIC component, with QUIC providing a reliable stream abstraction to TLS.</li>
+<li>The TLS component provides a series of updates to the QUIC component, including (a) new packet protection keys to install (b) state changes such as handshake completion, the server certificate, etc.</li>
+</ul>
+<p><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#schematic" class="xref">Figure 2</a> shows these interactions in more detail, with the QUIC packet protection being called out specially.</p>
+<div id="rfc.figure.2"></div>
+<div id="schematic"></div>
+<pre>+------------+                        +------------+
+|            |&lt;- Handshake Messages -&gt;|            |
+|            |&lt;---- 0-RTT Keys -------|            |
+|            |&lt;--- Handshake Keys-----|            |
+|   QUIC     |&lt;---- 1-RTT Keys -------|    TLS     |
+|            |&lt;--- Handshake Done ----|            |
++------------+                        +------------+
+ |         ^
+ | Protect | Protected
+ v         | Packet
++------------+
+|   QUIC     |
+|  Packet    |
+| Protection |
++------------+
+</pre>
+<p class="figure">Figure 2: QUIC and TLS Interactions</p>
+<p id="rfc.section.3.p.7">Unlike TLS over TCP, QUIC applications which want to send data do not send it through TLS “application_data” records. Rather, they send it as QUIC STREAM frames which are then carried in QUIC packets.</p>
+<h1 id="rfc.section.4">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4">4.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#carrying-tls" id="carrying-tls">Carrying TLS Messages</a>
+</h1>
+<p id="rfc.section.4.p.1">QUIC carries TLS handshake data in CRYPTO frames, each of which consists of a contiguous block of handshake data identified by an offset and length. Those frames are packaged into QUIC packets and encrypted under the current TLS encryption level.  As with TLS over TCP, once TLS handshake data has been delivered to QUIC, it is QUIC’s responsibility to deliver it reliably. Each chunk of data that is produced by TLS is associated with the set of keys that TLS is currently using.  If QUIC needs to retransmit that data, it MUST use the same keys even if TLS has already updated to newer keys.</p>
+<p id="rfc.section.4.p.2">One important difference between TLS records (used with TCP) and QUIC CRYPTO frames is that in QUIC multiple frames may appear in the same QUIC packet as long as they are associated with the same encryption level. For instance, an implementation might bundle a Handshake message and an ACK for some Handshake data into the same packet.</p>
+<p id="rfc.section.4.p.3">Some frames are prohibited in different encryption levels, others cannot be sent. The rules here generalize those of TLS, in that frames associated with establishing the connection can usually appear at any encryption level, whereas those associated with transferring data can only appear in the 0-RTT and 1-RTT encryption levels:</p>
+<p></p>
+
+<ul>
+<li>PADDING frames MAY appear in packets of any encryption level.</li>
+<li>CRYPTO and CONNECTION_CLOSE frames MAY appear in packets of any encryption level except 0-RTT.</li>
+<li>ACK frames MAY appear in packets of any encryption level other than 0-RTT, but can only acknowledge packets which appeared in that packet number space.</li>
+<li>All other frame types MUST only be sent in the 0-RTT and 1-RTT levels.</li>
+</ul>
+<p id="rfc.section.4.p.5">Note that it is not possible to send the following frames in 0-RTT for various reasons: ACK, CRYPTO, NEW_TOKEN, PATH_RESPONSE, and RETIRE_CONNECTION_ID.</p>
+<p id="rfc.section.4.p.6">Because packets could be reordered on the wire, QUIC uses the packet type to indicate which level a given packet was encrypted under, as shown in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#packet-types-levels" class="xref">Table 1</a>. When multiple packets of different encryption levels need to be sent, endpoints SHOULD use coalesced packets to send them in the same UDP datagram.</p>
+<div id="rfc.table.1"></div>
+<div id="packet-types-levels"></div>
+<table cellpadding="3" cellspacing="0" class="tt full center">
+<caption>Encryption Levels by Packet Type</caption>
+<thead><tr>
+<th class="left">Packet Type</th>
+<th class="left">Encryption Level</th>
+<th class="left">PN Space</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="left">Initial</td>
+<td class="left">Initial secrets</td>
+<td class="left">Initial</td>
+</tr>
+<tr>
+<td class="left">0-RTT Protected</td>
+<td class="left">0-RTT</td>
+<td class="left">0/1-RTT</td>
+</tr>
+<tr>
+<td class="left">Handshake</td>
+<td class="left">Handshake</td>
+<td class="left">Handshake</td>
+</tr>
+<tr>
+<td class="left">Retry</td>
+<td class="left">N/A</td>
+<td class="left">N/A</td>
+</tr>
+<tr>
+<td class="left">Version Negotiation</td>
+<td class="left">N/A</td>
+<td class="left">N/A</td>
+</tr>
+<tr>
+<td class="left">Short Header</td>
+<td class="left">1-RTT</td>
+<td class="left">0/1-RTT</td>
+</tr>
+</tbody>
+</table>
+<p id="rfc.section.4.p.7">Section 17 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a> shows how packets at the various encryption levels fit into the handshake process.</p>
+<h2 id="rfc.section.4.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1">4.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#interface-to-tls" id="interface-to-tls">Interface to TLS</a>
+</h2>
+<p id="rfc.section.4.1.p.1">As shown in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#schematic" class="xref">Figure 2</a>, the interface from QUIC to TLS consists of three primary functions:</p>
+<p></p>
+
+<ul>
+<li>Sending and receiving handshake messages</li>
+<li>Rekeying (both transmit and receive)</li>
+<li>Handshake state updates</li>
+</ul>
+<p id="rfc.section.4.1.p.3">Additional functions might be needed to configure TLS.</p>
+<h3 id="rfc.section.4.1.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.1">4.1.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#sending-and-receiving-handshake-messages" id="sending-and-receiving-handshake-messages">Sending and Receiving Handshake Messages</a>
+</h3>
+<p id="rfc.section.4.1.1.p.1">In order to drive the handshake, TLS depends on being able to send and receive handshake messages. There are two basic functions on this interface: one where QUIC requests handshake messages and one where QUIC provides handshake packets.</p>
+<p id="rfc.section.4.1.1.p.2">Before starting the handshake QUIC provides TLS with the transport parameters (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#quic_parameters" class="xref">Section 8.2</a>) that it wishes to carry.</p>
+<p id="rfc.section.4.1.1.p.3">A QUIC client starts TLS by requesting TLS handshake bytes from TLS.  The client acquires handshake bytes before sending its first packet.  A QUIC server starts the process by providing TLS with the client’s handshake bytes.</p>
+<p id="rfc.section.4.1.1.p.4">At any given time, the TLS stack at an endpoint will have a current sending encryption level and receiving encryption level. Each encryption level is associated with a different flow of bytes, which is reliably transmitted to the peer in CRYPTO frames. When TLS provides handshake bytes to be sent, they are appended to the current flow and any packet that includes the CRYPTO frame is protected using keys from the corresponding encryption level.</p>
+<p id="rfc.section.4.1.1.p.5">QUIC takes the unprotected content of TLS handshake records as the content of CRYPTO frames. TLS record protection is not used by QUIC. QUIC assembles CRYPTO frames into QUIC packets, which are protected using QUIC packet protection.</p>
+<p id="rfc.section.4.1.1.p.6">When an endpoint receives a QUIC packet containing a CRYPTO frame from the network, it proceeds as follows:</p>
+<p></p>
+
+<ul>
+<li>If the packet was in the TLS receiving encryption level, sequence the data into the input flow as usual. As with STREAM frames, the offset is used to find the proper location in the data sequence.  If the result of this process is that new data is available, then it is delivered to TLS in order.</li>
+<li>If the packet is from a previously installed encryption level, it MUST not contain data which extends past the end of previously received data in that flow. Implementations MUST treat any violations of this requirement as a connection error of type PROTOCOL_VIOLATION.</li>
+<li>If the packet is from a new encryption level, it is saved for later processing by TLS.  Once TLS moves to receiving from this encryption level, saved data can be provided.  When providing data from any new encryption level to TLS, if there is data from a previous encryption level that TLS has not consumed, this MUST be treated as a connection error of type PROTOCOL_VIOLATION.</li>
+</ul>
+<p id="rfc.section.4.1.1.p.8">Each time that TLS is provided with new data, new handshake bytes are requested from TLS.  TLS might not provide any bytes if the handshake messages it has received are incomplete or it has no data to send.</p>
+<p id="rfc.section.4.1.1.p.9">Once the TLS handshake is complete, this is indicated to QUIC along with any final handshake bytes that TLS needs to send.  TLS also provides QUIC with the transport parameters that the peer advertised during the handshake.</p>
+<p id="rfc.section.4.1.1.p.10">Once the handshake is complete, TLS becomes passive.  TLS can still receive data from its peer and respond in kind, but it will not need to send more data unless specifically requested - either by an application or QUIC.  One reason to send data is that the server might wish to provide additional or updated session tickets to a client.</p>
+<p id="rfc.section.4.1.1.p.11">When the handshake is complete, QUIC only needs to provide TLS with any data that arrives in CRYPTO streams.  In the same way that is done during the handshake, new data is requested from TLS after providing received data.</p>
+<p></p>
+
+<dl>
+<dt>Important:</dt>
+<dd style="margin-left: 8">Until the handshake is reported as complete, the connection and key exchange are not properly authenticated at the server.  Even though 1-RTT keys are available to a server after receiving the first handshake messages from a client, the server cannot consider the client to be authenticated until it receives and validates the client’s Finished message.  A server MUST NOT process 1-RTT packets until the handshake is complete.  A server MAY buffer or discard 1-RTT packets that it cannot read.</dd>
+<dt></dt>
+<dd style="margin-left: 8">The requirement for the server to wait for the client Finished message creates a dependency on that message being delivered.  A client can avoid the potential for head-of-line blocking that this implies by sending a copy of the CRYPTO frame that carries the Finished message in multiple packets.  This enables immediate server processing for those packets.</dd>
+</dl>
+<h3 id="rfc.section.4.1.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.2">4.1.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#encryption-level-changes" id="encryption-level-changes">Encryption Level Changes</a>
+</h3>
+<p id="rfc.section.4.1.2.p.1">As keys for new encryption levels become available, TLS provides QUIC with those keys.  Separately, as TLS starts using keys at a given encryption level, TLS indicates to QUIC that it is now reading or writing with keys at that encryption level.  These events are not asynchronous; they always occur immediately after TLS is provided with new handshake bytes, or after TLS produces handshake bytes.</p>
+<p id="rfc.section.4.1.2.p.2">TLS provides QUIC with three items as a new encryption level becomes available:</p>
+<p></p>
+
+<ul>
+<li>A secret</li>
+<li>An Authenticated Encryption with Associated Data (AEAD) function</li>
+<li>A Key Derivation Function (KDF)</li>
+</ul>
+<p id="rfc.section.4.1.2.p.4">These values are based on the values that TLS negotiates and are used by QUIC to generate packet and header protection keys (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#packet-protection" class="xref">Section 5</a> and <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#header-protect" class="xref">Section 5.4</a>).</p>
+<p id="rfc.section.4.1.2.p.5">If 0-RTT is possible, it is ready after the client sends a TLS ClientHello message or the server receives that message.  After providing a QUIC client with the first handshake bytes, the TLS stack might signal the change to 0-RTT keys. On the server, after receiving handshake bytes that contain a ClientHello message, a TLS server might signal that 0-RTT keys are available.</p>
+<p id="rfc.section.4.1.2.p.6">Although TLS only uses one encryption level at a time, QUIC may use more than one level. For instance, after sending its Finished message (using a CRYPTO frame at the Handshake encryption level) an endpoint can send STREAM data (in 1-RTT encryption). If the Finished message is lost, the endpoint uses the Handshake encryption level to retransmit the lost message.  Reordering or loss of packets can mean that QUIC will need to handle packets at multiple encryption levels.  During the handshake, this means potentially handling packets at higher and lower encryption levels than the current encryption level used by TLS.</p>
+<p id="rfc.section.4.1.2.p.7">In particular, server implementations need to be able to read packets at the Handshake encryption level at the same time as the 0-RTT encryption level.  A client could interleave ACK frames that are protected with Handshake keys with 0-RTT data and the server needs to process those acknowledgments in order to detect lost Handshake packets.</p>
+<h3 id="rfc.section.4.1.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.1.3">4.1.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-interface-summary" id="tls-interface-summary">TLS Interface Summary</a>
+</h3>
+<p><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#exchange-summary" class="xref">Figure 3</a> summarizes the exchange between QUIC and TLS for both client and server. Each arrow is tagged with the encryption level used for that transmission.</p>
+<div id="rfc.figure.3"></div>
+<div id="exchange-summary"></div>
+<pre>Client                                                    Server
+
+Get Handshake
+                     Initial -------------&gt;
+Install tx 0-RTT Keys
+                     0-RTT ---------------&gt;
+                                              Handshake Received
+                                                   Get Handshake
+                     &lt;------------- Initial
+                                           Install rx 0-RTT keys
+                                          Install Handshake keys
+                                                   Get Handshake
+                     &lt;----------- Handshake
+                                           Install tx 1-RTT keys
+                     &lt;--------------- 1-RTT
+Handshake Received
+Install tx Handshake keys
+Handshake Received
+Get Handshake
+Handshake Complete
+                     Handshake -----------&gt;
+Install 1-RTT keys
+                     1-RTT ---------------&gt;
+                                              Handshake Received
+                                           Install rx 1-RTT keys
+                                              Handshake Complete
+                                                   Get Handshake
+                     &lt;--------------- 1-RTT
+Handshake Received
+</pre>
+<p class="figure">Figure 3: Interaction Summary between QUIC and TLS</p>
+<h2 id="rfc.section.4.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.2">4.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-version" id="tls-version">TLS Version</a>
+</h2>
+<p id="rfc.section.4.2.p.1">This document describes how TLS 1.3 <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a> is used with QUIC.</p>
+<p id="rfc.section.4.2.p.2">In practice, the TLS handshake will negotiate a version of TLS to use.  This could result in a newer version of TLS than 1.3 being negotiated if both endpoints support that version.  This is acceptable provided that the features of TLS 1.3 that are used by QUIC are supported by the newer version.</p>
+<p id="rfc.section.4.2.p.3">A badly configured TLS implementation could negotiate TLS 1.2 or another older version of TLS.  An endpoint MUST terminate the connection if a version of TLS older than 1.3 is negotiated.</p>
+<h2 id="rfc.section.4.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.3">4.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#clienthello-size" id="clienthello-size">ClientHello Size</a>
+</h2>
+<p id="rfc.section.4.3.p.1">QUIC requires that the first Initial packet from a client contain an entire cryptographic handshake message, which for TLS is the ClientHello.  Though a packet larger than 1200 bytes might be supported by the path, a client improves the likelihood that a packet is accepted if it ensures that the first ClientHello message is small enough to stay within this limit.</p>
+<p id="rfc.section.4.3.p.2">QUIC packet and framing add at least 36 bytes of overhead to the ClientHello message.  That overhead increases if the client chooses a connection ID without zero length.  Overheads also do not include the token or a connection ID longer than 8 bytes, both of which might be required if a server sends a Retry packet.</p>
+<p id="rfc.section.4.3.p.3">A typical TLS ClientHello can easily fit into a 1200 byte packet.  However, in addition to the overheads added by QUIC, there are several variables that could cause this limit to be exceeded.  Large session tickets, multiple or large key shares, and long lists of supported ciphers, signature algorithms, versions, QUIC transport parameters, and other negotiable parameters and extensions could cause this message to grow.</p>
+<p id="rfc.section.4.3.p.4">For servers, in addition to connection IDs and tokens, the size of TLS session tickets can have an effect on a client’s ability to connect.  Minimizing the size of these values increases the probability that they can be successfully used by a client.</p>
+<p id="rfc.section.4.3.p.5">A client is not required to fit the ClientHello that it sends in response to a HelloRetryRequest message into a single UDP datagram.</p>
+<p id="rfc.section.4.3.p.6">The TLS implementation does not need to ensure that the ClientHello is sufficiently large.  QUIC PADDING frames are added to increase the size of the packet as necessary.</p>
+<h2 id="rfc.section.4.4">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.4">4.4.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#peer-authentication" id="peer-authentication">Peer Authentication</a>
+</h2>
+<p id="rfc.section.4.4.p.1">The requirements for authentication depend on the application protocol that is in use.  TLS provides server authentication and permits the server to request client authentication.</p>
+<p id="rfc.section.4.4.p.2">A client MUST authenticate the identity of the server.  This typically involves verification that the identity of the server is included in a certificate and that the certificate is issued by a trusted entity (see for example <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#RFC2818" class="xref">[RFC2818]</a>).</p>
+<p id="rfc.section.4.4.p.3">A server MAY request that the client authenticate during the handshake. A server MAY refuse a connection if the client is unable to authenticate when requested.  The requirements for client authentication vary based on application protocol and deployment.</p>
+<p id="rfc.section.4.4.p.4">A server MUST NOT use post-handshake client authentication (see Section 4.6.2 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>).</p>
+<h2 id="rfc.section.4.5">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.5">4.5.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#enable-0rtt" id="enable-0rtt">Enabling 0-RTT</a>
+</h2>
+<p id="rfc.section.4.5.p.1">In order to be usable for 0-RTT, TLS MUST provide a NewSessionTicket message that contains the “early_data” extension with a max_early_data_size of 0xffffffff; the amount of data which the client can send in 0-RTT is controlled by the “initial_max_data” transport parameter supplied by the server.  A client MUST treat receipt of a NewSessionTicket that contains an “early_data” extension with any other value as a connection error of type PROTOCOL_VIOLATION.</p>
+<p id="rfc.section.4.5.p.2">Early data within the TLS connection MUST NOT be used.  As it is for other TLS application data, a server MUST treat receiving early data on the TLS connection as a connection error of type PROTOCOL_VIOLATION.</p>
+<h2 id="rfc.section.4.6">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.6">4.6.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rejecting-0-rtt" id="rejecting-0-rtt">Rejecting 0-RTT</a>
+</h2>
+<p id="rfc.section.4.6.p.1">A server rejects 0-RTT by rejecting 0-RTT at the TLS layer.  This also prevents QUIC from sending 0-RTT data. A server will always reject 0-RTT if it sends a TLS HelloRetryRequest.</p>
+<p id="rfc.section.4.6.p.2">When 0-RTT is rejected, all connection characteristics that the client assumed might be incorrect.  This includes the choice of application protocol, transport parameters, and any application configuration.  The client therefore MUST reset the state of all streams, including application state bound to those streams.</p>
+<p id="rfc.section.4.6.p.3">A client MAY attempt to send 0-RTT again if it receives a Retry or Version Negotiation packet.  These packets do not signify rejection of 0-RTT.</p>
+<h2 id="rfc.section.4.7">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.7">4.7.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#helloretryrequest" id="helloretryrequest">HelloRetryRequest</a>
+</h2>
+<p id="rfc.section.4.7.p.1">In TLS over TCP, the HelloRetryRequest feature (see Section 4.1.4 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>) can be used to correct a client’s incorrect KeyShare extension as well as for a stateless round-trip check. From the perspective of QUIC, this just looks like additional messages carried in the Initial encryption level. Although it is in principle possible to use this feature for address verification in QUIC, QUIC implementations SHOULD instead use the Retry feature (see Section 8.1 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a>).  HelloRetryRequest is still used to request key shares.</p>
+<h2 id="rfc.section.4.8">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.8">4.8.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-errors" id="tls-errors">TLS Errors</a>
+</h2>
+<p id="rfc.section.4.8.p.1">If TLS experiences an error, it generates an appropriate alert as defined in Section 6 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>.</p>
+<p id="rfc.section.4.8.p.2">A TLS alert is turned into a QUIC connection error by converting the one-byte alert description into a QUIC error code.  The alert description is added to 0x100 to produce a QUIC error code from the range reserved for CRYPTO_ERROR.  The resulting value is sent in a QUIC CONNECTION_CLOSE frame.</p>
+<p id="rfc.section.4.8.p.3">The alert level of all TLS alerts is “fatal”; a TLS stack MUST NOT generate alerts at the “warning” level.</p>
+<h2 id="rfc.section.4.9">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.9">4.9.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#discarding-unused-keys" id="discarding-unused-keys">Discarding Unused Keys</a>
+</h2>
+<p id="rfc.section.4.9.p.1">After QUIC moves to a new encryption level, packet protection keys for previous encryption levels can be discarded.  This occurs several times during the handshake, as well as when keys are updated (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-update" class="xref">Section 6</a>).  Initial packet protection keys are treated specially, see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#discard-initial" class="xref">Section 4.10</a>.</p>
+<p id="rfc.section.4.9.p.2">Packet protection keys are not discarded immediately when new keys are available.  If packets from a lower encryption level contain CRYPTO frames, frames that retransmit that data MUST be sent at the same encryption level.  Similarly, an endpoint generates acknowledgements for packets at the same encryption level as the packet being acknowledged.  Thus, it is possible that keys for a lower encryption level are needed for a short time after keys for a newer encryption level are available.</p>
+<p id="rfc.section.4.9.p.3">An endpoint cannot discard keys for a given encryption level unless it has both received and acknowledged all CRYPTO frames for that encryption level and when all CRYPTO frames for that encryption level have been acknowledged by its peer.  However, this does not guarantee that no further packets will need to be received or sent at that encryption level because a peer might not have received all the acknowledgements necessary to reach the same state.</p>
+<p id="rfc.section.4.9.p.4">After all CRYPTO frames for a given encryption level have been sent and all expected CRYPTO frames received, and all the corresponding acknowledgments have been received or sent, an endpoint starts a timer.  For 0-RTT keys, which do not carry CRYPTO frames, this timer starts when the first packets protected with 1-RTT are sent or received.  To limit the effect of packet loss around a change in keys, endpoints MUST retain packet protection keys for that encryption level for at least three times the current Probe Timeout (PTO) interval as defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-RECOVERY" class="xref">[QUIC-RECOVERY]</a>.  Retaining keys for this interval allows packets containing CRYPTO or ACK frames at that encryption level to be sent if packets are determined to be lost or new packets require acknowledgment.</p>
+<p id="rfc.section.4.9.p.5">Though an endpoint might retain older keys, new data MUST be sent at the highest currently-available encryption level.  Only ACK frames and retransmissions of data in CRYPTO frames are sent at a previous encryption level.  These packets MAY also include PADDING frames.</p>
+<p id="rfc.section.4.9.p.6">Once this timer expires, an endpoint MUST NOT either accept or generate new packets using those packet protection keys.  An endpoint can discard packet protection keys for that encryption level.</p>
+<p id="rfc.section.4.9.p.7">Key updates (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-update" class="xref">Section 6</a>) can be used to update 1-RTT keys before keys from other encryption levels are discarded.  In that case, packets protected with the newest packet protection keys and packets sent two updates prior will appear to use the same keys.  After the handshake is complete, endpoints only need to maintain the two latest sets of packet protection keys and MAY discard older keys.  Updating keys multiple times rapidly can cause packets to be effectively lost if packets are significantly delayed.  Because key updates can only be performed once per round trip time, only packets that are delayed by more than a round trip will be lost as a result of changing keys; such packets will be marked as lost before this, as they leave a gap in the sequence of packet numbers.</p>
+<h2 id="rfc.section.4.10">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.4.10">4.10.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#discard-initial" id="discard-initial">Discarding Initial Keys</a>
+</h2>
+<p id="rfc.section.4.10.p.1">Packets protected with Initial secrets (<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#initial-secrets" class="xref">Section 5.2</a>) are not authenticated, meaning that an attacker could spoof packets with the intent to disrupt a connection.  To limit these attacks, Initial packet protection keys can be discarded more aggressively than other keys.</p>
+<p id="rfc.section.4.10.p.2">The successful use of Handshake packets indicates that no more Initial packets need to be exchanged, as these keys can only be produced after receiving all CRYPTO frames from Initial packets.  Thus, a client MUST discard Initial keys when it first sends a Handshake packet and a server MUST discard Initial keys when it first successfully processes a Handshake packet.  Endpoints MUST NOT send Initial packets after this point.</p>
+<p id="rfc.section.4.10.p.3">This results in abandoning loss recovery state for the Initial encryption level and ignoring any outstanding Initial packets.</p>
+<h1 id="rfc.section.5">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5">5.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#packet-protection" id="packet-protection">Packet Protection</a>
+</h1>
+<p id="rfc.section.5.p.1">As with TLS over TCP, QUIC protects packets with keys derived from the TLS handshake, using the AEAD algorithm negotiated by TLS.</p>
+<h2 id="rfc.section.5.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.1">5.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#protection-keys" id="protection-keys">Packet Protection Keys</a>
+</h2>
+<p id="rfc.section.5.1.p.1">QUIC derives packet protection keys in the same way that TLS derives record protection keys.</p>
+<p id="rfc.section.5.1.p.2">Each encryption level has separate secret values for protection of packets sent in each direction.  These traffic secrets are derived by TLS (see Section 7.1 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>) and are used by QUIC for all encryption levels except the Initial encryption level.  The secrets for the Initial encryption level are computed based on the client’s initial Destination Connection ID, as described in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#initial-secrets" class="xref">Section 5.2</a>.</p>
+<p id="rfc.section.5.1.p.3">The keys used for packet protection are computed from the TLS secrets using the KDF provided by TLS.  In TLS 1.3, the HKDF-Expand-Label function described in Section 7.1 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a> is used, using the hash function from the negotiated cipher suite.  Other versions of TLS MUST provide a similar function in order to be used with QUIC.</p>
+<p id="rfc.section.5.1.p.4">The current encryption level secret and the label “quic key” are input to the KDF to produce the AEAD key; the label “quic iv” is used to derive the IV, see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#aead" class="xref">Section 5.3</a>.  The header protection key uses the “quic hp” label, see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#header-protect" class="xref">Section 5.4</a>.  Using these labels provides key separation between QUIC and TLS, see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-diversity" class="xref">Section 9.5</a>.</p>
+<p id="rfc.section.5.1.p.5">The KDF used for initial secrets is always the HKDF-Expand-Label function from TLS 1.3 (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#initial-secrets" class="xref">Section 5.2</a>).</p>
+<h2 id="rfc.section.5.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.2">5.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#initial-secrets" id="initial-secrets">Initial Secrets</a>
+</h2>
+<p id="rfc.section.5.2.p.1">Initial packets are protected with a secret derived from the Destination Connection ID field from the client’s first Initial packet of the connection. Specifically:</p>
+<pre>initial_salt = 0xef4fb0abb47470c41befcf8031334fae485e09a0
+initial_secret = HKDF-Extract(initial_salt,
+                              client_dst_connection_id)
+
+client_initial_secret = HKDF-Expand-Label(initial_secret,
+                                          "client in", "",
+                                          Hash.length)
+server_initial_secret = HKDF-Expand-Label(initial_secret,
+                                          "server in", "",
+                                          Hash.length)
+</pre>
+<p id="rfc.section.5.2.p.2">The hash function for HKDF when deriving initial secrets and keys is SHA-256 <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#SHA" class="xref">[SHA]</a>.</p>
+<p id="rfc.section.5.2.p.3">The connection ID used with HKDF-Expand-Label is the Destination Connection ID in the Initial packet sent by the client.  This will be a randomly-selected value unless the client creates the Initial packet after receiving a Retry packet, where the Destination Connection ID is selected by the server.</p>
+<p id="rfc.section.5.2.p.4">The value of initial_salt is a 20 byte sequence shown in the figure in hexadecimal notation. Future versions of QUIC SHOULD generate a new salt value, thus ensuring that the keys are different for each version of QUIC. This prevents a middlebox that only recognizes one version of QUIC from seeing or modifying the contents of packets from future versions.</p>
+<p id="rfc.section.5.2.p.5">The HKDF-Expand-Label function defined in TLS 1.3 MUST be used for Initial packets even where the TLS versions offered do not include TLS 1.3.</p>
+<p><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#test-vectors-initial" class="xref">Appendix A</a> contains test vectors for the initial packet encryption.</p>
+<p></p>
+
+<dl>
+<dt>Note:</dt>
+<dd style="margin-left: 8">The Destination Connection ID is of arbitrary length, and it could be zero length if the server sends a Retry packet with a zero-length Source Connection ID field.  In this case, the Initial keys provide no assurance to the client that the server received its packet; the client has to rely on the exchange that included the Retry packet for that property.</dd>
+</dl>
+<h2 id="rfc.section.5.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.3">5.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#aead" id="aead">AEAD Usage</a>
+</h2>
+<p id="rfc.section.5.3.p.1">The Authentication Encryption with Associated Data (AEAD) <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#AEAD" class="xref">[AEAD]</a> function used for QUIC packet protection is the AEAD that is negotiated for use with the TLS connection.  For example, if TLS is using the TLS_AES_128_GCM_SHA256, the AEAD_AES_128_GCM function is used.</p>
+<p id="rfc.section.5.3.p.2">Packets are protected prior to applying header protection (<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#header-protect" class="xref">Section 5.4</a>).  The unprotected packet header is part of the associated data (A).  When removing packet protection, an endpoint first removes the header protection.</p>
+<p id="rfc.section.5.3.p.3">All QUIC packets other than Version Negotiation and Retry packets are protected with an AEAD algorithm <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#AEAD" class="xref">[AEAD]</a>. Prior to establishing a shared secret, packets are protected with AEAD_AES_128_GCM and a key derived from the Destination Connection ID in the client’s first Initial packet (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#initial-secrets" class="xref">Section 5.2</a>).  This provides protection against off-path attackers and robustness against QUIC version unaware middleboxes, but not against on-path attackers.</p>
+<p id="rfc.section.5.3.p.4">QUIC can use any of the ciphersuites defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a> with the exception of TLS_AES_128_CCM_8_SHA256.  The AEAD for that ciphersuite, AEAD_AES_128_CCM_8 <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#CCM" class="xref">[CCM]</a>, does not produce a large enough authentication tag for use with the header protection designs provided (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#header-protect" class="xref">Section 5.4</a>).  All other ciphersuites defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a> have a 16-byte authentication tag and produce an output 16 bytes larger than their input.</p>
+<p id="rfc.section.5.3.p.5">The key and IV for the packet are computed as described in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#protection-keys" class="xref">Section 5.1</a>.  The nonce, N, is formed by combining the packet protection IV with the packet number.  The 62 bits of the reconstructed QUIC packet number in network byte order are left-padded with zeros to the size of the IV.  The exclusive OR of the padded packet number and the IV forms the AEAD nonce.</p>
+<p id="rfc.section.5.3.p.6">The associated data, A, for the AEAD is the contents of the QUIC header, starting from the flags byte in either the short or long header, up to and including the unprotected packet number.</p>
+<p id="rfc.section.5.3.p.7">The input plaintext, P, for the AEAD is the payload of the QUIC packet, as described in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a>.</p>
+<p id="rfc.section.5.3.p.8">The output ciphertext, C, of the AEAD is transmitted in place of P.</p>
+<p id="rfc.section.5.3.p.9">Some AEAD functions have limits for how many packets can be encrypted under the same key and IV (see for example <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#AEBounds" class="xref">[AEBounds]</a>).  This might be lower than the packet number limit.  An endpoint MUST initiate a key update (<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-update" class="xref">Section 6</a>) prior to exceeding any limit set for the AEAD that is in use.</p>
+<h2 id="rfc.section.5.4">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4">5.4.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#header-protect" id="header-protect">Header Protection</a>
+</h2>
+<p id="rfc.section.5.4.p.1">Parts of QUIC packet headers, in particular the Packet Number field, are protected using a key that is derived separate to the packet protection key and IV.  The key derived using the “quic hp” label is used to provide confidentiality protection for those fields that are not exposed to on-path elements.</p>
+<p id="rfc.section.5.4.p.2">This protection applies to the least-significant bits of the first byte, plus the Packet Number field.  The four least-significant bits of the first byte are protected for packets with long headers; the five least significant bits of the first byte are protected for packets with short headers.  For both header forms, this covers the reserved bits and the Packet Number Length field; the Key Phase bit is also protected for packets with a short header.</p>
+<p id="rfc.section.5.4.p.3">The same header protection key is used for the duration of the connection, with the value not changing after a key update (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-update" class="xref">Section 6</a>).  This allows header protection to be used to protect the key phase.</p>
+<p id="rfc.section.5.4.p.4">This process does not apply to Retry or Version Negotiation packets, which do not contain a protected payload or any of the fields that are protected by this process.</p>
+<h3 id="rfc.section.5.4.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.1">5.4.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#header-protection-application" id="header-protection-application">Header Protection Application</a>
+</h3>
+<p id="rfc.section.5.4.1.p.1">Header protection is applied after packet protection is applied (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#aead" class="xref">Section 5.3</a>).  The ciphertext of the packet is sampled and used as input to an encryption algorithm.  The algorithm used depends on the negotiated AEAD.</p>
+<p id="rfc.section.5.4.1.p.2">The output of this algorithm is a 5 byte mask which is applied to the protected header fields using exclusive OR.  The least significant bits of the first byte of the packet are masked by the least significant bits of the first mask byte, and the packet number is masked with the remaining bytes.  Any unused bytes of mask that might result from a shorter packet number encoding are unused.</p>
+<p><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#pseudo-hp" class="xref">Figure 4</a> shows a sample algorithm for applying header protection. Removing header protection only differs in the order in which the packet number length (pn_length) is determined.</p>
+<div id="rfc.figure.4"></div>
+<div id="pseudo-hp"></div>
+<pre>mask = header_protection(hp_key, sample)
+
+pn_length = (packet[0] &amp; 0x03) + 1
+if (packet[0] &amp; 0x80) == 0x80:
+   # Long header: 4 bits masked
+   packet[0] ^= mask[0] &amp; 0x0f
+else:
+   # Short header: 5 bits masked
+   packet[0] ^= mask[0] &amp; 0x1f
+
+# pn_offset is the start of the Packet Number field.
+packet[pn_offset:pn_offset+pn_length] ^= mask[1:1+pn_length]
+</pre>
+<p class="figure">Figure 4: Header Protection Pseudocode</p>
+<p><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#fig-sample" class="xref">Figure 5</a> shows the protected fields of long and short headers marked with an E.  <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#fig-sample" class="xref">Figure 5</a> also shows the sampled fields.</p>
+<div id="rfc.figure.5"></div>
+<div id="fig-sample"></div>
+<pre>Long Header:
++-+-+-+-+-+-+-+-+
+|1|1|T T|E E E E|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                    Version -&gt; Length Fields                 ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Short Header:
++-+-+-+-+-+-+-+-+
+|0|1|S|E E E E E|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|               Destination Connection ID (0/32..144)         ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+Common Fields:
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|E E E E E E E E E  Packet Number (8/16/24/32) E E E E E E E E...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|   [Protected Payload (8/16/24)]             ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|             Sampled part of Protected Payload (128)         ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+|                 Protected Payload Remainder (*)             ...
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</pre>
+<p class="figure">Figure 5: Header Protection and Ciphertext Sample</p>
+<p id="rfc.section.5.4.1.p.5">Before a TLS ciphersuite can be used with QUIC, a header protection algorithm MUST be specified for the AEAD used with that ciphersuite.  This document defines algorithms for AEAD_AES_128_GCM, AEAD_AES_128_CCM, AEAD_AES_256_GCM, AEAD_AES_256_CCM (all AES AEADs are defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#AEAD" class="xref">[AEAD]</a>), and AEAD_CHACHA20_POLY1305 <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#CHACHA" class="xref">[CHACHA]</a>.  Prior to TLS selecting a ciphersuite, AES header protection is used (<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#hp-aes" class="xref">Section 5.4.3</a>), matching the AEAD_AES_128_GCM packet protection.</p>
+<h3 id="rfc.section.5.4.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.2">5.4.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#hp-sample" id="hp-sample">Header Protection Sample</a>
+</h3>
+<p id="rfc.section.5.4.2.p.1">The header protection algorithm uses both the header protection key and a sample of the ciphertext from the packet Payload field.</p>
+<p id="rfc.section.5.4.2.p.2">The same number of bytes are always sampled, but an allowance needs to be made for the endpoint removing protection, which will not know the length of the Packet Number field.  In sampling the packet ciphertext, the Packet Number field is assumed to be 4 bytes long (its maximum possible encoded length).</p>
+<p id="rfc.section.5.4.2.p.3">An endpoint MUST discard packets that are not long enough to contain a complete sample.</p>
+<p id="rfc.section.5.4.2.p.4">To ensure that sufficient data is available for sampling, packets are padded so that the combined lengths of the encoded packet number and protected payload is at least 4 bytes longer than the sample required for header protection.  For the AEAD functions defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>, which have 16-byte expansions and 16-byte header protection samples, this results in needing at least 3 bytes of frames in the unprotected payload if the packet number is encoded on a single byte, or 2 bytes of frames for a 2-byte packet number encoding.</p>
+<p id="rfc.section.5.4.2.p.5">The sampled ciphertext for a packet with a short header can be determined by the following pseudocode:</p>
+<pre>sample_offset = 1 + len(connection_id) + 4
+
+sample = packet[sample_offset..sample_offset+sample_length]
+</pre>
+<p id="rfc.section.5.4.2.p.6">For example, for a packet with a short header, an 8 byte connection ID, and protected with AEAD_AES_128_GCM, the sample takes bytes 13 to 28 inclusive (using zero-based indexing).</p>
+<p id="rfc.section.5.4.2.p.7">A packet with a long header is sampled in the same way, noting that multiple QUIC packets might be included in the same UDP datagram and that each one is handled separately.</p>
+<pre>sample_offset = 6 + len(destination_connection_id) +
+                    len(source_connection_id) +
+                    len(payload_length) + 4
+if packet_type == Initial:
+    sample_offset += len(token_length) +
+                     len(token)
+
+sample = packet[sample_offset..sample_offset+sample_length]
+</pre>
+<h3 id="rfc.section.5.4.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.3">5.4.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#hp-aes" id="hp-aes">AES-Based Header Protection</a>
+</h3>
+<p id="rfc.section.5.4.3.p.1">This section defines the packet protection algorithm for AEAD_AES_128_GCM, AEAD_AES_128_CCM, AEAD_AES_256_GCM, and AEAD_AES_256_CCM. AEAD_AES_128_GCM and AEAD_AES_128_CCM use 128-bit AES <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#AES" class="xref">[AES]</a> in electronic code-book (ECB) mode. AEAD_AES_256_GCM, and AEAD_AES_256_CCM use 256-bit AES in ECB mode.</p>
+<p id="rfc.section.5.4.3.p.2">This algorithm samples 16 bytes from the packet ciphertext. This value is used as the input to AES-ECB.  In pseudocode:</p>
+<pre>mask = AES-ECB(hp_key, sample)
+</pre>
+<h3 id="rfc.section.5.4.4">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.4.4">5.4.4.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#hp-chacha" id="hp-chacha">ChaCha20-Based Header Protection</a>
+</h3>
+<p id="rfc.section.5.4.4.p.1">When AEAD_CHACHA20_POLY1305 is in use, header protection uses the raw ChaCha20 function as defined in Section 2.4 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#CHACHA" class="xref">[CHACHA]</a>.  This uses a 256-bit key and 16 bytes sampled from the packet protection output.</p>
+<p id="rfc.section.5.4.4.p.2">The first 4 bytes of the sampled ciphertext are interpreted as a 32-bit number in little-endian order and are used as the block count.  The remaining 12 bytes are interpreted as three concatenated 32-bit numbers in little-endian order and used as the nonce.</p>
+<p id="rfc.section.5.4.4.p.3">The encryption mask is produced by invoking ChaCha20 to protect 5 zero bytes. In pseudocode:</p>
+<pre>counter = DecodeLE(sample[0..3])
+nonce = DecodeLE(sample[4..7], sample[8..11], sample[12..15])
+mask = ChaCha20(hp_key, counter, nonce, {0,0,0,0,0})
+</pre>
+<h2 id="rfc.section.5.5">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.5">5.5.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#receiving-protected-packets" id="receiving-protected-packets">Receiving Protected Packets</a>
+</h2>
+<p id="rfc.section.5.5.p.1">Once an endpoint successfully receives a packet with a given packet number, it MUST discard all packets in the same packet number space with higher packet numbers if they cannot be successfully unprotected with either the same key, or - if there is a key update - the next packet protection key (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-update" class="xref">Section 6</a>).  Similarly, a packet that appears to trigger a key update, but cannot be unprotected successfully MUST be discarded.</p>
+<p id="rfc.section.5.5.p.2">Failure to unprotect a packet does not necessarily indicate the existence of a protocol error in a peer or an attack.  The truncated packet number encoding used in QUIC can cause packet numbers to be decoded incorrectly if they are delayed significantly.</p>
+<h2 id="rfc.section.5.6">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.6">5.6.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#using-early-data" id="using-early-data">Use of 0-RTT Keys</a>
+</h2>
+<p id="rfc.section.5.6.p.1">If 0-RTT keys are available (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#enable-0rtt" class="xref">Section 4.5</a>), the lack of replay protection means that restrictions on their use are necessary to avoid replay attacks on the protocol.</p>
+<p id="rfc.section.5.6.p.2">A client MUST only use 0-RTT keys to protect data that is idempotent.  A client MAY wish to apply additional restrictions on what data it sends prior to the completion of the TLS handshake.  A client otherwise treats 0-RTT keys as equivalent to 1-RTT keys, except that it MUST NOT send ACKs with 0-RTT keys.</p>
+<p id="rfc.section.5.6.p.3">A client that receives an indication that its 0-RTT data has been accepted by a server can send 0-RTT data until it receives all of the server’s handshake messages.  A client SHOULD stop sending 0-RTT data if it receives an indication that 0-RTT data has been rejected.</p>
+<p id="rfc.section.5.6.p.4">A server MUST NOT use 0-RTT keys to protect packets; it uses 1-RTT keys to protect acknowledgements of 0-RTT packets.  A client MUST NOT attempt to decrypt 0-RTT packets it receives and instead MUST discard them.</p>
+<p></p>
+
+<dl>
+<dt>Note:</dt>
+<dd style="margin-left: 8">0-RTT data can be acknowledged by the server as it receives it, but any packets containing acknowledgments of 0-RTT data cannot have packet protection removed by the client until the TLS handshake is complete.  The 1-RTT keys necessary to remove packet protection cannot be derived until the client receives all server handshake messages.</dd>
+</dl>
+<h2 id="rfc.section.5.7">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.5.7">5.7.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#pre-hs-protected" id="pre-hs-protected">Receiving Out-of-Order Protected Frames</a>
+</h2>
+<p id="rfc.section.5.7.p.1">Due to reordering and loss, protected packets might be received by an endpoint before the final TLS handshake messages are received.  A client will be unable to decrypt 1-RTT packets from the server, whereas a server will be able to decrypt 1-RTT packets from the client.</p>
+<p id="rfc.section.5.7.p.2">However, a server MUST NOT process data from incoming 1-RTT protected packets before verifying either the client Finished message or - in the case that the server has chosen to use a pre-shared key - the pre-shared key binder (see Section 4.2.11 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>).  Verifying these values provides the server with an assurance that the ClientHello has not been modified.  Packets protected with 1-RTT keys MAY be stored and later decrypted and used once the handshake is complete.</p>
+<p id="rfc.section.5.7.p.3">A server could receive packets protected with 0-RTT keys prior to receiving a TLS ClientHello.  The server MAY retain these packets for later decryption in anticipation of receiving a ClientHello.</p>
+<h1 id="rfc.section.6">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.6">6.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-update" id="key-update">Key Update</a>
+</h1>
+<p id="rfc.section.6.p.1">Once the 1-RTT keys are established and the short header is in use, it is possible to update the keys. The KEY_PHASE bit in the short header is used to indicate whether key updates have occurred. The KEY_PHASE bit is initially set to 0 and then inverted with each key update.</p>
+<p id="rfc.section.6.p.2">The KEY_PHASE bit allows a recipient to detect a change in keying material without necessarily needing to receive the first packet that triggered the change.  An endpoint that notices a changed KEY_PHASE bit can update keys and decrypt the packet that contains the changed bit.</p>
+<p id="rfc.section.6.p.3">This mechanism replaces the TLS KeyUpdate message.  Endpoints MUST NOT send a TLS KeyUpdate message.  Endpoints MUST treat the receipt of a TLS KeyUpdate message as a connection error of type 0x10a, equivalent to a fatal TLS alert of unexpected_message (see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-errors" class="xref">Section 4.8</a>).</p>
+<p id="rfc.section.6.p.4">An endpoint MUST NOT initiate more than one key update at a time.  A new key cannot be used until the endpoint has received and successfully decrypted a packet with a matching KEY_PHASE.</p>
+<p id="rfc.section.6.p.5">A receiving endpoint detects an update when the KEY_PHASE bit does not match what it is expecting.  It creates a new secret (see Section 7.2 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>) and the corresponding read key and IV using the KDF function provided by TLS.  The header protection key is not updated.</p>
+<p id="rfc.section.6.p.6">If the packet can be decrypted and authenticated using the updated key and IV, then the keys the endpoint uses for packet protection are also updated.  The next packet sent by the endpoint will then use the new keys.</p>
+<p id="rfc.section.6.p.7">An endpoint does not always need to send packets when it detects that its peer has updated keys.  The next packet that it sends will simply use the new keys.  If an endpoint detects a second update before it has sent any packets with updated keys, it indicates that its peer has updated keys twice without awaiting a reciprocal update.  An endpoint MUST treat consecutive key updates as a fatal error and abort the connection.</p>
+<p id="rfc.section.6.p.8">An endpoint SHOULD retain old keys for a period of no more than three times the Probe Timeout (PTO, see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-RECOVERY" class="xref">[QUIC-RECOVERY]</a>).  After this period, old keys and their corresponding secrets SHOULD be discarded.  Retaining keys allow endpoints to process packets that were sent with old keys and delayed in the network.  Packets with higher packet numbers always use the updated keys and MUST NOT be decrypted with old keys.</p>
+<p id="rfc.section.6.p.9">This ensures that once the handshake is complete, packets with the same KEY_PHASE will have the same packet protection keys, unless there are multiple key updates in a short time frame succession and significant packet reordering.</p>
+<div id="rfc.figure.6"></div>
+<div id="ex-key-update"></div>
+<pre>   Initiating Peer                    Responding Peer
+
+@M QUIC Frames
+               New Keys -&gt; @N
+@N QUIC Frames
+                      --------&gt;
+                                          QUIC Frames @M
+                          New Keys -&gt; @N
+                                          QUIC Frames @N
+                      &lt;--------
+</pre>
+<p class="figure">Figure 6: Key Update</p>
+<p id="rfc.section.6.p.10">A packet that triggers a key update could arrive after successfully processing a packet with a higher packet number.  This is only possible if there is a key compromise and an attack, or if the peer is incorrectly reverting to use of old keys.  Because the latter cannot be differentiated from an attack, an endpoint MUST immediately terminate the connection if it detects this condition.</p>
+<p id="rfc.section.6.p.11">In deciding when to update keys, endpoints MUST NOT exceed the limits for use of specific keys, as described in Section 5.5 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>.</p>
+<h1 id="rfc.section.7">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.7">7.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#security-of-initial-messages" id="security-of-initial-messages">Security of Initial Messages</a>
+</h1>
+<p id="rfc.section.7.p.1">Initial packets are not protected with a secret key, so they are subject to potential tampering by an attacker.  QUIC provides protection against attackers that cannot read packets, but does not attempt to provide additional protection against attacks where the attacker can observe and inject packets.  Some forms of tampering – such as modifying the TLS messages themselves – are detectable, but some – such as modifying ACKs – are not.</p>
+<p id="rfc.section.7.p.2">For example, an attacker could inject a packet containing an ACK frame that makes it appear that a packet had not been received or to create a false impression of the state of the connection (e.g., by modifying the ACK Delay).  Note that such a packet could cause a legitimate packet to be dropped as a duplicate.  Implementations SHOULD use caution in relying on any data which is contained in Initial packets that is not otherwise authenticated.</p>
+<p id="rfc.section.7.p.3">It is also possible for the attacker to tamper with data that is carried in Handshake packets, but because that tampering requires modifying TLS handshake messages, that tampering will cause the TLS handshake to fail.</p>
+<h1 id="rfc.section.8">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8">8.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#quic-specific-additions-to-the-tls-handshake" id="quic-specific-additions-to-the-tls-handshake">QUIC-Specific Additions to the TLS Handshake</a>
+</h1>
+<p id="rfc.section.8.p.1">QUIC uses the TLS handshake for more than just negotiation of cryptographic parameters.  The TLS handshake validates protocol version selection, provides preliminary values for QUIC transport parameters, and allows a server to perform return routeability checks on clients.</p>
+<h2 id="rfc.section.8.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.1">8.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#version-negotiation" id="version-negotiation">Protocol and Version Negotiation</a>
+</h2>
+<p id="rfc.section.8.1.p.1">The QUIC version negotiation mechanism is used to negotiate the version of QUIC that is used prior to the completion of the handshake.  However, this packet is not authenticated, enabling an active attacker to force a version downgrade.</p>
+<p id="rfc.section.8.1.p.2">To ensure that a QUIC version downgrade is not forced by an attacker, version information is copied into the TLS handshake, which provides integrity protection for the QUIC negotiation.  This does not prevent version downgrade prior to the completion of the handshake, though it means that a downgrade causes a handshake failure.</p>
+<p id="rfc.section.8.1.p.3">QUIC requires that the cryptographic handshake provide authenticated protocol negotiation.  TLS uses Application Layer Protocol Negotiation (ALPN) <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#RFC7301" class="xref">[RFC7301]</a> to select an application protocol.  Unless another mechanism is used for agreeing on an application protocol, endpoints MUST use ALPN for this purpose.  When using ALPN, endpoints MUST immediately close a connection (see Section 10.3 in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a>) if an application protocol is not negotiated with a no_application_protocol TLS alert (QUIC error code 0x178, see <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#tls-errors" class="xref">Section 4.8</a>).  While <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#RFC7301" class="xref">[RFC7301]</a> only specifies that servers use this alert, QUIC clients MUST also use it to terminate a connection when ALPN negotiation fails.</p>
+<p id="rfc.section.8.1.p.4">An application-layer protocol MAY restrict the QUIC versions that it can operate over.  Servers MUST select an application protocol compatible with the QUIC version that the client has selected.  If the server cannot select a compatible combination of application protocol and QUIC version, it MUST abort the connection. A client MUST abort a connection if the server picks an incompatible combination of QUIC version and ALPN identifier.</p>
+<h2 id="rfc.section.8.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.2">8.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#quic_parameters" id="quic_parameters">QUIC Transport Parameters Extension</a>
+</h2>
+<p id="rfc.section.8.2.p.1">QUIC transport parameters are carried in a TLS extension. Different versions of QUIC might define a different format for this struct.</p>
+<p id="rfc.section.8.2.p.2">Including transport parameters in the TLS handshake provides integrity protection for these values.</p>
+<pre>   enum {
+      quic_transport_parameters(0xffa5), (65535)
+   } ExtensionType;
+</pre>
+<p id="rfc.section.8.2.p.3">The <samp>extension_data</samp> field of the quic_transport_parameters extension contains a value that is defined by the version of QUIC that is in use.  The quic_transport_parameters extension carries a TransportParameters struct when the version of QUIC defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a> is used.</p>
+<p id="rfc.section.8.2.p.4">The quic_transport_parameters extension is carried in the ClientHello and the EncryptedExtensions messages during the handshake.</p>
+<p id="rfc.section.8.2.p.5">While the transport parameters are technically available prior to the completion of the handshake, they cannot be fully trusted until the handshake completes, and reliance on them should be minimized.  However, any tampering with the parameters will cause the handshake to fail.</p>
+<p id="rfc.section.8.2.p.6">Endpoints MUST NOT send this extension in a TLS connection that does not use QUIC (such as the use of TLS with TCP defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>).  A fatal unsupported_extension alert MUST be sent by an implementation that supports this extension if the extension is received when the transport is not QUIC.</p>
+<h2 id="rfc.section.8.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.8.3">8.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#remove-eoed" id="remove-eoed">Removing the EndOfEarlyData Message</a>
+</h2>
+<p id="rfc.section.8.3.p.1">The TLS EndOfEarlyData message is not used with QUIC.  QUIC does not rely on this message to mark the end of 0-RTT data or to signal the change to Handshake keys.</p>
+<p id="rfc.section.8.3.p.2">Clients MUST NOT send the EndOfEarlyData message.  A server MUST treat receipt of a CRYPTO frame in a 0-RTT packet as a connection error of type PROTOCOL_VIOLATION.</p>
+<p id="rfc.section.8.3.p.3">As a result, EndOfEarlyData does not appear in the TLS handshake transcript.</p>
+<h1 id="rfc.section.9">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9">9.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#security-considerations" id="security-considerations">Security Considerations</a>
+</h1>
+<p id="rfc.section.9.p.1">There are likely to be some real clangers here eventually, but the current set of issues is well captured in the relevant sections of the main text.</p>
+<p id="rfc.section.9.p.2">Never assume that because it isn’t in the security considerations section it doesn’t affect security.  Most of this document does.</p>
+<h2 id="rfc.section.9.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.1">9.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#replay-attacks-with-0-rtt" id="replay-attacks-with-0-rtt">Replay Attacks with 0-RTT</a>
+</h2>
+<p id="rfc.section.9.1.p.1">As described in Section 8 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>, use of TLS early data comes with an exposure to replay attack.  The use of 0-RTT in QUIC is similarly vulnerable to replay attack.</p>
+<p id="rfc.section.9.1.p.2">Endpoints MUST implement and use the replay protections described in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS13" class="xref">[TLS13]</a>, however it is recognized that these protections are imperfect.  Therefore, additional consideration of the risk of replay is needed.</p>
+<p id="rfc.section.9.1.p.3">QUIC is not vulnerable to replay attack, except via the application protocol information it might carry.  The management of QUIC protocol state based on the frame types defined in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a> is not vulnerable to replay.  Processing of QUIC frames is idempotent and cannot result in invalid connection states if frames are replayed, reordered or lost.  QUIC connections do not produce effects that last beyond the lifetime of the connection, except for those produced by the application protocol that QUIC serves.</p>
+<p></p>
+
+<dl>
+<dt>Note:</dt>
+<dd style="margin-left: 8">TLS session tickets and address validation tokens are used to carry QUIC configuration information between connections.  These MUST NOT be used to carry application semantics.  The potential for reuse of these tokens means that they require stronger protections against replay.</dd>
+</dl>
+<p id="rfc.section.9.1.p.5">A server that accepts 0-RTT on a connection incurs a higher cost than accepting a connection without 0-RTT.  This includes higher processing and computation costs.  Servers need to consider the probability of replay and all associated costs when accepting 0-RTT.</p>
+<p id="rfc.section.9.1.p.6">Ultimately, the responsibility for managing the risks of replay attacks with 0-RTT lies with an application protocol.  An application protocol that uses QUIC MUST describe how the protocol uses 0-RTT and the measures that are employed to protect against replay attack.  An analysis of replay risk needs to consider all QUIC protocol features that carry application semantics.</p>
+<p id="rfc.section.9.1.p.7">Disabling 0-RTT entirely is the most effective defense against replay attack.</p>
+<p id="rfc.section.9.1.p.8">QUIC extensions MUST describe how replay attacks affects their operation, or prohibit their use in 0-RTT.  Application protocols MUST either prohibit the use of extensions that carry application semantics in 0-RTT or provide replay mitigation strategies.</p>
+<h2 id="rfc.section.9.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.2">9.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#reflection" id="reflection">Packet Reflection Attack Mitigation</a>
+</h2>
+<p id="rfc.section.9.2.p.1">A small ClientHello that results in a large block of handshake messages from a server can be used in packet reflection attacks to amplify the traffic generated by an attacker.</p>
+<p id="rfc.section.9.2.p.2">QUIC includes three defenses against this attack. First, the packet containing a ClientHello MUST be padded to a minimum size. Second, if responding to an unverified source address, the server is forbidden to send more than three UDP datagrams in its first flight (see Section 8.1 of <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#QUIC-TRANSPORT" class="xref">[QUIC-TRANSPORT]</a>). Finally, because acknowledgements of Handshake packets are authenticated, a blind attacker cannot forge them.  Put together, these defenses limit the level of amplification.</p>
+<h2 id="rfc.section.9.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.3">9.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#useless" id="useless">Peer Denial of Service</a>
+</h2>
+<p id="rfc.section.9.3.p.1">QUIC, TLS, and HTTP/2 all contain messages that have legitimate uses in some contexts, but that can be abused to cause a peer to expend processing resources without having any observable impact on the state of the connection.  If processing is disproportionately large in comparison to the observable effects on bandwidth or state, then this could allow a malicious peer to exhaust processing capacity without consequence.</p>
+<p id="rfc.section.9.3.p.2">QUIC prohibits the sending of empty <samp>STREAM</samp> frames unless they are marked with the FIN bit.  This prevents <samp>STREAM</samp> frames from being sent that only waste effort.</p>
+<p id="rfc.section.9.3.p.3">While there are legitimate uses for some redundant packets, implementations SHOULD track redundant packets and treat excessive volumes of any non-productive packets as indicative of an attack.</p>
+<h2 id="rfc.section.9.4">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.4">9.4.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#header-protect-analysis" id="header-protect-analysis">Header Protection Analysis</a>
+</h2>
+<p id="rfc.section.9.4.p.1">Header protection relies on the packet protection AEAD being a pseudorandom function (PRF), which is not a property that AEAD algorithms guarantee. Therefore, no strong assurances about the general security of this mechanism can be shown in the general case. The AEAD algorithms described in this document are assumed to be PRFs.</p>
+<p id="rfc.section.9.4.p.2">The header protection algorithms defined in this document take the form:</p>
+<pre>protected_field = field XOR PRF(hp_key, sample)
+</pre>
+<p id="rfc.section.9.4.p.3">This construction is secure against chosen plaintext attacks (IND-CPA) <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#IMC" class="xref">[IMC]</a>.</p>
+<p id="rfc.section.9.4.p.4">Use of the same key and ciphertext sample more than once risks compromising header protection. Protecting two different headers with the same key and ciphertext sample reveals the exclusive OR of the protected fields.  Assuming that the AEAD acts as a PRF, if L bits are sampled, the odds of two ciphertext samples being identical approach 2^(-L/2), that is, the birthday bound. For the algorithms described in this document, that probability is one in 2^64.</p>
+<p></p>
+
+<dl>
+<dt>Note:</dt>
+<dd style="margin-left: 8">In some cases, inputs shorter than the full size required by the packet protection algorithm might be used.</dd>
+</dl>
+<p id="rfc.section.9.4.p.6">To prevent an attacker from modifying packet headers, the header is transitively authenticated using packet protection; the entire packet header is part of the authenticated additional data.  Protected fields that are falsified or modified can only be detected once the packet protection is removed.</p>
+<p id="rfc.section.9.4.p.7">An attacker could guess values for packet numbers and have an endpoint confirm guesses through timing side channels.  Similarly, guesses for the packet number length can be trialed and exposed.  If the recipient of a packet discards packets with duplicate packet numbers without attempting to remove packet protection they could reveal through timing side-channels that the packet number matches a received packet.  For authentication to be free from side-channels, the entire process of header protection removal, packet number recovery, and packet protection removal MUST be applied together without timing and other side-channels.</p>
+<p id="rfc.section.9.4.p.8">For the sending of packets, construction and protection of packet payloads and packet numbers MUST be free from side-channels that would reveal the packet number or its encoded size.</p>
+<h2 id="rfc.section.9.5">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.9.5">9.5.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#key-diversity" id="key-diversity">Key Diversity</a>
+</h2>
+<p id="rfc.section.9.5.p.1">In using TLS, the central key schedule of TLS is used.  As a result of the TLS handshake messages being integrated into the calculation of secrets, the inclusion of the QUIC transport parameters extension ensures that handshake and 1-RTT keys are not the same as those that might be produced by a server running TLS over TCP.  To avoid the possibility of cross-protocol key synchronization, additional measures are provided to improve key separation.</p>
+<p id="rfc.section.9.5.p.2">The QUIC packet protection keys and IVs are derived using a different label than the equivalent keys in TLS.</p>
+<p id="rfc.section.9.5.p.3">To preserve this separation, a new version of QUIC SHOULD define new labels for key derivation for packet protection key and IV, plus the header protection keys.  This version of QUIC uses the string “quic”.  Other versions can use a version-specific label in place of that string.</p>
+<p id="rfc.section.9.5.p.4">The initial secrets use a key that is specific to the negotiated QUIC version.  New QUIC versions SHOULD define a new salt value used in calculating initial secrets.</p>
+<h1 id="rfc.section.10">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.section.10">10.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#iana-considerations" id="iana-considerations">IANA Considerations</a>
+</h1>
+<p id="rfc.section.10.p.1">This document does not create any new IANA registries, but it registers the values in the following registries:</p>
+<p></p>
+
+<ul><li>TLS ExtensionsType Registry <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#TLS-REGISTRIES" class="xref">[TLS-REGISTRIES]</a> - IANA is to register the quic_transport_parameters extension found in <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#quic_parameters" class="xref">Section 8.2</a>.  The Recommended column is to be marked Yes.  The TLS 1.3 Column is to include CH and EE.</li></ul>
+<h1 id="rfc.references">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references">11.</a> References</h1>
+<h2 id="rfc.references.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references.1">11.1.</a> Normative References</h2>
+<table><tbody>
+<tr>
+<td class="reference"><b id="AEAD">[AEAD]</b></td>
+<td class="top">
+<a>McGrew, D.</a>, "<a href="https://tools.ietf.org/html/rfc5116">An Interface and Algorithms for Authenticated Encryption</a>", RFC 5116, DOI 10.17487/RFC5116, January 2008.</td>
+</tr>
+<tr>
+<td class="reference"><b id="AES">[AES]</b></td>
+<td class="top">"<a>Advanced encryption standard (AES)</a>", National Institute of Standards and Technology report, DOI 10.6028/nist.fips.197, November 2001.</td>
+</tr>
+<tr>
+<td class="reference"><b id="CHACHA">[CHACHA]</b></td>
+<td class="top">
+<a>Nir, Y.</a> and <a>A. Langley</a>, "<a href="https://tools.ietf.org/html/rfc8439">ChaCha20 and Poly1305 for IETF Protocols</a>", RFC 8439, DOI 10.17487/RFC8439, June 2018.</td>
+</tr>
+<tr>
+<td class="reference"><b id="QUIC-RECOVERY">[QUIC-RECOVERY]</b></td>
+<td class="top">
+<a title="Fastly">Iyengar, J.</a> and <a title="Google">I. Swett</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-recovery-20">QUIC Loss Detection and Congestion Control</a>", Internet-Draft draft-ietf-quic-recovery-20, April 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="QUIC-TRANSPORT">[QUIC-TRANSPORT]</b></td>
+<td class="top">
+<a title="Fastly">Iyengar, J.</a> and <a title="Mozilla">M. Thomson</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-transport-20">QUIC: A UDP-Based Multiplexed and Secure Transport</a>", Internet-Draft draft-ietf-quic-transport-20, April 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2119">[RFC2119]</b></td>
+<td class="top">
+<a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7301">[RFC7301]</b></td>
+<td class="top">
+<a>Friedl, S.</a>, <a>Popov, A.</a>, <a>Langley, A.</a> and <a>E. Stephan</a>, "<a href="https://tools.ietf.org/html/rfc7301">Transport Layer Security (TLS) Application-Layer Protocol Negotiation Extension</a>", RFC 7301, DOI 10.17487/RFC7301, July 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8174">[RFC8174]</b></td>
+<td class="top">
+<a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
+</tr>
+<tr>
+<td class="reference"><b id="SHA">[SHA]</b></td>
+<td class="top">
+<a>Dang, Q.</a>, "<a>Secure Hash Standard</a>", National Institute of Standards and Technology report, DOI 10.6028/nist.fips.180-4, July 2015.</td>
+</tr>
+<tr>
+<td class="reference"><b id="TLS-REGISTRIES">[TLS-REGISTRIES]</b></td>
+<td class="top">
+<a>Salowey, J.</a> and <a>S. Turner</a>, "<a href="https://tools.ietf.org/html/rfc8447">IANA Registry Updates for TLS and DTLS</a>", RFC 8447, DOI 10.17487/RFC8447, August 2018.</td>
+</tr>
+<tr>
+<td class="reference"><b id="TLS13">[TLS13]</b></td>
+<td class="top">
+<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/rfc8446">The Transport Layer Security (TLS) Protocol Version 1.3</a>", RFC 8446, DOI 10.17487/RFC8446, August 2018.</td>
+</tr>
+</tbody></table>
+<h2 id="rfc.references.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.references.2">11.2.</a> Informative References</h2>
+<table><tbody>
+<tr>
+<td class="reference"><b id="AEBounds">[AEBounds]</b></td>
+<td class="top">
+<a>Luykx, A.</a> and <a>K. Paterson</a>, "<a href="http://www.isg.rhul.ac.uk/~kp/TLS-AEbounds.pdf">Limits on Authenticated Encryption Use in TLS</a>", March 2016.</td>
+</tr>
+<tr>
+<td class="reference"><b id="CCM">[CCM]</b></td>
+<td class="top">
+<a>McGrew, D.</a> and <a>D. Bailey</a>, "<a href="https://tools.ietf.org/html/rfc6655">AES-CCM Cipher Suites for Transport Layer Security (TLS)</a>", RFC 6655, DOI 10.17487/RFC6655, July 2012.</td>
+</tr>
+<tr>
+<td class="reference"><b id="IMC">[IMC]</b></td>
+<td class="top">
+<a>Katz, J.</a> and <a>Y. Lindell</a>, "<a>Introduction to Modern Cryptography, Second Edition</a>", ISBN 978-1466570269, November 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="QUIC-HTTP">[QUIC-HTTP]</b></td>
+<td class="top">
+<a title="Microsoft">Bishop, M.</a>, "<a href="https://tools.ietf.org/html/draft-ietf-quic-http-20">Hypertext Transfer Protocol (HTTP) over QUIC</a>", Internet-Draft draft-ietf-quic-http-20, April 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2818">[RFC2818]</b></td>
+<td class="top">
+<a>Rescorla, E.</a>, "<a href="https://tools.ietf.org/html/rfc2818">HTTP Over TLS</a>", RFC 2818, DOI 10.17487/RFC2818, May 2000.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC5280">[RFC5280]</b></td>
+<td class="top">
+<a>Cooper, D.</a>, <a>Santesson, S.</a>, <a>Farrell, S.</a>, <a>Boeyen, S.</a>, <a>Housley, R.</a> and <a>W. Polk</a>, "<a href="https://tools.ietf.org/html/rfc5280">Internet X.509 Public Key Infrastructure Certificate and Certificate Revocation List (CRL) Profile</a>", RFC 5280, DOI 10.17487/RFC5280, May 2008.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.appendix.A">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A">Appendix A.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#test-vectors-initial" id="test-vectors-initial">Sample Initial Packet Protection</a>
+</h1>
+<p id="rfc.section.A.p.1">This section shows examples of packet protection for Initial packets so that implementations can be verified incrementally.  These packets use an 8-byte client-chosen Destination Connection ID of 0x8394c8f03e515708.  Values for both server and client packet protection are shown together with values in hexadecimal.</p>
+<h2 id="rfc.appendix.A.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.1">A.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#keys" id="keys">Keys</a>
+</h2>
+<p id="rfc.section.A.1.p.1">The labels generated by the HKDF-Expand-Label function are:</p>
+<p></p>
+
+<dl>
+<dt>client in:</dt>
+<dd style="margin-left: 8">00200f746c73313320636c69656e7420696e00</dd>
+<dt>server in:</dt>
+<dd style="margin-left: 8">00200f746c7331332073657276657220696e00</dd>
+<dt>quic key:</dt>
+<dd style="margin-left: 8">00100e746c7331332071756963206b657900</dd>
+<dt>quic iv:</dt>
+<dd style="margin-left: 8">000c0d746c733133207175696320697600</dd>
+<dt>quic hp:</dt>
+<dd style="margin-left: 8">00100d746c733133207175696320687000</dd>
+</dl>
+<p id="rfc.section.A.1.p.3">The initial secret is common:</p>
+<pre>initial_secret = HKDF-Extract(initial_salt, cid)
+    = 4496d3903d3f97cc5e45ac5790ddc686
+      683c7c0067012bb09d900cc21832d596
+</pre>
+<p id="rfc.section.A.1.p.4">The secrets for protecting client packets are:</p>
+<pre>client_initial_secret
+    = HKDF-Expand-Label(initial_secret, "client in", _, 32)
+    = 8a3515a14ae3c31b9c2d6d5bc58538ca
+      5cd2baa119087143e60887428dcb52f6
+
+key = HKDF-Expand-Label(client_initial_secret, "quic key", _, 16)
+    = 98b0d7e5e7a402c67c33f350fa65ea54
+
+iv  = HKDF-Expand-Label(client_initial_secret, "quic iv", _, 12)
+    = 19e94387805eb0b46c03a788
+
+hp  = HKDF-Expand-Label(client_initial_secret, "quic hp", _, 16)
+    = 0edd982a6ac527f2eddcbb7348dea5d7
+</pre>
+<p id="rfc.section.A.1.p.5">The secrets for protecting server packets are:</p>
+<pre>server_initial_secret
+    = HKDF-Expand-Label(initial_secret, "server in", _, 32)
+    = 47b2eaea6c266e32c0697a9e2a898bdf
+      5c4fb3e5ac34f0e549bf2c58581a3811
+
+key = HKDF-Expand-Label(server_initial_secret, "quic key", _, 16)
+    = 9a8be902a9bdd91d16064ca118045fb4
+
+iv  = HKDF-Expand-Label(server_initial_secret, "quic iv", _, 12)
+    = 0a82086d32205ba22241d8dc
+
+hp  = HKDF-Expand-Label(server_initial_secret, "quic hp", _, 16)
+    = 94b9452d2b3c7c7f6da7fdd8593537fd
+</pre>
+<h2 id="rfc.appendix.A.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.2">A.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#client-initial" id="client-initial">Client Initial</a>
+</h2>
+<p id="rfc.section.A.2.p.1">The client sends an Initial packet.  The unprotected payload of this packet contains the following CRYPTO frame, plus enough PADDING frames to make an 1163 byte payload:</p>
+<pre>060040c4010000c003036660261ff947 cea49cce6cfad687f457cf1b14531ba1
+4131a0e8f309a1d0b9c4000006130113 031302010000910000000b0009000006
+736572766572ff01000100000a001400 12001d00170018001901000101010201
+03010400230000003300260024001d00 204cfdfcd178b784bf328cae793b136f
+2aedce005ff183d7bb14952072366470 37002b0003020304000d0020001e0403
+05030603020308040805080604010501 060102010402050206020202002d0002
+0101001c00024001
+</pre>
+<p id="rfc.section.A.2.p.2">The unprotected header includes the connection ID and a 4 byte packet number encoding for a packet number of 2:</p>
+<pre>c3ff000012508394c8f03e51570800449f00000002
+</pre>
+<p id="rfc.section.A.2.p.3">Protecting the payload produces output that is sampled for header protection.  Because the header uses a 4 byte packet number encoding, the first 16 bytes of the protected payload is sampled, then applied to the header:</p>
+<pre>sample = 0000f3a694c75775b4e546172ce9e047
+
+mask = AES-ECB(hp, sample)[0..4]
+     = 020dbc1958
+
+header[0] ^= mask[0] &amp; 0x0f
+     = c1
+header[17..20] ^= mask[1..4]
+     = 0dbc195a
+header = c1ff000012508394c8f03e51570800449f0dbc195a
+</pre>
+<p id="rfc.section.A.2.p.4">The resulting protected packet is:</p>
+<pre>c1ff000012508394c8f03e5157080044 9f0dbc195a0000f3a694c75775b4e546
+172ce9e047cd0b5bee5181648c727adc 87f7eae54473ec6cba6bdad4f5982317
+4b769f12358abd292d4f3286934484fb 8b239c38732e1f3bbbc6a003056487eb
+8b5c88b9fd9279ffff3b0f4ecf95c462 4db6d65d4113329ee9b0bf8cdd7c8a8d
+72806d55df25ecb66488bc119d7c9a29 abaf99bb33c56b08ad8c26995f838bb3
+b7a3d5c1858b8ec06b839db2dcf918d5 ea9317f1acd6b663cc8925868e2f6a1b
+da546695f3c3f33175944db4a11a346a fb07e78489e509b02add51b7b203eda5
+c330b03641179a31fbba9b56ce00f3d5 b5e3d7d9c5429aebb9576f2f7eacbe27
+bc1b8082aaf68fb69c921aa5d33ec0c8 510410865a178d86d7e54122d55ef2c2
+bbc040be46d7fece73fe8a1b24495ec1 60df2da9b20a7ba2f26dfa2a44366dbc
+63de5cd7d7c94c57172fe6d79c901f02 5c0010b02c89b395402c009f62dc053b
+8067a1e0ed0a1e0cf5087d7f78cbd94a fe0c3dd55d2d4b1a5cfe2b68b86264e3
+51d1dcd858783a240f893f008ceed743 d969b8f735a1677ead960b1fb1ecc5ac
+83c273b49288d02d7286207e663c45e1 a7baf50640c91e762941cf380ce8d79f
+3e86767fbbcd25b42ef70ec334835a3a 6d792e170a432ce0cb7bde9aaa1e7563
+7c1c34ae5fef4338f53db8b13a4d2df5 94efbfa08784543815c9c0d487bddfa1
+539bc252cf43ec3686e9802d651cfd2a 829a06a9f332a733a4a8aed80efe3478
+093fbc69c8608146b3f16f1a5c4eac93 20da49f1afa5f538ddecbbe7888f4355
+12d0dd74fd9b8c99e3145ba84410d8ca 9a36dd884109e76e5fb8222a52e1473d
+a168519ce7a8a3c32e9149671b16724c 6c5c51bb5cd64fb591e567fb78b10f9f
+6fee62c276f282a7df6bcf7c17747bc9 a81e6c9c3b032fdd0e1c3ac9eaa5077d
+e3ded18b2ed4faf328f49875af2e36ad 5ce5f6cc99ef4b60e57b3b5b9c9fcbcd
+4cfb3975e70ce4c2506bcd71fef0e535 92461504e3d42c885caab21b782e2629
+4c6a9d61118cc40a26f378441ceb48f3 1a362bf8502a723a36c63502229a462c
+c2a3796279a5e3a7f81a68c7f81312c3 81cc16a4ab03513a51ad5b54306ec1d7
+8a5e47e2b15e5b7a1438e5b8b2882dbd ad13d6a4a8c3558cae043501b68eb3b0
+40067152337c051c40b5af809aca2856 986fd1c86a4ade17d254b6262ac1bc07
+7343b52bf89fa27d73e3c6f3118c9961 f0bebe68a5c323c2d84b8c29a2807df6
+63635223242a2ce9828d4429ac270aab 5f1841e8e49cf433b1547989f419caa3
+c758fff96ded40cf3427f0761b678daa 1a9e5554465d46b7a917493fc70f9ec5
+e4e5d786ca501730898aaa1151dcd318 29641e29428d90e6065511c24d3109f7
+cba32225d4accfc54fec42b733f95852 52ee36fa5ea0c656934385b468eee245
+315146b8c047ed27c519b2c0a52d33ef e72c186ffe0a230f505676c5324baa6a
+e006a73e13aa8c39ab173ad2b2778eea 0b34c46f2b3beae2c62a2c8db238bf58
+fc7c27bdceb96c56d29deec87c12351b fd5962497418716a4b915d334ffb5b92
+ca94ffe1e4f78967042638639a9de325 357f5f08f6435061e5a274703936c06f
+c56af92c420797499ca431a7abaa4618 63bca656facfad564e6274d4a741033a
+ca1e31bf63200df41cdf41c10b912bec
+</pre>
+<h2 id="rfc.appendix.A.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.A.3">A.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#server-initial" id="server-initial">Server Initial</a>
+</h2>
+<p id="rfc.section.A.3.p.1">The server sends the following payload in response, including an ACK frame, a CRYPTO frame, and no PADDING frames:</p>
+<pre>0d0000000018410a020000560303eefc e7f7b37ba1d1632e96677825ddf73988
+cfc79825df566dc5430b9a045a120013 0100002e00330024001d00209d3c940d
+89690b84d08a60993c144eca684d1081 287c834d5311bcf32bb9da1a002b0002
+0304
+</pre>
+<p id="rfc.section.A.3.p.2">The header from the server includes a new connection ID and a 2-byte packet number encoding for a packet number of 1:</p>
+<pre>c1ff00001205f067a5502a4262b50040740001
+</pre>
+<p id="rfc.section.A.3.p.3">As a result, after protection, the header protection sample is taken starting from the third protected octet:</p>
+<pre>sample = c4c2a2303d297e3c519bf6b22386e3d0
+mask   = 75f7ec8b62
+header = c4ff00001205f067a5502a4262b5004074f7ed
+</pre>
+<p id="rfc.section.A.3.p.4">The final protected packet is then:</p>
+<pre>c4ff00001205f067a5502a4262b50040 74f7ed5f01c4c2a2303d297e3c519bf6
+b22386e3d0bd6dfc6612167729803104 1bb9a79c9f0f9d4c5877270a660f5da3
+6207d98b73839b2fdf2ef8e7df5a51b1 7b8c68d864fd3e708c6c1b71a98a3318
+15599ef5014ea38c44bdfd387c03b527 5c35e009b6238f831420047c7271281c
+cb54df7884
+</pre>
+<h1 id="rfc.appendix.B">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B">Appendix B.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#change-log" id="change-log">Change Log</a>
+</h1>
+<p></p>
+
+<ul class="empty"><li>
+<strong>RFC Editor’s Note:</strong> Please remove this section prior to publication of a final version of this document.</li></ul>
+<p id="rfc.section.B.p.2">Issue and pull request numbers are listed with a leading octothorp.</p>
+<h2 id="rfc.appendix.B.1">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.1">B.1.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-18" id="since-draft-ietf-quic-tls-18">Since draft-ietf-quic-tls-18</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Increased the set of permissible frames in 0-RTT (#2344, #2355)</li>
+<li>Transport parameter extension is mandatory (#2528, #2560)</li>
+</ul>
+<h2 id="rfc.appendix.B.2">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.2">B.2.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-17" id="since-draft-ietf-quic-tls-17">Since draft-ietf-quic-tls-17</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Endpoints discard initial keys as soon as handshake keys are available (#1951, #2045)</li>
+<li>Use of ALPN or equivalent is mandatory (#2263, #2284)</li>
+</ul>
+<h2 id="rfc.appendix.B.3">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.3">B.3.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-14" id="since-draft-ietf-quic-tls-14">Since draft-ietf-quic-tls-14</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Update the salt used for Initial secrets (#1970)</li>
+<li>Clarify that TLS_AES_128_CCM_8_SHA256 isn’t supported (#2019)</li>
+<li>Change header protection <ul>
+<li>Sample from a fixed offset (#1575, #2030)</li>
+<li>Cover part of the first byte, including the key phase (#1322, #2006)</li>
+</ul>
+</li>
+<li>TLS provides an AEAD and KDF function (#2046) <ul>
+<li>Clarify that the TLS KDF is used with TLS (#1997)</li>
+<li>Change the labels for calculation of QUIC keys (#1845, #1971, #1991)</li>
+</ul>
+</li>
+<li>Initial keys are discarded once Handshake are avaialble (#1951, #2045)</li>
+</ul>
+<h2 id="rfc.appendix.B.4">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.4">B.4.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-13" id="since-draft-ietf-quic-tls-13">Since draft-ietf-quic-tls-13</a>
+</h2>
+<p></p>
+
+<ul><li>Updated to TLS 1.3 final (#1660)</li></ul>
+<h2 id="rfc.appendix.B.5">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.5">B.5.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-12" id="since-draft-ietf-quic-tls-12">Since draft-ietf-quic-tls-12</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Changes to integration of the TLS handshake (#829, #1018, #1094, #1165, #1190, #1233, #1242, #1252, #1450) <ul>
+<li>The cryptographic handshake uses CRYPTO frames, not stream 0</li>
+<li>QUIC packet protection is used in place of TLS record protection</li>
+<li>Separate QUIC packet number spaces are used for the handshake</li>
+<li>Changed Retry to be independent of the cryptographic handshake</li>
+<li>Limit the use of HelloRetryRequest to address TLS needs (like key shares)</li>
+</ul>
+</li>
+<li>Changed codepoint of TLS extension (#1395, #1402)</li>
+</ul>
+<h2 id="rfc.appendix.B.6">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.6">B.6.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-11" id="since-draft-ietf-quic-tls-11">Since draft-ietf-quic-tls-11</a>
+</h2>
+<p></p>
+
+<ul><li>Encrypted packet numbers.</li></ul>
+<h2 id="rfc.appendix.B.7">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.7">B.7.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-10" id="since-draft-ietf-quic-tls-10">Since draft-ietf-quic-tls-10</a>
+</h2>
+<p></p>
+
+<ul><li>No significant changes.</li></ul>
+<h2 id="rfc.appendix.B.8">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.8">B.8.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-09" id="since-draft-ietf-quic-tls-09">Since draft-ietf-quic-tls-09</a>
+</h2>
+<p></p>
+
+<ul><li>Cleaned up key schedule and updated the salt used for handshake packet protection (#1077)</li></ul>
+<h2 id="rfc.appendix.B.9">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.9">B.9.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-08" id="since-draft-ietf-quic-tls-08">Since draft-ietf-quic-tls-08</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Specify value for max_early_data_size to enable 0-RTT (#942)</li>
+<li>Update key derivation function (#1003, #1004)</li>
+</ul>
+<h2 id="rfc.appendix.B.10">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.10">B.10.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-07" id="since-draft-ietf-quic-tls-07">Since draft-ietf-quic-tls-07</a>
+</h2>
+<p></p>
+
+<ul><li>Handshake errors can be reported with CONNECTION_CLOSE (#608, #891)</li></ul>
+<h2 id="rfc.appendix.B.11">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.11">B.11.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-05" id="since-draft-ietf-quic-tls-05">Since draft-ietf-quic-tls-05</a>
+</h2>
+<p id="rfc.section.B.11.p.1">No significant changes.</p>
+<h2 id="rfc.appendix.B.12">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.12">B.12.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-04" id="since-draft-ietf-quic-tls-04">Since draft-ietf-quic-tls-04</a>
+</h2>
+<p></p>
+
+<ul><li>Update labels used in HKDF-Expand-Label to match TLS 1.3 (#642)</li></ul>
+<h2 id="rfc.appendix.B.13">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.13">B.13.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-03" id="since-draft-ietf-quic-tls-03">Since draft-ietf-quic-tls-03</a>
+</h2>
+<p id="rfc.section.B.13.p.1">No significant changes.</p>
+<h2 id="rfc.appendix.B.14">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.14">B.14.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-02" id="since-draft-ietf-quic-tls-02">Since draft-ietf-quic-tls-02</a>
+</h2>
+<p></p>
+
+<ul><li>Updates to match changes in transport draft</li></ul>
+<h2 id="rfc.appendix.B.15">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.15">B.15.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-01" id="since-draft-ietf-quic-tls-01">Since draft-ietf-quic-tls-01</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Use TLS alerts to signal TLS errors (#272, #374)</li>
+<li>Require ClientHello to fit in a single packet (#338)</li>
+<li>The second client handshake flight is now sent in the clear (#262, #337)</li>
+<li>The QUIC header is included as AEAD Associated Data (#226, #243, #302)</li>
+<li>Add interface necessary for client address validation (#275)</li>
+<li>Define peer authentication (#140)</li>
+<li>Require at least TLS 1.3 (#138)</li>
+<li>Define transport parameters as a TLS extension (#122)</li>
+<li>Define handling for protected packets before the handshake completes (#39)</li>
+<li>Decouple QUIC version and ALPN (#12)</li>
+</ul>
+<h2 id="rfc.appendix.B.16">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.16">B.16.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-ietf-quic-tls-00" id="since-draft-ietf-quic-tls-00">Since draft-ietf-quic-tls-00</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Changed bit used to signal key phase</li>
+<li>Updated key phase markings during the handshake</li>
+<li>Added TLS interface requirements section</li>
+<li>Moved to use of TLS exporters for key derivation</li>
+<li>Moved TLS error code definitions into this document</li>
+</ul>
+<h2 id="rfc.appendix.B.17">
+<a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.appendix.B.17">B.17.</a> <a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#since-draft-thomson-quic-tls-01" id="since-draft-thomson-quic-tls-01">Since draft-thomson-quic-tls-01</a>
+</h2>
+<p></p>
+
+<ul>
+<li>Adopted as base for draft-ietf-quic-tls</li>
+<li>Updated authors/editors list</li>
+<li>Added status note</li>
+</ul>
+<h1 id="rfc.acknowledgments"><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.acknowledgments">Acknowledgments</a></h1>
+<p id="rfc.section.C.p.1">This document has benefited from input from Dragana Damjanovic, Christian Huitema, Jana Iyengar, Adam Langley, Roberto Peon, Eric Rescorla, Ian Swett, and many others.</p>
+<h1 id="rfc.contributors"><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.contributors">Contributors</a></h1>
+<p id="rfc.section.D.p.1">Ryan Hamilton was originally an author of this specification.</p>
+<h1 id="rfc.authors"><a href="https://tools.ietf.org/id/draft-ietf-quic-tls-20.html#rfc.authors">Authors' Addresses</a></h1>
+<div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Martin Thomson</span> (editor)
+	  <span class="n hidden">
+		<span class="family-name">Thomson</span>
+	  </span>
+	</span>
+	<span class="org vcardline">Mozilla</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:mt@lowentropy.net">mt@lowentropy.net</a></span>
+
+  </address>
+</div><div class="avoidbreak">
+  <address class="vcard">
+	<span class="vcardline">
+	  <span class="fn">Sean Turner</span> (editor)
+	  <span class="n hidden">
+		<span class="family-name">Turner</span>
+	  </span>
+	</span>
+	<span class="org vcardline">sn3rd</span>
+	<span class="adr">
+	  
+	  <span class="vcardline">
+		<span class="locality"></span> 
+		<span class="region"></span>
+		<span class="code"></span>
+	  </span>
+	  <span class="country-name vcardline"></span>
+	</span>
+	<span class="vcardline">EMail: <a href="mailto:sean@sn3rd.com">sean@sn3rd.com</a></span>
+
+  </address>
+</div>
+
+
+
+</body></html>
