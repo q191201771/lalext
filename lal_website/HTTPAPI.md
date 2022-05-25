@@ -94,9 +94,10 @@ $curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
     "video_codec": "H264",    // 视频编码格式 "H264" | "H265"
     "video_width": 640,       // 视频宽
     "video_height": 360,      // 视频高
-    "pub": {                  // 接收推流的信息
-      "protocol": "RTMP",                      // 推流协议 "RTMP" | "RTSP"
+    "pub": {                                   // -----接收推流的信息-----
       "session_id": "RTMPPUBSUB1",             // 会话ID，会话全局唯一标识
+      "protocol": "RTMP",                      // 推流协议，取值范围： "RTMP" | "RTSP"
+      "base_type": "PUB",                      // 基础类型，该处固定为"PUB"
       "start_time": "2020-10-11 19:17:41.586", // 推流开始时间
       "remote_addr": "127.0.0.1:61353",        // 对端地址
       "read_bytes_sum": 9219247,               // 累计读取数据大小（从推流开始时计算）
@@ -105,10 +106,11 @@ $curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
       "read_bitrate": 436,                     // 最近5秒读取数据码率
       "write_bitrate": 0                       // 最近5秒发送数据码率
     },
-    "subs": [                 // 拉流的信息，可能存在多种协议，每种协议可能存在多个会话连接
+    "subs": [                                    // -----拉流的信息，可能存在多种协议，每种协议可能存在多个会话连接-----
       {
-        "protocol": "HTTP-FLV",                  // 拉流协议 "RTMP" | "HTTP-FLV" | "HTTP-TS"
         "session_id": "FLVSUB1",                 // 会话ID，会话全局唯一标识
+        "protocol": "FLV",                       // 拉流协议，取值范围： "RTMP" | "FLV" | "TS"
+        "base_type" "SUB"                        // 基础类型，该处固定为"SUB"
         "start_time": "2020-10-11 19:19:21.724", // 拉流开始时间
         "remote_addr": "127.0.0.1:61785",        // 对端地址
         "read_bytes_sum": 134,                   // 累计读取数据大小（从拉流开始时计算）
@@ -118,8 +120,11 @@ $curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
         "write_bitrate": 439                     // 最近5秒发送数据码率
       }
     ],
-    "pull": {}, // 该节点从其他节点拉流回源信息，内部字段和上面pub的内部字段相同，不再赘述
-    "pushs":[]  // 主动外连转推信息，暂时不提供
+    "pull": {              // -----该节点从其他节点拉流回源信息-----
+      "base_type": "PULL", // 该处固定为"PULL"
+      ...                  // 其他字段和上面pub的内部字段相同，不再赘述
+    }, 
+    "pushs":[] // 主动外连转推信息，暂时不提供
   }
 }
 ```
@@ -242,7 +247,7 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
 - 2001 请求接口失败，失败描述参考desp
   - "lal.logic: in stream already exist in group": 输入流已经存在了
 
-> 注意：返回成功表示lalserver收到命令并开始从远端拉流，并不保证从远端拉流成功。判断是否拉流成功，可以使用HTTP-Notify的on_relay_pull_start回调事件
+> 注意：返回成功表示lalserver收到命令并开始从远端拉流，并不保证从远端拉流成功。判断是否拉流成功，可以使用HTTP-Notify的on_relay_pull_start, on_update等回调事件
 
 ✸ 返回示例：
 
