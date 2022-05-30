@@ -92,7 +92,7 @@
   "rtsp": {
     "enable": true,                 //. 是否开启rtsp服务的监听
     "addr": ":5544",                //. rtsp监听地址
-    "out_wait_key_frame_flag": true //. rtsp发送数据时，是否等待视频关键帧数据再发送
+    "out_wait_key_frame_flag": true, //. rtsp发送数据时，是否等待视频关键帧数据再发送
                                     //
                                     //  该配置项主要决定首帧、花屏、音视频同步等问题
                                     //
@@ -105,6 +105,10 @@
                                     //  为了应对这个问题，lalserver会尽最大可能判断是否为纯音频的流，
                                     //  如果判断成功为纯音频的流，音频将直接发送。
                                     //  但是，如果有纯音频流，依然建议将该配置项设置为false
+    "auth_enable": false,           //. 是否开启rtsp服务鉴权功能
+    "auth_method": 1,               //. rtsp鉴权方式, 0-Basic鉴权方式, 1-Digest鉴权方式(MD5算法)
+    "username": admin,              //. rtsp服务账号, 开启鉴权功能需配置
+    "password": admin123            //. rtsp服务密码, 开启鉴权功能需配置
   },
   "record": {
     "enable_flv": true,                      //. 是否开启flv录制
