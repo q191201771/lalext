@@ -27,15 +27,16 @@ HTTP Notify在配置文件中有一些配置如下（具体以 [lalserver 配置
 ## ▌ 二. HTTP Notify列表
 
 ```
-1. on_update           // 定时汇报所有group、session的信息
-2. on_pub_start        // 别人推流到当前节点
-3. on_pub_stop         // 推流停止
-4. on_sub_start        // 别人从当前节点拉流
-5. on_sub_stop         // 拉流停止
-6. on_relay_pull_start // 回源拉流成功
-7. on_relay_pull_stop  // 回源拉流停止
-8. on_rtmp_connect     // 收到rtmp connect message信令
-9. on_server_start     // 服务启动时
+ 1. on_update           // 定时汇报所有group、session的信息
+ 2. on_pub_start        // 别人推流到当前节点
+ 3. on_pub_stop         // 推流停止
+ 4. on_sub_start        // 别人从当前节点拉流
+ 5. on_sub_stop         // 拉流停止
+ 6. on_relay_pull_start // 回源拉流成功
+ 7. on_relay_pull_stop  // 回源拉流停止
+ 8. on_rtmp_connect     // 收到rtmp connect message信令
+ 9. on_server_start     // 服务启动时
+10. on_hls_make_ts      // hls生成每个ts分片文件时
 ```
 
 ## ▌ 三. 示例
@@ -244,3 +245,28 @@ RTMP、RTSP类似，不再赘述。
 ### 9 `on_server_start`
 
 服务启动时。字段同HTTP API中`/api/stat/lal_info`中的data字段。
+
+### 10 `on_hls_make_ts`
+
+hls生成每个ts分片文件时。
+
+```
+{
+  "event": "open",                                                // . "open"  表示ts分片文件被创建
+                                                                  //   "close" 表示ts分片文件写入完毕
+                                                                  //
+  "stream_name": "test110"                                        // . 流名称                          
+  "cwd": "/Volumes/T7/lal",                                       // . 当前工作路径。
+                                                                  //   当配置文件中的hls目录设置为相对路径时，相对的是该字段的值
+  "ts_file": "lal_record/hls/test110/test110-1654601694357-2.ts", // . ts文件磁盘地址
+  "live_m3u8_file": "lal_record/hls/test110/playlist.m3u8",       // . 直播m3u8文件磁盘地址
+  "record_m3u8_file": "lal_record/hls/test110/record.m3u8",       // . 录制m3u8文件磁盘地址
+                                                                  //   注意，只有开启录制时，该字段才有意义
+                                                                  //
+  "id": 2,                                                        // . ts文件的ID编号。线性递增
+  "duration": 3.333,                                              // . ts文件的时长，单位秒
+                                                                  //   注意，只有event为"close"时该字段才有意义
+                                                                  //
+  "server_id": "1"                                                // .
+}
+```
