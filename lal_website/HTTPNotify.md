@@ -255,7 +255,7 @@ hls生成每个ts分片文件时。
   "event": "open",                                                // . "open"  表示ts分片文件被创建
                                                                   //   "close" 表示ts分片文件写入完毕
                                                                   //
-  "stream_name": "test110"                                        // . 流名称                          
+  "stream_name": "test110"                                        // . 流名称
   "cwd": "/Volumes/T7/lal",                                       // . 当前工作路径。
                                                                   //   当配置文件中的hls目录设置为相对路径时，相对的是该字段的值
   "ts_file": "lal_record/hls/test110/test110-1654601694357-2.ts", // . ts文件磁盘地址

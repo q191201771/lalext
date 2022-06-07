@@ -37,10 +37,6 @@ pict_type=B
 ffmpeg -i input.mp4 -codec:v libx264 -bf 0 -codec:a copy -f mp4 input_no_b_frame.mp4
 ```
 
-##### Q: 为什么使用vlc等播放器播放h265 rtmp失败了？
-
-因为rtmp标准不支持h265，所以原生的ffmpeg和vlc都无法直接播放h265 rtmp/flv，可以使用 [lalext](https://github.com/q191201771/lalext) 项目里`thirdparty/build.sh`编译一个支持h265的ffmpeg。
-
 ##### Q: 使用lalserver，推流结束后，vlc、ffplay等播放器卡在最后一帧画面不退出？
 
 首先，lalserver有超时机制，推流结束一段时候后，会主动断开拉流播放端的连接。  
@@ -70,6 +66,22 @@ ffmpeg -i input.mp4 -codec:v libx264 -bf 0 -codec:a copy -f mp4 input_no_b_frame
 
 另外，如果想要lalserver内部直接提供支持，可以去github上提issue，我会考虑排期支持，感谢。
 
+#### ▌ h265
+
+##### Q: 支持h265播放吗？
+
+lal支持h265。想从lalserver拉取h265的流并播放，只要播放器支持即可。
+
+##### Q: 为什么使用vlc等播放器播放h265 flv/rtmp失败了？
+
+lal支持h265 flv/rtmp。
+
+但是由于rtmp官方标准不支持h265，所以原生的ffmpeg和vlc都无法直接播放h265 rtmp/flv。  
+你可以使用 [lalext](https://github.com/q191201771/lalext) 项目里`thirdparty/build.sh`编译一个支持h265的ffmpeg。
+
+另外，据说 [EasyPlayer.js](https://github.com/tsingsee/EasyPlayer.js) 也支持播放h265 rtmp/flv，你也可以试试。
+
+
 #### ▌ rtsp
 
 ##### Q: rtsp支持组播吗
@@ -98,8 +110,6 @@ lal主要聚焦在传输方面，至于传输前和传输后对编码前、解�
 ##### Q: 支持防盗链吗？
 
 ##### Q: 支持鉴权吗？
-
-##### Q: 支持h265播放吗？
 
 ##### Q: 每种协议支持的编码格式和封装格式？
 
