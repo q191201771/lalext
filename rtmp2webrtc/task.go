@@ -56,8 +56,11 @@ func (r *rtspObserverAdapter) OnAvPacket(pkt base.AvPacket) {
 		var nals [][]byte
 		var err error
 
-		//todo: 格式判断 avcc or annexb
-		nals, err = avc.SplitNaluAvcc(pkt.Payload)
+		if pos, len := avc.IterateNaluStartCode(pkt.Payload, 0); pos == -1 && len == -1 {
+			nals, err = avc.SplitNaluAvcc(pkt.Payload)
+		} else {
+			nals, err = avc.SplitNaluAnnexb(pkt.Payload)
+		}
 
 		if err != nil {
 			nazalog.Errorf("iterate nalu failed. err=%+v", err)
@@ -165,7 +168,7 @@ func (t *TaskCreator) StartRtspTunnelTask(liveUrl string, sessionDescription str
 	}
 	pullSession = rtsp.NewPullSession(&observer, func(option *rtsp.PullSessionOption) {
 		option.PullTimeoutMs = 5000
-		option.OverTcp = false
+		option.OverTcp = true
 	})
 
 	localSessionDescription, err := webrtcSender.Init(sd)
