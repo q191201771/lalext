@@ -10,10 +10,12 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 
 	"github.com/q191201771/naza/pkg/nazahttp"
 	"github.com/q191201771/naza/pkg/nazalog"
@@ -66,9 +68,18 @@ func main() {
 		sessDescChan := make(chan string, 1)
 		errChan := make(chan error, 1)
 		go func() {
-			err = taskCreator.StartTunnelTask(param.RtmpUrl, param.SessionDescription, func(sessDesc string) {
-				sessDescChan <- sessDesc
-			})
+			if strings.HasPrefix(param.RtmpUrl, "rtmp") {
+				err = taskCreator.StartTunnelTask(param.RtmpUrl, param.SessionDescription, func(sessDesc string) {
+					sessDescChan <- sessDesc
+				})
+			} else if strings.HasPrefix(param.RtmpUrl, "rtsp") {
+				err = taskCreator.StartRtspTunnelTask(param.RtmpUrl, param.SessionDescription, func(sessDesc string) {
+					sessDescChan <- sessDesc
+				})
+			} else {
+				err = errors.New("not support yet")
+			}
+
 			errChan <- err
 		}()
 		select {
