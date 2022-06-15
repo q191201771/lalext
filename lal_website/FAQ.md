@@ -7,6 +7,15 @@
 > 
 > 参与方式，可以提PR修改文档 [lal_website/FAQ.md](https://github.com/q191201771/lalext/blob/master/lal_website/FAQ.md)，也可以到这个 [issue](https://github.com/q191201771/lalext/issues/4) 里跟帖（我会定期把内容挪过来）。
 
+- ▌
+- ▌ 录制
+- ▌ h265
+- ▌ rtsp
+- ▌ 应用场景
+- ▌ 编译、运行问题
+- ▌ 待整理
+
+
 #### ▌
 
 ##### Q: 我在我电脑上本地obs推，vlc拉，有声音回环，有什么优化建议？ (202205)
@@ -76,10 +85,9 @@ lal支持h265。想从lalserver拉取h265的流并播放，只要播放器支持
 
 lal支持h265 flv/rtmp。
 
-但是由于rtmp官方标准不支持h265，所以原生的ffmpeg和vlc都无法直接播放h265 rtmp/flv。  
-你可以使用 [lalext](https://github.com/q191201771/lalext) 项目里`thirdparty/build.sh`编译一个支持h265的ffmpeg。
-
-另外，据说 [EasyPlayer.js](https://github.com/tsingsee/EasyPlayer.js) 也支持播放h265 rtmp/flv，你也可以试试。
+但是由于flv/rtmp官方标准不支持h265，所以原生官方版本的ffmpeg，vlc，[flv.js](https://github.com/bilibili/flv.js)都不支持直接播放h265 rtmp/flv。  
+你可以使用 [lalext](https://github.com/q191201771/lalext) 项目里`thirdparty/build.sh`编译一个支持h265的ffmpeg。  
+也可以试试： [EasyPlayer.js](https://github.com/tsingsee/EasyPlayer.js)。
 
 
 #### ▌ rtsp
@@ -98,6 +106,12 @@ lal支持h265 flv/rtmp。
 
 lal主要聚焦在传输方面，至于传输前和传输后对编码前、解码后的音视频如何处理，lal并不太关心。  
 比如这个问题中所说的IPcamera AI处理后推的流，只需要封装成lal支持的标准协议格式，就能衔接使用。  
+
+#### ▌ 编译、运行问题
+
+##### Q: 不知道怎么能跑起来？
+
+见 https://pengrl.com/#/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c
 
 #### ▌ 待整理
 

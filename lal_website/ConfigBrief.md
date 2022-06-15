@@ -3,7 +3,7 @@
 ```
 {
   "# doc of config": "https://pengrl.com/lal/#/ConfigBrief", //. 配置文件对应的文档说明链接，在程序中没实际用途
-  "conf_version": "0.3.2",                                   //. 配置文件版本号，业务方不应该手动修改，程序中会检查该版本
+  "conf_version": "0.3.3",                                   //. 配置文件版本号，业务方不应该手动修改，程序中会检查该版本
                                                              //  号是否与代码中声明的一致
   "rtmp": {
     "enable": true,                      //. 是否开启rtmp服务的监听
@@ -90,25 +90,26 @@
     "gop_num": 0            //. 见rtmp.gop_num
   },
   "rtsp": {
-    "enable": true,                 //. 是否开启rtsp服务的监听
-    "addr": ":5544",                //. rtsp监听地址
+    "enable": true,                  //. 是否开启rtsp服务的监听
+    "addr": ":5544",                 //. rtsp监听地址
     "out_wait_key_frame_flag": true, //. rtsp发送数据时，是否等待视频关键帧数据再发送
-                                    //
-                                    //  该配置项主要决定首帧、花屏、音视频同步等问题
-                                    //
-                                    //  如果为true，则音频和视频都等待视频关键帧才开始发送。
-                                    // （也即，视频关键帧到来前，音频或视频全部丢弃不发送）
-                                    //
-                                    //  如果为false，则音频和视频都直接发送。（也即，音频和视频都不等待视频关键帧，都不等待任何数据）
-                                    //
-                                    //  注意，纯音频的流，如果该标志为true，理论上音频永远等不到视频关键帧，也即音频没有了发送机会，
-                                    //  为了应对这个问题，lalserver会尽最大可能判断是否为纯音频的流，
-                                    //  如果判断成功为纯音频的流，音频将直接发送。
-                                    //  但是，如果有纯音频流，依然建议将该配置项设置为false
-    "auth_enable": false,           //. 是否开启rtsp服务鉴权功能
-    "auth_method": 1,               //. rtsp鉴权方式, 0-Basic鉴权方式, 1-Digest鉴权方式(MD5算法)
-    "username": admin,              //. rtsp服务账号, 开启鉴权功能需配置
-    "password": admin123            //. rtsp服务密码, 开启鉴权功能需配置
+                                     //
+                                     //  该配置项主要决定首帧、花屏、音视频同步等问题
+                                     //
+                                     //  如果为true，则音频和视频都等待视频关键帧才开始发送。
+                                     // （也即，视频关键帧到来前，音频或视频全部丢弃不发送）
+                                     //
+                                     //  如果为false，则音频和视频都直接发送。（也即，音频和视频都不等待视频关键帧，都不等待任何数据）
+                                     //
+                                     //  注意，纯音频的流，如果该标志为true，理论上音频永远等不到视频关键帧，也即音频没有了发送机会，
+                                     //  为了应对这个问题，lalserver会尽最大可能判断是否为纯音频的流，
+                                     //  如果判断成功为纯音频的流，音频将直接发送。
+                                     //  但是，如果有纯音频流，依然建议将该配置项设置为false
+                                     //
+    "auth_enable": false,            //. 是否开启rtsp服务鉴权功能
+    "auth_method": 1,                //. rtsp鉴权方式, 0-Basic鉴权方式, 1-Digest鉴权方式(MD5算法)
+    "username": "q191201771",        //. rtsp服务账号, 开启鉴权功能需配置
+    "password": "pengrl"             //. rtsp服务密码, 开启鉴权功能需配置
   },
   "record": {
     "enable_flv": true,                      //. 是否开启flv录制
@@ -140,7 +141,7 @@
     "addr": ":8083" //. 监听地址
   },
   "server_id": "1", //. 当前lalserver唯一ID。多个lalserver HTTP Notify向同一个地址回调时，可通过该ID区分lalserver节点
-  "http_notify": {
+  "http_notify": {                                               // ----- HTTP-Notify文档见： https://pengrl.com/lal/#/HTTPNotify
     "enable": true,                                              //. 是否开启HTTP Notify事件回调
     "update_interval_sec": 5,                                    //. update事件回调间隔，单位秒
     "on_server_start": "http://127.0.0.1:10101/on_server_start", //. 各事件HTTP Notify事件回调地址
@@ -153,7 +154,7 @@
     "on_relay_pull_stop": "http://127.0.0.1:10101/on_relay_pull_stop",
     "on_rtmp_connect": "http://127.0.0.1:10101/on_rtmp_connect"
   },
-  "simple_auth": {                    // 鉴权文档见： https://pengrl.com/lal/#/auth
+  "simple_auth": {                    // ----- 鉴权文档见： https://pengrl.com/lal/#/auth
     "key": "q191201771",              // 私有key，计算md5鉴权参数时使用
     "dangerous_lal_secret": "pengrl", // 后门鉴权参数，所有的流可通过该参数值鉴权
     "pub_rtmp_enable": false,         // rtmp推流是否开启鉴权，true为开启鉴权，false为不开启鉴权
