@@ -5,6 +5,12 @@
 ##      注意：
 ##      1. 执行需要root权限，比如 sudo ./build.sh
 ##      2. 依赖 cmake，比如 yum install cmake -y
+##      3. 依赖 g++，比如 yum install gcc-c++.x86_64
+##      4. gcc/g++版本 https://pengrl.com/p/42585/
+##
+## 注释 nasm
+##
+##      http://www.nasm.us/pub/nasm/releasebuilds/2.13.03/nasm-2.13.03.tar.xz
 ##
 ## 注释 libx264
 ##
@@ -40,11 +46,19 @@ set -x
 
 PREFIX=/usr/local
 
+echo 'nasm...'
+xz -d nasm-2.13.03.tar.xz
+tar -xvf nasm-2.13.03.tar
+cd nasm-2.13.03
+./configure  --prefix=${PREFIX}
+make && make install
 
+
+## 注释 --disable-asm configure参数
 echo 'libx264...'
 tar jxvf x264-master.tar.bz2
 cd x264-master
-./configure --prefix=${PREFIX} --enable-shared --disable-asm --enable-pic --extra-cflags="-fno-stack-check"
+./configure --prefix=${PREFIX} --enable-shared --enable-pic --extra-cflags="-fno-stack-check"
 make -j8 && make install && make clean
 cd -
 
@@ -69,6 +83,7 @@ cd opus-1.3.1
 make -j8 && make install && make clean
 cd -
 
+## 注释 汇编优化相关的configure参数，加上会影响影响 --disable-x86asm --disable-asm \
 echo 'ffmpeg...'
 tar zxvf n4.4.tar.gz
 tar zxvf mod_ffmpeg_to_support_rtmp_hevc.tgz
@@ -80,11 +95,10 @@ echo 'ffmpeg configure...'
 export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
 ./configure --prefix=${PREFIX} --extra-cflags="-I${PREFIX}/include -L${PREFIX}/lib -fno-stack-check -g" \
             --enable-pic \
-            --disable-x86asm \
             --enable-shared --disable-static \
             --enable-gpl --enable-nonfree \
-            --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libopus \
-            --enable-debug=3 --disable-optimizations --disable-asm --disable-stripping
+            --enable-debug=3 --disable-optimizations --disable-stripping \
+            --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libopus
 make -j8 && make install
 cd -
 
