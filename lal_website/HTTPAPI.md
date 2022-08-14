@@ -28,6 +28,8 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
 2.1. /api/ctrl/start_relay_pull // 控制服务器从远端拉流至本地
 2.2. /api/ctrl/stop_relay_pull  // 停止relay pull
 2.3. /api/ctrl/kick_session     // 强行踢出关闭指定session，session可以是pub、sub、pull类型
+2.4. /api/ctrl/start_rtp_pub    // 打开GB28181接收端口
+2.5. /api/ctrl/stop_rtp_pub     // 关闭GB28181接收端口
 ```
 
 ## ▌ 三. 名词解释：
@@ -48,13 +50,14 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
 
 2 `error_code`列表：
 
-| error_code   | desp                     | 说明                |
-| ----         | -----                    | -----              |
-| 0            | succ                     | 调用成功            |
-| 1001         | group not found          | group不存在         |
-| 1002         | param missing            | 必填参数缺失         |
-| 1003         | session not found        | session不存在        |
-| 2001         | 多种值，表示失败的具体原因    | start_relay_pull失败 |
+| error_code   | desp                       | 说明                |
+| ----         | -----                      | -----              |
+| 0            | succ                       | 调用成功            |
+| 1001         | group not found            | group不存在         |
+| 1002         | param missing              | 必填参数缺失         |
+| 1003         | session not found          | session不存在        |
+| 2001         | 多种值，表示失败的具体原因 | start_relay_pull失败 |
+| 2002         | 打开gb28181端口失败        | start_rtp_pub失败    |
 
 3 注意，有的接口使用HTTP GET+url参数的形式调用，有的接口使用HTTP POST+json body的形式调用，请仔细查看文档说明。
 
@@ -335,3 +338,62 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
   "desp": "succ"
 }
 ```
+
+### 2.4 `/api/ctrl/start_rtp_pub`
+
+✸ 简要描述： 打开GB28181接收端口
+
+✸ 请求示例：
+
+```
+$curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", "port": 0, "timeout_ms": 10000}' http://127.0.0.1:8083/api/ctrl/start_rtp_pub
+```
+
+✸ 请求方式： `HTTP POST`
+
+✸ 请求参数：
+
+```
+{
+  "stream_name": "test110", //. 必填项，流名称，后续这条流都与这个流名称绑定，比如生成的录制文件名，用其他协议拉流的流名称等
+                            //
+  "port": 0,                //. 选填项，接收端口
+                            //  如果为0，lalserver选择一个随机端口，并将端口通过返回值返回给调用方
+                            //  默认值是0
+                            //
+  "timeout_ms": 60000,      //. 选填项，超时时间，单位毫秒，开启时或中途超过这个时长没有收到任何数据，则关闭端口监听
+                            //  如果为0，则不会超时关闭
+                            //  默认值是60000
+  "debug_dump_packet": ""   //. 选填项，将接收的udp数据存成文件
+                            //  注意啊，有问题的时候才使用，把存储的文件提供给lal作者分析。没问题时关掉，免性能下降并且浪费磁盘
+                            //  值举例："./dump/test110.psdata", "/tmp/test110.psdata"
+                            //  如果为空字符串""，则不会存文件
+                            //  默认值是""
+}
+```
+
+✸ 返回值`error_code`可能取值：
+
+- 0    请求接口成功。端口成功打开
+- 1002 参数错误
+- 2002 绑定监听端口失败
+
+✸ 返回示例：
+
+```
+{
+  "error_code": 0,
+  "desp": "succ",
+  "data": {
+    "stream_name": "test110",
+    "session_id": "PSSUB1",
+    "port": 20000
+  }
+}
+```
+
+### 2.4 `/api/ctrl/stop_rtp_pub`
+
+开发中。
+
+this note updated at 202208, yoko
