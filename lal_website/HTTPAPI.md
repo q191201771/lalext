@@ -126,7 +126,7 @@ $curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
     "pull": {              // -----该节点从其他节点拉流回源信息-----
       "base_type": "PULL", // 该处固定为"PULL"
       ...                  // 其他字段和上面pub的内部字段相同，不再赘述
-    }, 
+    },
     "pushs":[] // 主动外连转推信息，暂时不提供
   }
 }
@@ -364,6 +364,7 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
   "timeout_ms": 60000,      //. 选填项，超时时间，单位毫秒，开启时或中途超过这个时长没有收到任何数据，则关闭端口监听
                             //  如果为0，则不会超时关闭
                             //  默认值是60000
+                            //
   "debug_dump_packet": ""   //. 选填项，将接收的udp数据存成文件
                             //  注意啊，有问题的时候才使用，把存储的文件提供给lal作者分析。没问题时关掉，免性能下降并且浪费磁盘
                             //  值举例："./dump/test110.psdata", "/tmp/test110.psdata"
