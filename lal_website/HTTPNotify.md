@@ -125,7 +125,9 @@ $ffmpeg -re -i wontcry.flv -c:a copy -c:v copy -f flv "rtmp://127.0.0.1:1935/liv
     "stream_name": "test110",                               // 流名称
     "url_param": "token=1111",                              // URL参数
     "has_in_session": true,                                 // 对应的group中，是否存在输入音视频数据的流
-    "has_out_session": false                                // 对应的group中，是否存在输出音视频数据的流
+    "has_out_session": false,                               // 对应的group中，是否存在输出音视频数据的流
+    "read_bytes_sum": 3407,                                 // 会话建立至当前时间点，总共读取的数据，单位字节
+    "wrote_bytes_sum": 3500                                 // 会话建立至当前时间点，总共发送的数据，单位字节
 }
 
 -----
@@ -144,7 +146,9 @@ $ffmpeg -re -i wontcry.flv -c:a copy -c:v copy -f rtsp rtsp://localhost:5544/liv
     "stream_name": "test110",
     "url_param": "",
     "has_in_session": true,
-    "has_out_session": false
+    "has_out_session": false,
+    "read_bytes_sum": 0,
+    "wrote_bytes_sum": 0
 }
 ```
 
@@ -171,11 +175,13 @@ $wget http://127.0.0.1:8080/live/test110.flv\?token\=1111
     "stream_name": "test110",
     "url_param": "token=1111",
     "has_in_session": false,
-    "has_out_session": true
+    "has_out_session": true,
+    "read_bytes_sum": 0,
+    "wrote_bytes_sum": 0
 }
 
 2) HTTP-TS
-$wget http://127.0.0.1:8082/live/test110.ts\?token\=1111
+$wget http://127.0.0.1:8080/live/test110.ts\?token\=1111
 
 {
     "server_id": "1",
@@ -188,10 +194,12 @@ $wget http://127.0.0.1:8082/live/test110.ts\?token\=1111
     "stream_name": "test110",
     "url_param": "token=1111",
     "has_in_session": false,
-    "has_out_session": true
+    "has_out_session": true,
+    "read_bytes_sum": 0,
+    "wrote_bytes_sum": 0
 }
 
-RTMP、RTSP类似，不再赘述。
+RTMP、RTSP等其他协议类似，不再赘述。
 ```
 
 关于按需回源拉流：
@@ -220,6 +228,8 @@ RTMP、RTSP类似，不再赘述。
     "url_param": "token=1111",                              // URL参数
     "has_in_session": true,                                 // 对应的group中，是否存在输入音视频数据的流
     "has_out_session": false                                // 对应的group中，是否存在输出音视频数据的流
+    "read_bytes_sum": 0,                                    // 会话建立至当前时间点，总共读取的数据，单位字节
+    "wrote_bytes_sum": 0                                    // 会话建立至当前时间点，总共发送的数据，单位字节
 }
 ```
 
