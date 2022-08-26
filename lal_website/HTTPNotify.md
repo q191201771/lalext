@@ -78,9 +78,9 @@ Accept-Encoding: gzip
           "remote_addr": "127.0.0.1:61353",        // 对端地址
           "read_bytes_sum": 9219247,               // 累计读取数据大小（从推流开始时计算）
           "wrote_bytes_sum": 3500,                 // 累计发送数据大小
-          "bitrate": 436,                          // 最近5秒码率，单位kbit/s。对于pub类型，如无特殊声明，等价于`read_bitrate`
-          "read_bitrate": 436,                     // 最近5秒读取数据码率
-          "write_bitrate": 0                       // 最近5秒发送数据码率
+          "bitrate_kbits": 436,                    // 最近5秒码率，单位kbit/s。对于pub类型，如无特殊声明，等价于`read_bitrate_kbits`
+          "read_bitrate_kbits": 436,               // 最近5秒读取数据码率
+          "write_bitrate_kbits": 0                 // 最近5秒发送数据码率
         },
         "subs": [                                    // -----拉流的信息，可能存在多种协议，每种协议可能存在多个会话连接-----
           {
@@ -91,9 +91,9 @@ Accept-Encoding: gzip
             "remote_addr": "127.0.0.1:61785",        // 对端地址
             "read_bytes_sum": 134,                   // 累计读取数据大小（从拉流开始时计算）
             "wrote_bytes_sum": 2944020,              // 累计发送数据大小
-            "bitrate": 439,                          // 最近5秒码率，单位kbit/s。对于sub类型，如无特殊声明，等价于`write_bitrate`
-            "read_bitrate": 0,                       // 最近5秒读取数据码率
-            "write_bitrate": 439                     // 最近5秒发送数据码率
+            "bitrate_kbits": 439,                    // 最近5秒码率，单位kbit/s。对于sub类型，如无特殊声明，等价于`write_bitrate_kbits`
+            "read_bitrate_kbits": 0,                 // 最近5秒读取数据码率
+            "write_bitrate_kbits": 439               // 最近5秒发送数据码率
           }
         ],
         "pull": {              // -----该节点从其他节点拉流回源信息-----
