@@ -366,7 +366,7 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
                             //  默认值是60000
                             //
   "debug_dump_packet": ""   //. 选填项，将接收的udp数据存成文件
-                            //  注意啊，有问题的时候才使用，把存储的文件提供给lal作者分析。没问题时关掉，免性能下降并且浪费磁盘
+                            //  注意啊，有问题的时候才使用，把存储的文件提供给lal作者分析。没问题时关掉，避免性能下降并且浪费磁盘
                             //  值举例："./dump/test110.psdata", "/tmp/test110.psdata"
                             //  如果为空字符串""，则不会存文件
                             //  默认值是""
@@ -395,6 +395,8 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
 
 ### 2.4 `/api/ctrl/stop_rtp_pub`
 
-开发中。
+现阶段请使用`/api/ctrl/kick_session`接口来完成主动关闭rtp pub的功能。
 
-this note updated at 202208, yoko
+`stop_rtp_pub`这个接口暂时没有开放。
+
+NOTE: this note updated at 202208, yoko
