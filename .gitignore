@@ -13,6 +13,7 @@
 /dump
 /pkg
 /app
+/logs
 
 /lalc/output/
 lalc/cmake-build-debug/
