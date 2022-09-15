@@ -93,6 +93,7 @@ $curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
   "desp": "succ",  // 接口返回描述，"succ"表示成功
   "data": {
     "stream_name": "test110", // 流名称
+    "app_name":    "live",    // appName
     "audio_codec": "AAC",     // 音频编码格式 "AAC"
     "video_codec": "H264",    // 视频编码格式 "H264" | "H265"
     "video_width": 640,       // 视频宽
@@ -399,4 +400,4 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
 
 `stop_rtp_pub`这个接口暂时没有开放。
 
-NOTE: this note updated at 202208, yoko
+NOTE: HttpApiVersion = "v0.4.1"

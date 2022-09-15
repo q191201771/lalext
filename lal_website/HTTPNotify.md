@@ -66,6 +66,7 @@ Accept-Encoding: gzip
     groups: [
       {
         "stream_name": "test110", // 流名称
+        "app_name":    "live",    // appName
         "audio_codec": "AAC",     // 音频编码格式 "AAC"
         "video_codec": "H264",    // 视频编码格式 "H264" | "H265"
         "video_width": 640,       // 视频宽
@@ -280,3 +281,5 @@ hls生成每个ts分片文件时。
   "server_id": "1"                                                // .
 }
 ```
+
+Note: HttpNotifyVersion = "v0.2.1"
