@@ -366,6 +366,9 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
                             //  如果为0，则不会超时关闭
                             //  默认值是60000
                             //
+  "is_tcp_flag": 0,         //. 选填项，是否使用tcp传输流媒体音视频数据
+                            //  如果为1，使用tcp；如果为0，使用udp
+                            //  默认值为0
   "debug_dump_packet": ""   //. 选填项，将接收的udp数据存成文件
                             //  注意啊，有问题的时候才使用，把存储的文件提供给lal作者分析。没问题时关掉，避免性能下降并且浪费磁盘
                             //  值举例："./dump/test110.psdata", "/tmp/test110.psdata"
@@ -394,10 +397,10 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
 }
 ```
 
-### 2.4 `/api/ctrl/stop_rtp_pub`
+### 2.5 `/api/ctrl/stop_rtp_pub`
 
 现阶段请使用`/api/ctrl/kick_session`接口来完成主动关闭rtp pub的功能。
 
 `stop_rtp_pub`这个接口暂时没有开放。
 
-NOTE: HttpApiVersion = "v0.4.1"
+NOTE: HttpApiVersion = "v0.4.2"
