@@ -43,7 +43,7 @@
 
 ### ▦ 一. lalserver 简介
 
-[lalserver](https://github.com/q191201771/lal)是纯Golang开发的流媒体（直播音视频网络传输）服务器。目前已支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket[S]-FLV/TS协议。并支持二次开发扩展。
+[lalserver](https://github.com/q191201771/lal)是纯Golang开发的流媒体（直播音视频网络传输）服务器。目前已支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket[S]-FLV/TS, GB28181协议。并支持通过插件形式进行二次开发扩展。
 
 ![lal特性图](https://pengrl.com/lal/_media/lal_feature.jpeg?date=220501)
 
@@ -59,9 +59,9 @@
 - [x] **高性能**。多核多线程扩展，支持高并发，性能和同类型`c/c++`开发服务处于同一水平
 - [x] **高可用**。完善的单元测试。并且有多个线上环境应用
 - [x] **多种直播流封装协议**。
-  - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket[S]-FLV/TS
+  - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket[S]-FLV/TS, GB28181
   - [x] 支持不同封装协议间相互转换
-  - [x] 支持二次开发，扩展其他协议
+  - [x] 支持通过插件形式进行二次开发，扩展其他协议
 - [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC
 - [x] **多种格式录制**。支持FLV，长MPEGTS，HLS录制(HLS直播与录制可同时开启)
 - [x] **HTTPS**。支持HTTPS-FLV，HTTPS-TS，HLS over HTTPS拉流
@@ -197,7 +197,8 @@ lal项目中，除了`/app/lalserver`这个比较核心的服务之外，在`/ap
 
 ##### ✦ 流媒体协议栈库package/library
 
-lal中的协议栈都是独立的，与应用分层设计的。并且客户端和服务端的协议栈都有。
+客户端和服务端的协议栈都有。
+lal中的协议栈都是独立的，分多层设计的。
 业务方可以在自身的应用中集成lal的协议栈package库。
 
 ##### ✦ Golang通用基础库-naza
@@ -216,14 +217,9 @@ rtmp转WebRTC的网关
 
 了解更多请访问： [《lalext github 地址》](https://github.com/q191201771/lalext)： https://github.com/q191201771/lalext
 
+##### ✦ SRT
+
 #### ✒ 进行中
-
-- lal:
-  - 支持国标GB28181协议
-  - lalserver插件功能，支持业务方注册自定义协议
-- lalext: 使用lal库中流传输以及装封装功能的代码，结合ffmpeg库中编解码功能的代码，演示MCU合流
-
-了解更多请访问：
 
 - [正在搞的TODO Roadmap-汇总](https://github.com/q191201771/lal/issues/157)
 - [不确定啥时候搞的Indefinite delay-汇总](https://github.com/q191201771/lal/issues/37)
