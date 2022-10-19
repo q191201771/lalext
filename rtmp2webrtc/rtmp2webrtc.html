@@ -47,7 +47,7 @@
 
         pc.addTransceiver('video', { 'direction': 'sendrecv' })
         pc.addTransceiver('audio', { 'direction': 'recvonly' })
-        
+
 
         pc.createOffer().then(d => pc.setLocalDescription(d)).catch(log)
 
@@ -83,7 +83,7 @@
 </head>
 
 rtmp url:<br />
-<textarea id="idRtmpUrl">rtmp://10.10.14.108:1935/live/1</textarea> <br />
+<textarea id="idRtmpUrl">rtmp://localhost:1935/live/1</textarea> <br />
 
 <button onclick="window.startSession()"> Start Session </button><br />
 
