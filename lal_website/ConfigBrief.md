@@ -3,7 +3,7 @@
 ```
 {
   "# doc of config": "https://pengrl.com/lal/#/ConfigBrief", //. 配置文件对应的文档说明链接，在程序中没实际用途
-  "conf_version": "0.3.5",                                   //. 配置文件版本号，业务方不应该手动修改，程序中会检查该版本
+  "conf_version": "0.4.0",                                   //. 配置文件版本号，业务方不应该手动修改，程序中会检查该版本
                                                              //  号是否与代码中声明的一致
   "rtmp": {
     "enable": true,                       //. 是否开启rtmp服务的监听
@@ -12,14 +12,16 @@
     "rtmps_enable": true,                 //. 是否开启rtmps服务的监听
                                           //  注意，rtmp和rtmps可以任意开启一个或全部打开或全部关闭
     "rtmps_addr": ":4935",                //. RTMPS服务监听的端口地址
-    "rtmps_cert_file": "./conf/cert.pem", // RTMPS的本地cert文件
-    "rtmps_key_file": "./conf/key.pem",   // RTMPS的本地key文件
+    "rtmps_cert_file": "./conf/cert.pem", //. RTMPS的本地cert文件
+    "rtmps_key_file": "./conf/key.pem",   //. RTMPS的本地key文件
     "gop_num": 0,                         //. RTMP拉流的GOP缓存数量，加速流打开时间，但是可能增加延时
-                                          //. 如果为0，则不使用缓存发送
+                                          //  如果为0，则不使用缓存发送
     "merge_write_size": 0,                //. 将小包数据合并进行发送，单位字节，提高服务器性能，但是可能造成卡顿
                                           //  如果为0，则不合并发送
+  },
+  "in_session": {                         //. 针对所有输入型流（包括所有协议、所有输入类型）的配置
     "add_dummy_audio_enable": false,      //. 是否开启动态检测添加静音AAC数据的功能
-                                          //  如果开启，rtmp pub推流时，如果超过`add_dummy_audio_wait_audio_ms`时间依然没有
+                                          //  如果开启，所有输入型流如果超过`add_dummy_audio_wait_audio_ms`时间依然没有
                                           //  收到音频数据，则会自动为这路流叠加AAC的数据
     "add_dummy_audio_wait_audio_ms": 150  //. 单位毫秒，具体见`add_dummy_audio_enable`
   },
@@ -100,8 +102,8 @@
     "rtsps_enable": true,                 //. 是否开启rtsps服务的监听
                                           //  注意，rtsp和rtsps可以任意开启一个或全部打开或全部关闭
     "rtsps_addr": ":5322",                //. RTSPS服务监听的端口地址
-    "rtsps_cert_file": "./conf/cert.pem", // RTSPS的本地cert文件
-    "rtsps_key_file": "./conf/key.pem",   // RTSPS的本地key文件
+    "rtsps_cert_file": "./conf/cert.pem", //. RTSPS的本地cert文件
+    "rtsps_key_file": "./conf/key.pem",   //. RTSPS的本地key文件
     "out_wait_key_frame_flag": true,      //. rtsp发送数据时，是否等待视频关键帧数据再发送
                                           //
                                           //  该配置项主要决定首帧、花屏、音视频同步等问题
