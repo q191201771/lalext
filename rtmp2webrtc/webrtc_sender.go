@@ -23,15 +23,15 @@ var (
 
 type WebRtcSender struct {
 	vTrack               *TrackLocalVideo
+	ATrack               *TrackLocalAudio
 	UdpMux               ice.UDPMux
 	TcpMux               ice.TCPMux
 	HostIp               string
 	ICEConnectionStateCB func(connectionState webrtc.ICEConnectionState)
+	peerConnection       *webrtc.PeerConnection
 }
 
 func (w *WebRtcSender) Init(offer webrtc.SessionDescription) (localDesc webrtc.SessionDescription, err error) {
-
-	var peerConnection *webrtc.PeerConnection
 
 	m := &webrtc.MediaEngine{}
 	if err = m.RegisterDefaultCodecs(); err != nil {
@@ -43,7 +43,9 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription) (localDesc webrtc.S
 		return
 	}
 
-	s := webrtc.SettingEngine{}
+	s := webrtc.SettingEngine{
+		LoggerFactory: rtcLoggerFactory{},
+	}
 	s.SetICEUDPMux(w.UdpMux)
 	s.SetICETCPMux(w.TcpMux)
 
@@ -54,13 +56,13 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription) (localDesc webrtc.S
 	} else {
 		webrtcConf.ICEServers = []webrtc.ICEServer{
 			{
-				URLs: []string{"stun:stun.l.google.com:19302"},
+				URLs: []string{"stun:stun2.seewo.com:3478"},
 			},
 		}
 	}
 
 	api := webrtc.NewAPI(webrtc.WithMediaEngine(m), webrtc.WithInterceptorRegistry(i), webrtc.WithSettingEngine(s))
-	peerConnection, err = api.NewPeerConnection(webrtcConf)
+	w.peerConnection, err = api.NewPeerConnection(webrtcConf)
 	if err != nil {
 		return
 	}
@@ -69,41 +71,67 @@ func (w *WebRtcSender) Init(offer webrtc.SessionDescription) (localDesc webrtc.S
 		return
 	}
 
-	var rtpSender *webrtc.RTPSender
-	if rtpSender, err = peerConnection.AddTrack(w.vTrack); err != nil {
+	if w.ATrack, err = NewTrackLocalAudio(webrtc.RTPCodecCapability{MimeType: "audio/opus"}, "audio", "pion"); err != nil {
+		return
+	}
+
+	var videoRtpSender *webrtc.RTPSender
+	if videoRtpSender, err = w.peerConnection.AddTrack(w.vTrack); err != nil {
+		return
+	}
+
+	var audioRtpSender *webrtc.RTPSender
+	if audioRtpSender, err = w.peerConnection.AddTrack(w.ATrack); err != nil {
 		return
 	}
 
 	go func() {
 		rtcpBuf := make([]byte, 1500)
 		for {
-			if _, _, err := rtpSender.Read(rtcpBuf); err != nil {
+			if _, _, err := audioRtpSender.Read(rtcpBuf); err != nil {
 				return
 			}
 		}
 	}()
 
-	peerConnection.OnICEConnectionStateChange(w.ICEConnectionStateCB)
+	go func() {
+		rtcpBuf := make([]byte, 1500)
+		for {
+			if _, _, err := videoRtpSender.Read(rtcpBuf); err != nil {
+				return
+			}
+		}
+	}()
 
-	if err = peerConnection.SetRemoteDescription(offer); err != nil {
+	w.peerConnection.OnICEConnectionStateChange(w.ICEConnectionStateCB)
+
+	if err = w.peerConnection.SetRemoteDescription(offer); err != nil {
 		return
 	}
 
 	var answer webrtc.SessionDescription
-	if answer, err = peerConnection.CreateAnswer(nil); err != nil {
+	if answer, err = w.peerConnection.CreateAnswer(nil); err != nil {
 		return
 	}
 
-	if err = peerConnection.SetLocalDescription(answer); err != nil {
+	if err = w.peerConnection.SetLocalDescription(answer); err != nil {
 		return
 	}
 
-	gatherComplete := webrtc.GatheringCompletePromise(peerConnection)
+	gatherComplete := webrtc.GatheringCompletePromise(w.peerConnection)
 	<-gatherComplete
 
-	return *peerConnection.LocalDescription(), nil
+	return *w.peerConnection.LocalDescription(), nil
 }
 
-func (w *WebRtcSender) Write(pkt base.AvPacket) error {
+func (w *WebRtcSender) WriteVideo(pkt base.AvPacket) error {
 	return w.vTrack.Write(pkt)
+}
+
+func (w *WebRtcSender) WriteAudio(pkt base.AvPacket) error {
+	return w.ATrack.Write(pkt)
+}
+
+func (w *WebRtcSender) Close() {
+	w.peerConnection.Close()
 }

@@ -11,37 +11,41 @@ package main
 import (
 	"github.com/pion/rtp"
 	"github.com/pion/webrtc/v3"
+	"github.com/pion/webrtc/v3/pkg/media/oggwriter"
 	"github.com/q191201771/lal/pkg/base"
 	"github.com/q191201771/lal/pkg/rtprtcp"
 	"github.com/q191201771/naza/pkg/nazalog"
 )
 
-type TrackLocalVideo struct {
+type TrackLocalAudio struct {
 	rtpPacker *rtprtcp.RtpPacker
 	rtpTrack  *webrtc.TrackLocalStaticRTP
+	ogg       *oggwriter.OggWriter
+	count     int
 }
 
-func NewTrackLocalVideo(c webrtc.RTPCodecCapability, id, streamID string) (*TrackLocalVideo, error) {
-	pp := rtprtcp.NewRtpPackerPayloadAvc(func(option *rtprtcp.RtpPackerPayloadAvcHevcOption) {
-		option.Typ = rtprtcp.RtpPackerPayloadAvcHevcTypeAnnexb
-	})
+func NewTrackLocalAudio(c webrtc.RTPCodecCapability, id, streamID string) (*TrackLocalAudio, error) {
+	pp := NewRtpPackerPayloadOpus()
+
 	// ssrc可以不填
-	packer := rtprtcp.NewRtpPacker(pp, 90000, 0)
+	packer := rtprtcp.NewRtpPacker(pp, 48000, 0)
 
 	rtpTrack, err := webrtc.NewTrackLocalStaticRTP(c, id, streamID)
 	if err != nil {
 		return nil, err
 	}
 
-	return &TrackLocalVideo{
+	// ogg, _ := oggwriter.New("output.ogg", 48000, 2)
+	return &TrackLocalAudio{
 		rtpPacker: packer,
 		rtpTrack:  rtpTrack,
+		// ogg:       ogg,
 	}, nil
 }
 
 // @param pkt: PayloadType可以不填
 //
-func (t *TrackLocalVideo) Write(pkt base.AvPacket) error {
+func (t *TrackLocalAudio) Write(pkt base.AvPacket) error {
 	rtpPkts := t.rtpPacker.Pack(pkt)
 	for i := range rtpPkts {
 		var newRtpPkt rtp.Packet
@@ -49,30 +53,42 @@ func (t *TrackLocalVideo) Write(pkt base.AvPacket) error {
 		nazalog.Assert(nil, err)
 		err = t.rtpTrack.WriteRTP(&newRtpPkt)
 		nazalog.Assert(nil, err)
+
+		// for debug
+		// if t.count > 1000 {
+		// 	break
+		// } else {
+		// 	t.ogg.WriteRTP(&newRtpPkt)
+		// 	t.count++
+		// 	if t.count > 1000 {
+		// 		nazalog.Info("close ogg file..............")
+		// 	}
+		// }
+
 	}
 	return nil
 }
 
-func (t *TrackLocalVideo) Bind(c webrtc.TrackLocalContext) (webrtc.RTPCodecParameters, error) {
+func (t *TrackLocalAudio) Bind(c webrtc.TrackLocalContext) (webrtc.RTPCodecParameters, error) {
 	return t.rtpTrack.Bind(c)
 }
 
-func (t *TrackLocalVideo) Unbind(c webrtc.TrackLocalContext) error {
+func (t *TrackLocalAudio) Unbind(c webrtc.TrackLocalContext) error {
 	return t.rtpTrack.Unbind(c)
 }
 
-func (t *TrackLocalVideo) ID() string {
+func (t *TrackLocalAudio) ID() string {
 	return t.rtpTrack.ID()
 }
 
-func (t *TrackLocalVideo) StreamID() string {
+func (t *TrackLocalAudio) StreamID() string {
 	return t.rtpTrack.StreamID()
 }
 
-func (t *TrackLocalVideo) Kind() webrtc.RTPCodecType {
+func (t *TrackLocalAudio) Kind() webrtc.RTPCodecType {
 	return t.rtpTrack.Kind()
 }
 
-func (t *TrackLocalVideo) RID() string {
+func (t *TrackLocalAudio) RID() string {
 	return t.rtpTrack.RID()
 }

@@ -32,7 +32,7 @@ type TaskResponse struct {
 
 func main() {
 	_ = nazalog.Init(func(option *nazalog.Option) {
-		option.Level = nazalog.LevelTrace
+		option.Level = nazalog.LevelInfo
 	})
 
 	httpPort, webrtcPort, hostIp := parseFlag()
@@ -100,7 +100,7 @@ func main() {
 }
 
 func parseFlag() (int, int, string) {
-	httpPort := flag.Int("p", 8827, "specify listen port")
+	httpPort := flag.Int("p", 1080, "specify listen port")
 	webrtcPort := flag.Int("wp", 8900, "specify webrtc mux port")
 	hostIp := flag.String("ip", "", "specify host ip")
 	flag.Parse()

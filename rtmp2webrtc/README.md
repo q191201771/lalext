@@ -4,6 +4,11 @@ rtmp转换webrtc的网关。
 
 通过它，你可以使用h5网页通过WebRTC协议播放已有的RTMP流（RTMP流可以是任意支持RTMP拉流的服务器上的流）。使用方法：
 
+## Linux依赖库
+```
+sudo apt install libavformat-dev libswresample-dev libavcodec-dev libavutil-dev
+```
+
 步骤1，编译并运行协议转换程序
 
 ```
