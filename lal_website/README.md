@@ -43,7 +43,7 @@
 
 ### ▦ 一. lalserver 简介
 
-[lalserver](https://github.com/q191201771/lal)是纯Golang开发的流媒体（直播音视频网络传输）服务器。目前已支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket[S]-FLV/TS, GB28181协议。并支持通过插件形式进行二次开发扩展。
+[lalserver](https://github.com/q191201771/lal)是纯Golang开发的流媒体（直播音视频网络传输）服务器。目前已支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, GB28181协议。并支持通过插件形式进行二次开发扩展。
 
 ![lal特性图](https://pengrl.com/lal/_media/lal_feature.jpeg?date=220501)
 
@@ -58,14 +58,15 @@
   - [x] 支持docker
 - [x] **高性能**。多核多线程扩展，支持高并发，性能和同类型`c/c++`开发服务处于同一水平
 - [x] **高可用**。完善的单元测试。并且有多个线上环境应用
-- [x] **多种直播流封装协议**。
-  - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket[S]-FLV/TS, GB28181
+- [x] **多种直播流封装协议**
+  - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, GB28181
   - [x] 支持不同封装协议间相互转换
   - [x] 支持通过插件形式进行二次开发，扩展其他协议
 - [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC
 - [x] **多种格式录制**。支持FLV，长MPEGTS，HLS录制(HLS直播与录制可同时开启)
 - [x] **HTTPS**。支持HTTPS-FLV，HTTPS-TS，HLS over HTTPS拉流
-- [x] **WebSocket/WebSockets**。支持Websocket-FLV，WebSocket-TS拉流
+- [x] **WebSocket**。支持Websocket-FLV，WebSocket-TS拉流
+- [x] **TLS/SSL**。所有协议都支持相应的TLS/SSL加密传输。比如RTMPS，RTSPS，HTTPS，WebSockets
 - [x] **HLS**。支持LIVE实时直播、VOD全列表直播。切片文件支持多种删除方式。支持内存切片
 - [x] **RTSP**。支持over TCP(interleaved模式)。支持basic/digest auth验证。
 - [x] **RTMP**。支持给单视频添加静音音频数据，支持合并发送。兼容对接各种常见RTMP实现
@@ -80,7 +81,7 @@
 - [x] **HTTP文件服务器**。比如HLS切片文件可直接播放，不需要额外的HTTP文件服务器
 - [x] **监听端口复用**。HTTP-FLV，HTTP-TS，HLS可使用相同的端口。over HTTPS类似
 - [x] **秒开播放**。GOP缓冲
-- [x] **支持(在服务端)叠加静音音频**
+- [x] **支持(在服务端)自动叠加静音音频**
 - [x] **支持先拉流后推流**
 - [x] **支持推流断开后重连，拉流端无感知**。
 

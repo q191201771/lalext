@@ -14,7 +14,8 @@
   * [2.3 lalserver HTTP API接口](HTTPAPI.md)
   * [2.4 lalserver HTTP Notify事件回调(Callback/Webhook)](HTTPNotify.md)
   * [2.5 lalserver 鉴权防盗链](auth.md)
-  * [2.6 lalserver 二次开发-pub接入自定义流](customize_pub.md)
+  * [2.6 lalserver 二次开发(插件化)](customize.md)
+  * [|-- 2.6.1 二次开发-pub接入自定义流](customize_pub.md)
   * [2.7 lalserver 接入国标GB28181](gb28181.md)
 * ***
 * =====3 lal 补充文档=====
