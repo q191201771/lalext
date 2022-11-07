@@ -17,6 +17,7 @@
   * [2.6 lalserver 二次开发(插件化)](customize.md)
   * [|-- 2.6.1 二次开发-pub接入自定义流](customize_pub.md)
   * [2.7 lalserver 接入国标GB28181](gb28181.md)
+  * [2.8 自动叠加静音音频](dummy_audio.md)
 * ***
 * =====3 lal 补充文档=====
   * [3.1 Demo简介](DEMO.md)
@@ -34,3 +35,4 @@
   * [rtmp中的各种ID](RTMPID.md)
   * [ffplay播放rtsp花屏](RTSPFFPlayBlur.md)
   * [FAQ](FAQ.md)
+  * [重要概念](concept.md)
