@@ -34,5 +34,5 @@
   * [rtmp handshake握手之简单模式和复杂模式](RTMPHandshake.md)
   * [rtmp中的各种ID](RTMPID.md)
   * [ffplay播放rtsp花屏](RTSPFFPlayBlur.md)
-  * [FAQ](FAQ.md)
+  * [常见问题FAQ](FAQ.md)
   * [重要概念](concept.md)
