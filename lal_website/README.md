@@ -10,7 +10,7 @@
 <a title="license" target="_blank" href="https://github.com/q191201771/lal/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-brightgreen.svg"></a>
 <br>
 <a title="wechat" target="_blank" href=""><img src="https://img.shields.io/:微信-q191201771-blue.svg"></a>
-<a title="qqgroup" target="_blank" href=""><img src="https://img.shields.io/:QQ群-1090510973-blue.svg"></a>
+<a title="qqgroup" target="_blank" href=""><img src="https://img.shields.io/:QQ群-635846365-blue.svg"></a>
 <br>
 </p>
 
@@ -231,7 +231,7 @@ rtmp转WebRTC的网关
 - 微信： q191201771
 - QQ： 191201771
 - 微信群： 加我微信好友后，告诉我拉你进群
-- QQ群： 1090510973
+- QQ群： 635846365
 - 邮箱：191201771@qq.com
 - lal github地址： https://github.com/q191201771/lal
 - lal官方文档： https://pengrl.com/lal
