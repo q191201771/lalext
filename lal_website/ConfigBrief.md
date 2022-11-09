@@ -1,5 +1,15 @@
 # lalserver 配置文件说明
 
+lalserver的配置文件为json格式。  
+
+为了方便阅读、方便查找，本文档使用两种形式对配置文件进行说明：
+
+- 注释版： 一种是保持json原有格式，在行尾增加注释的方式
+- 拆解版： 另外一种是把一级子项作为一个单独的大标题，内部块block包含了它的子项
+
+
+## 注释版
+
 ```
 {
   "# doc of config": "https://pengrl.com/lal/#/ConfigBrief", //. 配置文件对应的文档说明链接，在程序中没实际用途
@@ -20,6 +30,7 @@
                                           //  如果为0，则不合并发送
   },
   "in_session": {                         //. 针对所有输入型流（包括所有协议、所有输入类型）的配置
+                                          //  详细介绍见： https://pengrl.com/lal/#/dummy_audio
     "add_dummy_audio_enable": false,      //. 是否开启动态检测添加静音AAC数据的功能
                                           //  如果开启，所有输入型流如果超过`add_dummy_audio_wait_audio_ms`时间依然没有
                                           //  收到音频数据，则会自动为这路流叠加AAC的数据
@@ -196,3 +207,170 @@
   }
 }
 ```
+
+
+## 拆解版
+
+### ▌ "# doc of config"
+
+类型: string  
+值举例: "https://pengrl.com/lal/#/ConfigBrief"
+
+配置文件对应的文档说明链接，在程序中没实际用途
+
+### ▌ "conf_version"
+
+类型: string  
+值举例: "0.4.0"
+
+配置文件版本号，业务方不应该手动修改，程序中会检查该版本号是否与代码中声明的一致
+
+### ▌ "rtmp"
+
+#### ✸ "rtmp/enable"
+
+类型: bool
+值举例: true
+
+是否开启rtmp服务的监听  
+
+注意，配置文件中控制各协议类型的enable开关都应该按需打开，避免造成不必要的协议转换的开销
+
+#### ✸ "rtmp/addr"
+
+类型: string  
+值举例: "1935"
+
+RTMP服务监听的端口，客户端向lalserver推拉流都是这个地址
+
+#### ✸ "rtmp/rtmps_enable"
+
+类型: bool  
+值举例: true
+
+是否开启rtmps服务的监听
+
+注意，rtmp和rtmps可以任意开启一个或全部打开或全部关闭
+
+#### ✸ "rtmp/rtmps_addr"
+
+类型: string  
+值举例: ":4935"
+
+RTMPS服务监听的端口地址
+
+#### ✸ "rtmp/rtmps_cert_file"
+
+类型: string  
+值举例: "./conf/cert.pem"
+
+RTMPS的本地cert文件
+
+#### ✸ "rtmp/rtmps_key_file"
+
+类型: string  
+值举例: "./conf/key.pem"
+
+RTMPS的本地key文件
+
+#### ✸ "rtmp/gop_num"
+
+类型: int  
+值举例: 0
+
+RTMP拉流的GOP缓存数量，加速流打开时间，但是可能增加延时
+
+如果为0，则不使用缓存发送
+
+#### ✸ "rtmp/merge_write_size"
+
+类型: int  
+值举例: 0
+
+将小包数据合并进行发送，单位字节，提高服务器性能，但是可能造成卡顿
+
+如果为0，则不合并发送
+
+### ▌ "in_session"
+
+针对所有输入型流（包括所有协议、所有输入类型）的配置
+
+详细介绍见： https://pengrl.com/lal/#/dummy_audio
+
+#### ✸ "in_session/add_dummy_audio_enable"
+
+类型: bool  
+值举例: false
+
+是否开启动态检测添加静音AAC数据的功能
+
+如果开启，所有输入型流如果超过`add_dummy_audio_wait_audio_ms`时间依然没有
+
+收到音频数据，则会自动为这路流叠加AAC的数据
+
+#### ✸ "in_session/add_dummy_audio_wait_audio_ms"
+
+类型: int  
+值举例: 150
+
+单位毫秒，具体见`add_dummy_audio_enable`
+
+### ▌ "default_http"
+
+TODO
+
+### ▌ "httpflv"
+
+TODO
+
+### ▌ "hls"
+
+TODO
+
+### ▌ "httpts"
+
+TODO
+
+### ▌ "rtsp"
+
+TODO
+
+### ▌ "record"
+
+TODO
+
+### ▌ "relay_push"
+
+TODO
+
+### ▌ "static_relay_pull"
+
+TODO
+
+### ▌ "http_api"
+
+TODO
+
+### ▌ "server_id"
+
+TODO
+
+### ▌ "http_notify"
+
+TODO
+
+### ▌ "simple_auth"
+
+TODO
+
+### ▌ "pprof"
+
+TODO
+
+### ▌ "log"
+
+TODO
+
+### ▌ "debug"
+
+TODO
