@@ -36,3 +36,4 @@
   * [ffplay播放rtsp花屏](RTSPFFPlayBlur.md)
   * [常见问题FAQ](FAQ.md)
   * [重要概念](concept.md)
+  * [v0.32.0版本介绍](brief_v0.32.0.md)
