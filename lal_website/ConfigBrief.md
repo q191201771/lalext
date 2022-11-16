@@ -26,6 +26,7 @@ lalserver的配置文件为json格式。
     "rtmps_key_file": "./conf/key.pem",   //. RTMPS的本地key文件
     "gop_num": 0,                         //. RTMP拉流的GOP缓存数量，加速流打开时间，但是可能增加延时
                                           //  如果为0，则不使用缓存发送
+    "single_gop_max_frame_num": 0,        //. GOP缓存功能开启时，单个GOP中缓存的帧数量的最大限制
     "merge_write_size": 0,                //. 将小包数据合并进行发送，单位字节，提高服务器性能，但是可能造成卡顿
                                           //  如果为0，则不合并发送
   },
@@ -45,11 +46,12 @@ lalserver的配置文件为json格式。
     "https_key_file": "./conf/key.pem"    //. HTTPS的本地key文件地址
   },
   "httpflv": {
-    "enable": true,          //. 是否开启HTTP-FLV服务的监听
-    "enable_https": true,    //. 是否开启HTTPS-FLV监听
-    "url_pattern": "/",      //. 拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。
-                             //  如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.flv`
-    "gop_num": 0             //. 见rtmp.gop_num
+    "enable": true,                //. 是否开启HTTP-FLV服务的监听
+    "enable_https": true,          //. 是否开启HTTPS-FLV监听
+    "url_pattern": "/",            //. 拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。
+                                   //  如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.flv`
+    "gop_num": 0,                  //. httpflv协议的Gop缓存功能，含义和 rtmp.gop_num 类似
+    "single_gop_max_frame_num": 0  //. 见 rtmp.gop_num
   },
   "hls": {
     "enable": true,                  //. 是否开启HLS服务的监听
@@ -101,11 +103,12 @@ lalserver的配置文件为json格式。
                                      //  注意，使用该模式要注意内存容量。一般来说不应该搭配`cleanup_mode`为0或1使用
   },
   "httpts": {
-    "enable": true,         //. 是否开启HTTP-TS服务的监听。注意，这并不是HLS中的TS，而是在一条HTTP长连接上持续性传输TS流
-    "enable_https": true,   //. 是否开启HTTPS-TS监听
-    "url_pattern": "/",     //. 拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。
-                            //  如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.ts`
-    "gop_num": 0            //. 见rtmp.gop_num
+    "enable": true,                //. 是否开启HTTP-TS服务的监听。注意，这并不是HLS中的TS，而是在一条HTTP长连接上持续性传输TS流
+    "enable_https": true,          //. 是否开启HTTPS-TS监听
+    "url_pattern": "/",            //. 拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。
+                                   //  如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.ts`
+    "gop_num": 0,                  //. 见 rtmp.gop_num
+    "single_gop_max_frame_num": 0  //. 见 rtmp.single_gop_max_frame_num
   },
   "rtsp": {
     "enable": true,                       //. 是否开启rtsp服务的监听
@@ -229,7 +232,7 @@ lalserver的配置文件为json格式。
 
 #### ✸ "rtmp/enable"
 
-类型: bool
+类型: bool  
 值举例: true
 
 是否开启rtmp服务的监听  
@@ -282,6 +285,13 @@ RTMP拉流的GOP缓存数量，加速流打开时间，但是可能增加延时
 
 如果为0，则不使用缓存发送
 
+#### ✸ "rtmp/single_gop_max_frame_num"
+
+类型: int  
+值举例: 0
+
+GOP缓存功能开启时，单个GOP中缓存的帧数量的最大限制
+
 #### ✸ "rtmp/merge_write_size"
 
 类型: int  
@@ -321,7 +331,41 @@ TODO
 
 ### ▌ "httpflv"
 
-TODO
+#### ✸ "httpflv/enable"
+
+类型: bool  
+值举例: true
+
+是否开启HTTP-FLV服务的监听
+
+#### ✸ "httpflv/enable_https"
+
+类型: bool  
+值举例: true
+
+是否开启HTTPS-FLV监听
+
+#### ✸ "httpflv/url_pattern"
+
+类型: string  
+值举例: "/"
+
+拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。  
+如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.flv`
+
+#### ✸ "httpflv/gop_num"
+
+类型: int  
+值举例: 0
+
+httpflv协议的Gop缓存功能，含义和 rtmp.gop_num 类似
+
+#### ✸ "httpflv/single_gop_max_frame_num"
+
+类型: int  
+值举例: 0
+
+见 rtmp.single_gop_max_frame_num
 
 ### ▌ "hls"
 
@@ -329,7 +373,41 @@ TODO
 
 ### ▌ "httpts"
 
-TODO
+#### ✸ "httpts/enable"
+
+类型: bool  
+值举例: true
+
+是否开启HTTP-TS服务的监听。注意，这并不是HLS中的TS，而是在一条HTTP长连接上持续性传输TS流
+
+#### ✸ "httpts/enable_https"
+
+类型: bool  
+值举例: true
+
+是否开启HTTPS-TS监听
+
+#### ✸ "httpts/url_pattern"
+
+类型: string  
+值举例: "/"
+
+拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。  
+如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.ts`
+
+#### ✸ "httpts/gop_num"
+
+类型: int  
+值举例: 0
+
+见 rtmp.gop_num
+
+#### ✸ "httpts/single_gop_max_frame_num"
+
+类型: int  
+值举例: 0
+
+见 rtmp.single_gop_max_frame_num
 
 ### ▌ "rtsp"
 
