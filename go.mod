@@ -9,6 +9,6 @@ require (
 	github.com/pion/interceptor v0.0.12
 	github.com/pion/rtp v1.6.5
 	github.com/pion/webrtc/v3 v3.0.29
-	github.com/q191201771/lal v0.30.1
-	github.com/q191201771/naza v0.30.2
+	github.com/q191201771/lal v0.32.0
+	github.com/q191201771/naza v0.30.8
 )

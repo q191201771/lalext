@@ -251,7 +251,7 @@ func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string,
 
 	var sps []byte
 	var pps []byte
-	err = pullSession.Pull(rtmpUrl, func(msg base.RtmpMsg) {
+	pullSession.WithOnReadRtmpAvMsg(func(msg base.RtmpMsg) {
 		switch msg.Header.MsgTypeId {
 		case base.RtmpTypeIdMetadata:
 			// noop
@@ -301,11 +301,12 @@ func (t *TaskCreator) StartTunnelTask(rtmpUrl string, sessionDescription string,
 
 		if len(out) != 0 {
 			_ = webrtcSender.Write(base.AvPacket{
-				Timestamp: timestamp,
+				Timestamp: int64(timestamp),
 				Payload:   out,
 			})
 		}
 	})
+	err = pullSession.Pull(rtmpUrl)
 	if err != nil {
 		return err
 	}
