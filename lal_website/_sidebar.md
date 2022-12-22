@@ -18,6 +18,7 @@
   * [|-- 2.6.1 二次开发-pub接入自定义流](customize_pub.md)
   * [2.7 lalserver 接入国标GB28181](gb28181.md)
   * [2.8 lalserver 自动叠加静音音频](dummy_audio.md)
+  * [2.9 debug dump抓取lal流调试](debug_dump.md)
 * ***
 * =====3 lal 补充文档=====
   * [3.1 Demo简介](DEMO.md)
@@ -36,4 +37,4 @@
   * [ffplay播放rtsp花屏](RTSPFFPlayBlur.md)
   * [常见问题FAQ](FAQ.md)
   * [重要概念](concept.md)
-  * [v0.32.0版本介绍](brief_v0.32.0.md)
+  * [LAL v0.32.0发布，更好的支持纯视频流](brief_v0.32.0.md)

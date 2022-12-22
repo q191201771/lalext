@@ -11,7 +11,7 @@
 | 3    | 业务方服务与lalserver的HTTP Notify(回调事件)，HTTP API(接口)配合   | 80%          | [lalserver HTTP Notify事件回调](https://pengrl.com/lal/#/HTTPNotify) <br> [lalserver HTTP API接口](https://pengrl.com/lal/#/HTTPAPI) |
 | 4    | 与lal中的其他demo配合                                     | 85%          | [Demo 介绍](https://pengrl.com/lal/#/DEMO)                                                                                       |
 | 5    | 与lalext中的扩展配合                                      | 90%          | [lalext](https://github.com/q191201771/lalext)                                                                                 |
-| 6    | 基于lalserver做二次开发                                   | 95%          | [lalserver 二次开发](https://github.com/q191201771/customize)                                                                      |
+| 6    | 基于lalserver做二次开发                                   | 95%          | [lalserver 二次开发](https://pengrl.com/lal/#/customize)                                                                      |
 | 7    | 丢掉lalserver，基于lal库做自己的应用                           | 99%          | nil                                                                                                                            |
 | 8    | 丢掉lal                                              | 100%         | nil                                                                                                                            |
 

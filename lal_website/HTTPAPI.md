@@ -237,10 +237,15 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
                                                              //  默认值是-1
                                                              //  提示：不开启该功能，你可以在收到HTTP-Notify on_sub_stop, on_update等消息时决定是否关闭relay pull
                                                              //
-    "rtsp_mode": 0                                           //. 选填项，使用rtsp时的连接方式
+    "rtsp_mode": 0,                                          //. 选填项，使用rtsp时的连接方式
                                                              //  0 tcp
                                                              //  1 udp
                                                              //  默认值是0
+    "debug_dump_packet": ""                                  //. 选填项，将接收的数据存成文件
+                                                             //  注意啊，有问题的时候才使用，把存储的文件提供给lal作者分析。没问题时关掉，避免性能下降并且浪费磁盘
+                                                             //  值举例："./dump/test110.laldump", "/tmp/test110.laldump"
+                                                             //  如果为空字符串""，则不会存文件
+                                                             //  默认值是""
 }
 ```
 
@@ -371,7 +376,7 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
                             //  默认值为0
   "debug_dump_packet": ""   //. 选填项，将接收的udp数据存成文件
                             //  注意啊，有问题的时候才使用，把存储的文件提供给lal作者分析。没问题时关掉，避免性能下降并且浪费磁盘
-                            //  值举例："./dump/test110.psdata", "/tmp/test110.psdata"
+                            //  值举例："./dump/test110.laldump", "/tmp/test110.laldump"
                             //  如果为空字符串""，则不会存文件
                             //  默认值是""
 }
