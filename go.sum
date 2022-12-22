@@ -82,10 +82,13 @@ github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINE
 github.com/pkg/profile v1.4.0/go.mod h1:NWz/XGvpEW1FyYQ7fCx4dqYBLlfTcE+A9FLAkNKqjFE=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/q191201771/lal v0.30.1 h1:VYZnOUHShmrXfZpi69JpX6CSi/ZoH1yOZELa0l23QBE=
-github.com/q191201771/lal v0.30.1/go.mod h1:oBPQ+vNMI4GjXaUf1zg6xbZ9QfoLikEdqSOy0Kzdyo4=
-github.com/q191201771/naza v0.30.2 h1:9ZC4T5AdSgGlW9cuFGp6H0mOOXQ156HxOzkYPqrvc14=
+github.com/q191201771/lal v0.29.1 h1:6OCWgwKp+kmKjntoeS2xjEY/R1c6ORaT5IHX2J57r24=
+github.com/q191201771/lal v0.29.1/go.mod h1:oBPQ+vNMI4GjXaUf1zg6xbZ9QfoLikEdqSOy0Kzdyo4=
+github.com/q191201771/lal v0.32.0 h1:uTN6ppG4YhmXMM4W2r23gFhDontbDkuPkTW6nTCzwnY=
+github.com/q191201771/lal v0.32.0/go.mod h1:Gst1z55BMFx2/5PB8QsFLzvw3M6m73s7/RBE/vrI9/Q=
 github.com/q191201771/naza v0.30.2/go.mod h1:n+dpJjQSh90PxBwxBNuifOwQttywvSIN5TkWSSYCeBk=
+github.com/q191201771/naza v0.30.8 h1:Lhh29o65C4PmTDj2l+eKfsw9dddpgWZk4bFICtcnSaA=
+github.com/q191201771/naza v0.30.8/go.mod h1:n+dpJjQSh90PxBwxBNuifOwQttywvSIN5TkWSSYCeBk=
 github.com/sclevine/agouti v3.0.0+incompatible/go.mod h1:b4WX9W9L1sfQKXeJf1mUTLZKJ48R1S7H23Ji7oFO5Bw=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
