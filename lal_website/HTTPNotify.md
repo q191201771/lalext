@@ -159,7 +159,7 @@ $ffmpeg -re -i wontcry.flv -c:a copy -c:v copy -f rtsp rtsp://localhost:5544/liv
 
 ### 4 `on_sub_start`
 
-别人从当前节点拉流。目前支持RTMP、RTSP、`HTTP-FLV`、`HTTP-TS`，示例如下：
+别人从当前节点拉流。目前支持RTMP、RTSP、`HTTP-FLV`、`HTTP-TS`、HLS，示例如下：
 
 ```
 1) HTTP-FLV
@@ -281,5 +281,3 @@ hls生成每个ts分片文件时。
   "server_id": "1"                                                // .
 }
 ```
-
-Note: HttpNotifyVersion = "v0.2.1"
