@@ -10,5 +10,3 @@
 
 ![lal作者微信](https://pengrl.com/images/yoko_vx.jpeg?date=220329)
 
-欢迎任何技术和非技术的交流。  
-

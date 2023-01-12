@@ -54,53 +54,62 @@ lalserver的配置文件为json格式。
     "single_gop_max_frame_num": 0  //. 见 rtmp.gop_num
   },
   "hls": {
-    "enable": true,                  //. 是否开启HLS服务的监听
-    "enable_https": true,            //. 是否开启HTTPS-HLS监听
-                                     //
-    "url_pattern": "/hls/",          //. 拉流url路由地址，默认值`/hls/`，对应的HLS(m3u8)拉流url地址：
-                                     //  - `/hls/{streamName}.m3u8`
-                                     //  - `/hls/{streamName}/playlist.m3u8`
-                                     //  - `/hls/{streamName}/record.m3u8`
-                                     //
-                                     //  playlist.m3u8文件对应直播hls，列表中只保存`<fragment_num>`个ts文件名称，会持续增
-                                     //  加新生成的ts文件，并去除过期的ts文件
-                                     //  record.m3u8文件对应录制hls，列表中会保存从第一个ts文件到最新生成的ts文件，会持
-                                     //  续追加新生成的ts文件
-                                     //
-                                     //  ts文件地址备注如下：
-                                     //  - `/hls/{streamName}/{streamName}-{timestamp}-{index}.ts` 或
-                                     //    `/hls/{streamName}-{timestamp}-{index}.ts`
-                                     //
-                                     //  注意，hls的url_pattern不能和httpflv、httpts的url_pattern相同
-                                     //
-    "out_path": "./lal_record/hls/", //. HLS的m3u8和文件的输出根目录
-    "fragment_duration_ms": 3000,    //. 单个TS文件切片时长，单位毫秒
-    "fragment_num": 6,               //. playlist.m3u8文件列表中ts文件的数量
-                                     //
-    "delete_threshold": 6,           //. ts文件的删除时机
-                                     //  注意，只在配置项`cleanup_mode`为2时使用
-                                     //  含义是只保存最近从playlist.m3u8中移除的ts文件的个数，更早过期的ts文件将被删除
-                                     //  如果没有，默认值取配置项`fragment_num`的值
-                                     //  注意，该值应该不小于1，避免删除过快导致播放失败
-                                     //
-    "cleanup_mode": 1,               //. HLS文件清理模式：
-                                     //
-                                     //  0 不删除m3u8+ts文件，可用于录制等场景
-                                     //
-                                     //  1 在输入流结束后删除m3u8+ts文件
-                                     //    注意，确切的删除时间点是推流结束后的
-                                     //    `fragment_duration_ms * (fragment_num + delete_threshold)`
-                                     //    推迟一小段时间删除，是为了避免输入流刚结束，HLS的拉流端还没有拉取完
-                                     //
-                                     //  2 推流过程中，持续删除过期的ts文件，只保留最近的
-                                     //    `delete_threshold + fragment_num + 1`
-                                     //    个左右的ts文件
-                                     //    并且，在输入流结束后，也会执行清理模式1的逻辑
-                                     //
-                                     //  注意，record.m3u8只在0和1模式下生成
-                                     //
-    "use_memory_as_disk_flag": false //. 是否使用内存取代磁盘，保存m3u8+ts文件
-                                     //  注意，使用该模式要注意内存容量。一般来说不应该搭配`cleanup_mode`为0或1使用
+    "enable": true,                      //. 是否开启HLS服务的监听
+                                         //
+    "enable_https": true,                //. 是否开启HTTPS-HLS监听
+                                         //
+    "url_pattern": "/hls/",              //. 拉流url路由地址，默认值`/hls/`，对应的HLS(m3u8)拉流url地址：
+                                         //  - `/hls/{streamName}.m3u8`
+                                         //  - `/hls/{streamName}/playlist.m3u8`
+                                         //  - `/hls/{streamName}/record.m3u8`
+                                         //
+                                         //  playlist.m3u8文件对应直播hls，列表中只保存`<fragment_num>`个ts文件名称，会持续增
+                                         //  加新生成的ts文件，并去除过期的ts文件
+                                         //  record.m3u8文件对应录制hls，列表中会保存从第一个ts文件到最新生成的ts文件，会持
+                                         //  续追加新生成的ts文件
+                                         //
+                                         //  ts文件地址备注如下：
+                                         //  `/hls/{streamName}/{streamName}-{timestamp}-{index}.ts` 或
+                                         //  `/hls/{streamName}-{timestamp}-{index}.ts`
+                                         //
+                                         //  注意，hls的url_pattern不能和httpflv、httpts的url_pattern相同
+                                         //
+    "out_path": "./lal_record/hls/",     //. HLS的m3u8和文件的输出根目录
+                                         //
+    "fragment_duration_ms": 3000,        //. 单个TS文件切片时长，单位毫秒
+                                         //
+    "fragment_num": 6,                   //. playlist.m3u8文件列表中ts文件的数量
+                                         //
+    "delete_threshold": 6,               //. ts文件的删除时机
+                                         //  注意，只在配置项`cleanup_mode`为2时使用
+                                         //  含义是只保存最近从playlist.m3u8中移除的ts文件的个数，更早过期的ts文件将被删除
+                                         //  如果没有，默认值取配置项`fragment_num`的值
+                                         //  注意，该值应该不小于1，避免删除过快导致播放失败
+                                         //
+    "cleanup_mode": 1,                   //. HLS文件清理模式：
+                                         //
+                                         //  0 不删除m3u8+ts文件，可用于录制等场景
+                                         //
+                                         //  1 在输入流结束后删除m3u8+ts文件
+                                         //    注意，确切的删除时间点是推流结束后的
+                                         //    `fragment_duration_ms * (fragment_num + delete_threshold)`
+                                         //    推迟一小段时间删除，是为了避免输入流刚结束，HLS的拉流端还没有拉取完
+                                         //
+                                         //  2 推流过程中，持续删除过期的ts文件，只保留最近的
+                                         //    `delete_threshold + fragment_num + 1`
+                                         //    个左右的ts文件
+                                         //    并且，在输入流结束后，也会执行清理模式1的逻辑
+                                         //
+                                         //  注意，record.m3u8只在0和1模式下生成
+                                         //
+    "use_memory_as_disk_flag": false,    //. 是否使用内存取代磁盘，保存m3u8+ts文件
+                                         //  注意，使用该模式要注意内存容量。一般来说不应该搭配`cleanup_mode`为0或1使用
+                                         //
+    "sub_session_timeout_ms": 30000,     //. 统计HLS播放者信息时，判定HLS播放者超时离开的时间，单位是毫秒
+                                         //  如果为值0，则默认值为`fragment_num` * `fragment_duration_ms` * 2
+                                         //
+    "sub_session_hash_key": "q191201771" //. 私钥，计算播放者唯一ID时使用
+                                         //  注意，如果为空，则关闭统计HLS播放者信息的功能
   },
   "httpts": {
     "enable": true,                //. 是否开启HTTP-TS服务的监听。注意，这并不是HLS中的TS，而是在一条HTTP长连接上持续性传输TS流
@@ -369,7 +378,123 @@ httpflv协议的Gop缓存功能，含义和 rtmp.gop_num 类似
 
 ### ▌ "hls"
 
-TODO
+#### ✸ "hls/enable"
+
+类型: bool  
+值举例: true
+
+是否开启HLS服务的监听
+
+#### ✸ "hls/enable_https"
+
+类型: bool  
+值举例: true
+
+是否开启HTTPS-HLS监听
+
+#### ✸ "hls/url_pattern"
+
+类型: string  
+值举例: "/hls/"
+
+拉流url路由地址，默认值`/hls/`，对应的HLS(m3u8)拉流url地址：
+
+- `/hls/{streamName}.m3u8`
+- `/hls/{streamName}/playlist.m3u8`
+- `/hls/{streamName}/record.m3u8`
+
+playlist.m3u8文件对应直播hls，列表中只保存`<fragment_num>`个ts文件名称，会持续增加新生成的ts文件，并去除过期的ts文件。  
+record.m3u8文件对应录制hls，列表中会保存从第一个ts文件到最新生成的ts文件，会持续追加新生成的ts文件。  
+
+ts文件地址备注如下：
+
+`/hls/{streamName}/{streamName}-{timestamp}-{index}.ts` 或 `/hls/{streamName}-{timestamp}-{index}.ts`
+
+注意，hls的url_pattern不能和httpflv、httpts的url_pattern相同
+
+
+#### ✸ "hls/out_path"
+
+类型: string  
+值举例: "./lal_record/hls/"
+
+HLS的m3u8和文件的输出根目录
+
+
+#### ✸ "hls/fragment_duration_ms"
+
+类型: int  
+值举例: 3000
+
+单个TS文件切片时长，单位毫秒
+
+
+#### ✸ "hls/fragment_num"
+
+类型: int  
+值举例: 6
+
+playlist.m3u8文件列表中ts文件的数量
+
+#### ✸ "hls/delete_threshold"
+
+类型: int   
+值举例: 6
+
+ts文件的删除时机。  
+注意，只在配置项`cleanup_mode`为2时使用。  
+含义是只保存最近从playlist.m3u8中移除的ts文件的个数，更早过期的ts文件将被删除。  
+如果没有，默认值取配置项`fragment_num`的值。  
+注意，该值应该不小于1，避免删除过快导致播放失败。  
+
+#### ✸ "hls/cleanup_mode"
+
+类型: int  
+值举例: 1
+
+```
+HLS文件清理模式：
+
+0 不删除m3u8+ts文件，可用于录制等场景
+
+1 在输入流结束后删除m3u8+ts文件
+  注意，确切的删除时间点是推流结束后的
+  `fragment_duration_ms * (fragment_num + delete_threshold)`
+  推迟一小段时间删除，是为了避免输入流刚结束，HLS的拉流端还没有拉取完
+
+2 推流过程中，持续删除过期的ts文件，只保留最近的
+  `delete_threshold + fragment_num + 1`
+  个左右的ts文件
+  并且，在输入流结束后，也会执行清理模式1的逻辑
+
+注意，record.m3u8只在0和1模式下生成
+```
+
+#### ✸ "hls/use_memory_as_disk_flag"
+
+类型: bool  
+值举例: false
+
+是否使用内存取代磁盘，保存m3u8+ts文件。  
+注意，使用该模式要注意内存容量。一般来说不应该搭配`cleanup_mode`为0或1使用
+
+xxx
+
+#### ✸ "hls/sub_session_timeout_ms"
+
+类型: int  
+值举例: 30000
+
+统计HLS播放者信息时，判定HLS播放者超时离开的时间，单位是毫秒。  
+如果为值0，则默认值为`fragment_num` * `fragment_duration_ms` * 2
+
+#### ✸ "hls/sub_session_hash_key"
+
+类型: string  
+值举例: q191201771
+
+私钥，计算播放者唯一ID时使用。  
+注意，如果为空，则关闭统计HLS播放者信息的功能
 
 ### ▌ "httpts"
 
