@@ -491,7 +491,7 @@ xxx
 #### ✸ "hls/sub_session_hash_key"
 
 类型: string  
-值举例: q191201771
+值举例: "q191201771"
 
 私钥，计算播放者唯一ID时使用。  
 注意，如果为空，则关闭统计HLS播放者信息的功能
@@ -577,3 +577,5 @@ TODO
 ### ▌ "debug"
 
 TODO
+
+202301, mod by yoko
