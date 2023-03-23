@@ -55,12 +55,11 @@ set -x
 PREFIX=/usr/local
 
 echo 'nasm...'
-xz -d nasm-2.13.03.tar.xz
 tar -xvf nasm-2.13.03.tar
 cd nasm-2.13.03
 ./configure  --prefix=${PREFIX}
-make && make install
-
+make && make install && make clean
+cd -
 
 ## 注释 --disable-asm configure参数
 echo 'libx264...'
