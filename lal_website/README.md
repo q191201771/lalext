@@ -62,7 +62,7 @@
   - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, GB28181
   - [x] 支持不同封装协议间相互转换
   - [x] 支持通过插件形式进行二次开发，扩展其他协议
-- [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC
+- [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC，G711A/U
 - [x] **多种格式录制**。支持FLV，长MPEGTS，HLS录制(HLS直播与录制可同时开启)
 - [x] **HTTPS**。支持HTTPS-FLV，HTTPS-TS，HLS over HTTPS拉流
 - [x] **WebSocket**。支持Websocket-FLV，WebSocket-TS拉流
@@ -85,7 +85,8 @@
 - [x] **支持(在服务端)自动叠加静音音频**
 - [x] **支持先拉流后推流**
 - [x] **支持推流断开后重连，拉流端无感知**。
-- [x] **支持自定义debug格式流录制、流回放，快速复现、定位问题
+- [x] **支持自定义debug格式流录制、流回放，快速复现、定位问题**
+- [x] **自带Web UI页面**
 
 
 #### ✒ 协议转换支持情况

@@ -281,3 +281,5 @@ hls生成每个ts分片文件时。
   "server_id": "1"                                                // .
 }
 ```
+
+NOTE: HttpNotifyVersion = "v0.2.2"

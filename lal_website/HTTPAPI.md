@@ -408,4 +408,4 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
 
 `stop_rtp_pub`这个接口暂时没有开放。
 
-NOTE: HttpApiVersion = "v0.4.2"
+NOTE: HttpApiVersion = "v0.4.5"

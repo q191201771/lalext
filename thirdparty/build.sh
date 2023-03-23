@@ -7,6 +7,14 @@
 ##      2. 依赖 cmake，比如 yum install cmake -y
 ##      3. 依赖 g++，比如 yum install gcc-c++.x86_64
 ##      4. gcc/g++版本 https://pengrl.com/p/42585/
+##      5. 依赖 automake，比如 brew install automake
+##      6. 依赖 autoconf，比如 brew install autoconf@2.69
+##      7. 依赖 pkg-config，比如 brew install pkg-config
+##      https://www.pengrl.com/p/20043/
+##      brew install xquartz sdl glfw3 glew
+##
+## macos m1没有编译出ffplay，我自己手动编译的
+##      gcc cmdutils.c ffplay.c -I.. -I/opt/homebrew/include/SDL2 -lavdevice -lavfilter -lavformat -lavcodec -lpostproc -lswresample -lswscale -lavutil /opt/homebrew/lib/libSDL2.dylib
 ##
 ## 注释 nasm
 ##
@@ -83,7 +91,7 @@ cd opus-1.3.1
 make -j8 && make install && make clean
 cd -
 
-## 注释 汇编优化相关的configure参数，加上会影响影响 --disable-x86asm --disable-asm \
+## 注释 汇编优化相关的configure参数，加上会影响性能 --disable-x86asm --disable-asm \
 echo 'ffmpeg...'
 tar zxvf n4.4.tar.gz
 tar zxvf mod_ffmpeg_to_support_rtmp_hevc.tgz
@@ -109,3 +117,7 @@ cd FFmpeg-n4.4
 cd doc/examples
 gcc filtering_video.c -lavfilter -lavformat -lavdevice -lavcodec -lavutil -lpostproc -lswresample -lswscale -lm -lz -lx264 -lx265 -lfdk-aac -lopus -lpthread
 ./a.out
+
+cd ../../fftools
+gcc cmdutils.c ffplay.c -I.. -I/opt/homebrew/include/SDL2 -lavdevice -lavfilter -lavformat -lavcodec -lpostproc -lswresample -lswscale -lavutil /opt/homebrew/lib/libSDL2.dylib -o ffplay
+mv ffplay /usr/local/bin
