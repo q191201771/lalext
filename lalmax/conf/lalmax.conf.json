@@ -113,7 +113,7 @@
     },
     "log": {
       "level": 1,
-      "filename": "./logs/lalserver.log",
+      "filename": "./logs/lalmax.log",
       "is_to_stdout": true,
       "is_rotate_daily": true,
       "short_file_flag": true,
