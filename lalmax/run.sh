@@ -1,1 +1,1 @@
-./lalmax -c conf/lalserver.conf.json
+./lalmax -c conf/lalmax.conf.json
