@@ -62,14 +62,14 @@
   - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, GB28181
   - [x] 支持不同封装协议间相互转换
   - [x] 支持通过插件形式进行二次开发，扩展其他协议
-- [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC，G711A/U
+- [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC，G711A/G711U
 - [x] **多种格式录制**。支持FLV，长MPEGTS，HLS录制(HLS直播与录制可同时开启)
 - [x] **HTTPS**。支持HTTPS-FLV，HTTPS-TS，HLS over HTTPS拉流
 - [x] **WebSocket**。支持Websocket-FLV，WebSocket-TS拉流
 - [x] **TLS/SSL**。所有协议都支持相应的TLS/SSL加密传输。比如RTMPS，RTSPS，HTTPS，WebSockets
 - [x] **HLS**。支持LIVE实时直播、VOD全列表直播。切片文件支持多种删除方式。支持内存切片。支持统计HLS播放者数量
-- [x] **RTSP**。支持over TCP(interleaved模式)。支持basic/digest auth验证。
-- [x] **RTMP**。支持给单视频添加静音音频数据，支持合并发送。兼容对接各种常见RTMP实现
+- [x] **RTSP**。支持over TCP(interleaved模式)。支持basic/digest auth验证。支持461。
+- [x] **RTMP**。支持给单视频添加静音音频数据，支持合并发送。兼容对接各种常见RTMP实现。支持enhanced RTMP。
 - [x] **RTP**。支持解析扩展头
 - [x] **HTTP API接口**。用于获取服务信息，向服务发送命令。
 - [x] **HTTP Notify事件回调**。获取时间通知，业务方可以轻松定制自身的逻辑。
@@ -78,7 +78,7 @@
 - [x] **静态pull回源**。通过配置文件配置回源地址
 - [x] **静态push转推**。支持转推多个地址。通过配置文件配置转推地址
 - [x] **支持按需回源**。没有观众的回源拉流可以主动关闭
-- [x] **CORS跨域**。支持HTTP-FLV，HTTP-TS，HLS跨域拉流
+- [x] **CORS跨域**。支持HTTP-FLV，HTTP-TS，HLS跨域拉流。HTTP-API支持跨域。
 - [x] **HTTP文件服务器**。比如HLS切片文件可直接播放，不需要额外的HTTP文件服务器
 - [x] **监听端口复用**。HTTP-FLV，HTTP-TS，HLS可使用相同的端口。over HTTPS类似
 - [x] **秒开播放**。GOP缓冲
@@ -87,6 +87,7 @@
 - [x] **支持推流断开后重连，拉流端无感知**。
 - [x] **支持自定义debug格式流录制、流回放，快速复现、定位问题**
 - [x] **自带Web UI页面**
+- [x] **支持有B帧的视频**
 
 
 #### ✒ 协议转换支持情况
