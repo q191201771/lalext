@@ -40,5 +40,6 @@ lal:0.35.4+
 ![节点](./_media/enhanced-rtmp_6.png)
 
 （3）使用ffplay或者VLC播放Rtsp或者HLS流
+
 （4）如果想播放FLV流，由于ffmpeg和VLC暂时还不支持此标准，可以使用mpegts.js进行测试，笔者这里利用了srs的播放器，在URL中输入lal的http-flv的拉流地址即可
 ![节点](./_media/enhanced-rtmp_7.png)
