@@ -6,7 +6,7 @@ Go语言流媒体开源项目 [LAL](https://github.com/q191201771/lal) 今天发
 
 老规矩，简单介绍一下：
 
-#### ▦ 一. OBS支持RTMP H265推流
+### ▦ 一. OBS支持RTMP H265推流
 
 新出的标准，一般被称为enhanced RTMP，OBS新版(29.1+版本，[点我去下载安装包](https://github.com/obsproject/obs-studio/releases))已经实现可以使用，LAL也做了相应的适配，换言之，你可以使用OBS推送H265的RTMP流给LAL了。
 
@@ -20,17 +20,17 @@ Tips: 使用H265的好处是相较于H264，占用更低的码率却拥有更高
 
 关于enhanced RTMP协议实现细节、OBS对应的使用方法可以看看我们的这篇文章： [《enhanced RTMP》](https://pengrl.com/lal/#/enhanced_rtmp)
 
-#### ▦ 二. G711A/G711U
+### ▦ 二. G711A/G711U
 
 上个版本支持G711音频编码格式时留了个待完成的尾巴，RTSP转RTMP只有视频没有声音，这个版本支持了。
 
 G711的整体情况我们正在整理中： https://www.yuque.com/pengrl/public/psxbp37r3yqopnxx
 
-#### ▦ 三. RTSP TCP/UDP 切换
+### ▦ 三. RTSP TCP/UDP 切换
 
 一个优化： 有的RTSP源不支持TCP传输音视频数据，会在SETUP信令阶段给对端回复status code 461，用于表明自身不支持TCP，新版本的LAL收到461后会尝试切换UDP SETUP。反之UDP切TCP也是一样的道理。
 
-#### ▦ 更多
+### ▦ 更多
 
 还有一些修改不逐个介绍了，大致如下：
 
@@ -45,11 +45,11 @@ G711的整体情况我们正在整理中： https://www.yuque.com/pengrl/public/
 >
 > 以上内容摘取自 [《lal CHANGELOG版本日志》](https://pengrl.com/lal/#/CHANGELOG) ，你可以通过源文档获取更详细的内容。
 
-#### ▦ 开发者
+### ▦ 开发者
 
 感谢参与这个版本的开源贡献者：yoko, ZSC714725, joaop, sanenchen, yang heng01~, penglh, LiH0820
 
-#### ▦ 进一步了解lal
+### ▦ 进一步了解lal
 
 - [github](https://github.com/q191201771/lal)
 - [官方文档](https://pengrl.com/lal)

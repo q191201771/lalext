@@ -61,7 +61,7 @@
 - [x] **多种直播流封装协议**
   - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, GB28181
   - [x] 支持不同封装协议间相互转换
-  - [x] 支持通过插件形式进行二次开发，扩展其他协议
+  - [x] 支持通过插件形式进行二次开发，支持扩展自定义协议，输入输出都可以
 - [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC，G711A/G711U
 - [x] **多种格式录制**。支持FLV，长MPEGTS，HLS录制(HLS直播与录制可同时开启)
 - [x] **HTTPS**。支持HTTPS-FLV，HTTPS-TS，HLS over HTTPS拉流

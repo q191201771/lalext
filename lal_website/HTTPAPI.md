@@ -207,7 +207,7 @@ $curl http://127.0.0.1:8083/api/stat/lal_info
 ✸ 请求示例：
 
 ```
-$curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb"}' http://127.0.0.1:8083/api/ctrl/start_relay_pull
+$curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/live/test110?token=aaa&p2=bbb", "pull_retry_num": 0}' http://127.0.0.1:8083/api/ctrl/start_relay_pull
 ```
 
 ✸ 请求方式： `HTTP POST`
@@ -220,8 +220,8 @@ $curl -H "Content-Type:application/json" -X POST -d '{"url": "rtmp://127.0.0.1/l
                                                              //
     "stream_name": "test110",                                //. 选填项，如果不指定，则从`url`参数中解析获取
                                                              //
-    "pull_timeout_ms": 5000,                                 //. 选填项，pull建立会话的超时时间，单位毫秒。
-                                                             //  默认值是5000
+    "pull_timeout_ms": 10000,                                //. 选填项，pull建立会话的超时时间，单位毫秒。
+                                                             //  默认值是10000
                                                              //
     "pull_retry_num": 0,                                     //. 选填项，pull连接失败或者中途断开连接的重试次数
                                                              //  -1  表示一直重试，直到收到stop请求，或者开启并触发下面的自动关闭功能

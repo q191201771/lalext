@@ -24,12 +24,14 @@
 * =====3 lal 补充文档=====
   * [3.1 Demo简介](DEMO.md)
   * [3.2 Changelog版本日志](CHANGELOG.md)
+  * [|-- v0.36.7发布，Customize Sub，我有的都给你](brief_v0.36.7.md)
   * [|-- v0.35.4发布，OBS支持RTMP H265推流，我跟了](brief_v0.35.4.md)
   * [|-- v0.34.3发布，G711音频来了，Web UI也来了](brief_v0.34.3.md)
   * [|-- v0.33.0发布，支持抓取流数据回放调试](brief_v0.33.0.md)
   * [|-- v0.32.0发布，更好的支持纯视频流](brief_v0.32.0.md)
   * [3.3 github star趋势图](StarChart.md)
   * [3.4 第三方依赖](ThirdDeps.md)
+  * [3.5 谁在使用LAL](https://github.com/q191201771/lal/issues/290)
 * =====4 其他文档=====
   * [4.1 常见推拉流客户端信息汇总](CommonClient.md)
   * [4.2 连接类型之session pub/sub/push/pull](Session.md)
