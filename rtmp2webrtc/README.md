@@ -11,7 +11,13 @@ $cd rtmp2webrtc
 $go build
 $./rtmp2webrtc -p 8827 -wp 8900
 ```
-也可以使用`./rtmp2webrtc -p 8827 -wp 8900 -ip x.x.x.x`，`x.x.x.x`是你机器ip地址。这样不用依赖外部stun服务，也可以减少建链时间。 
+
+参数说明：
+
+-p 8827 是html页面的tcp端口
+-wp 8900 是WebRTCICE的端口，包含tcp和udp端口
+
+另外，也可以使用`./rtmp2webrtc -p 8827 -wp 8900 -ip x.x.x.x`，`x.x.x.x`是你机器ip地址。这样不用依赖外部stun服务，也可以减少建链时间。 
 
 步骤2，使用chrome浏览器打开h5网页： http://127.0.0.1:8827/rtmp2webrtc.html
 
