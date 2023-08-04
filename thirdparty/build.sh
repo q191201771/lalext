@@ -4,7 +4,7 @@
 ##
 ##      注意：
 ##      1. 执行需要root权限，比如 sudo ./build.sh
-##      2. 依赖 cmake，比如 yum install cmake -y
+##      2. 依赖 cmake
 ##      3. 依赖 g++，比如 yum install gcc-c++.x86_64
 ##      4. gcc/g++版本 https://pengrl.com/p/42585/
 ##      5. 依赖 automake，比如 brew install automake
@@ -13,12 +13,19 @@
 ##      https://www.pengrl.com/p/20043/
 ##      brew install xquartz sdl glfw3 glew
 ##
+## centos 安装依赖：
+## yum install centos-release-scl -y
+## yum install devtoolset-9 -y
+## yum install cmake
+## scl enable devtoolset-9 bash
+##
 ## macos m1没有编译出ffplay，我自己手动编译的
 ##      gcc cmdutils.c ffplay.c -I.. -I/opt/homebrew/include/SDL2 -lavdevice -lavfilter -lavformat -lavcodec -lpostproc -lswresample -lswscale -lavutil /opt/homebrew/lib/libSDL2.dylib
 ##
 ## 注释 nasm
 ##
 ##      http://www.nasm.us/pub/nasm/releasebuilds/2.13.03/nasm-2.13.03.tar.xz
+##      https://blog.csdn.net/weixin_43328157/article/details/109046492
 ##
 ## 注释 libx264
 ##
@@ -39,11 +46,17 @@
 ##      https://opus-codec.org/downloads/
 ##      https://archive.mozilla.org/pub/opus/opus-1.3.1.tar.gz
 ##
+## 注释 libass
+##
+##      https://github.com/libass/libass/releases/tag/0.17.1
+##      https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.gz
+##
 ## 注释 ffmpeg
 ##
 ##      https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n4.4.tar.gz
 ##
 ##      --extra-cflags="-fno-stack-check" https://pengrl.com/p/20042/
+##
 ##
 ## 注释 注意，--enable-debug 这一行的选项打开用于编译debug版本
 ##
@@ -52,13 +65,15 @@
 
 set -x
 
+export ACCEPT_INFERIOR_RM_PROGRAM=yes
+
 PREFIX=/usr/local
 
 echo 'nasm...'
 tar -xvf nasm-2.13.03.tar
 cd nasm-2.13.03
 ./configure  --prefix=${PREFIX}
-make && make install && make clean
+make -j8 && make install && make clean
 cd -
 
 ## 注释 --disable-asm configure参数
@@ -90,6 +105,12 @@ cd opus-1.3.1
 make -j8 && make install && make clean
 cd -
 
+echo 'libass...'
+tar zxvf libass-0.17.1.tar.gz
+cd libass-0.17.1/
+./configure --prefix=${PREFIX}
+make -j8 && make install && make clean
+
 ## 注释 汇编优化相关的configure参数，加上会影响性能 --disable-x86asm --disable-asm \
 echo 'ffmpeg...'
 tar zxvf n4.4.tar.gz
@@ -105,7 +126,10 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
             --enable-shared --disable-static \
             --enable-gpl --enable-nonfree \
             --enable-debug=3 --disable-optimizations --disable-stripping \
-            --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libopus
+            --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libopus --enable-libass
+# --extra-cflags="-I${PREFIX}/include -I/opt/homebrew/include -L${PREFIX}/lib -L/opt/homebrew/lib"
+# --extra-libs="-lpthread -lm" \
+
 make -j8 && make install
 cd -
 
