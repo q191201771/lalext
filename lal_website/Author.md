@@ -1,6 +1,8 @@
-Thank you for your interest in the lal project.  
+Thank you for your interest in the lal project.
+
 All the code and documents are open source and free, you can use them fr asas long as you do not break the law.  
-WeChat and QQ groups are also free, aiming to provide a platform for everyone to communicate.  
+WeChat and QQ groups are also free, aiming to provide a platform for everyone to communicate. 
+
 If you want to support my project, you can send a donation to buy me a cup of coffee.
 
 - WeChat: q191201771

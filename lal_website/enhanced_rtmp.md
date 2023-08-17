@@ -22,7 +22,7 @@ RTMP内部负载也是使用FLV的Tag，故这里主要讲解下enhaned FLV Vide
 
 在标准的FLV格式中，Video Tag由Tag Header和Tag Body组成，Tag Header固定5个字节，可以通过第一个字节的后4bits来判断codec信息。
 
-### ▦ Enhaned FLV Video Tag
+### ▦ Enhanced FLV Video Tag
 
 ![pic](https://pengrl.com/lal/_media/enhanced-rtmp_3.png)
 ![pic](https://pengrl.com/lal/_media/enhanced-rtmp_4.png)

@@ -1,146 +1,115 @@
 # lal FAQ
+The FAQ is displayed at: https://pengrl.com/lal/#/FAQ 
+The FAQ documentation is hosted at [lal_website/FAQ.md](https://github.com/lalext/lal_website/FAQ.md) on the GitHub lalext project.
 
-> FAQ 展示地址： https://pengrl.com/lal/#/FAQ  
-> FAQ 文档存放地址：github [lalext项目](https://github.com/q191201771/lalext) 的 [lal_website/FAQ.md](https://github.com/q191201771/lalext/blob/master/lal_website/FAQ.md)
->
-> 欢迎大家添加自己的问题，或者自问自答，或者回答文档里最下面待整理的问题。  
-> 
-> 参与方式，可以提PR修改文档 [lal_website/FAQ.md](https://github.com/q191201771/lalext/blob/master/lal_website/FAQ.md)，也可以到这个 [issue](https://github.com/q191201771/lalext/issues/4) 里跟帖（我会定期把内容挪过来）。
+You are welcome to add your own questions, or ask your own questions, or answer the questions at the bottom of the document. 
 
-- ▌
-- ▌ 录制
-- ▌ h265
-- ▌ rtsp
-- ▌ 应用场景
-- ▌ 编译、运行问题
-- ▌ 待整理
+To participate, you can either submit a PR to modify lal_website/FAQ.md, or follow up in this issue (I'll move the content over periodically).
 
 
-#### ▌
+▌ Recording
 
-##### Q: 我在我电脑上本地obs推，vlc拉，有声音回环，有什么优化建议？ (202205)
+▌ H265
 
-如果音频是采集的麦克风，应该是你拉流播放出的声音，通过麦克风再次采集推流了，循环了。从而导致回音，啸叫等不良效果。
+▌ RTSP
 
-可以弄个耳机播放试试。
+▌ Application Scenarios
 
-这个对于单向直播产品其实不算问题，因为播放端和推流端不在一起，不会循环。对于双向交互的产品，需要端上做回声消除。
+▌ Compilation and operation problems
 
-##### Q: 使用lalext/rtmp2webrtc时，观看画面跳跃？鬼畜？ (202205)
+▌ To be sorted out
 
-因为chrome webrtc用的是openh264,只支持baseline profile 所以不支持b帧。
 
-因为webrtc不支持B帧，所以会在播放B帧的时候有部分帧回退的现象。
+**Q: I'm pushing locally OBS on my computer, pulling with VLC, with sound loopback, any suggestions for optimisation?** (202205)
+If the audio is picked up from the microphone, it may happen that the sound played out of the stream you pull, may get picked up by the microphone again, and pushed the stream up, looped. This leads to echo, whistling, and other undesirable effects.
 
-你可以通过以下方法检查你的rtmp流是否有带B帧：
-1. 使用命令`ffprobe -show_frames -select_streams v -show_entries frame=pict_type -i rtmp://xxxx`
-2. 如果输出如下信息，代表rtmp流有B帧：
-```shell
+You can try instead with a headset.
+
+This is not really a problem for one-way live productions, because the playback side and the push-flow side are not together, and will not loop. For two-way interactive products, you need to do echo cancellation on (at least) your end.
+
+**Q: When using lalext/rtmp2webrtc, the viewing screen jumps? Ghosting?** (202205)
+Because Chrome WebRTC uses OpenH264, it only supports the baseline profile, so it doesn't support B-frames, therefore there will be some frames fallback when playing B-frames.
+
+You can check if your RTMP stream has B-frames or not using the following command:
+```bash
+ffprobe -show_frames -select_streams v -show_entries frame=pict_type -i rtmp://xxxx
+```
+If the following information is output, it means the RTMP stream has B-frames:
+```
 [FRAME]
 pict_type=B
 [/FRAME]
 ```
-
-去除B帧需要对视频进行重编码,命令行如下:
+Removing B-frames requires re-encoding the video, the command line is as follows.
 ```bash
 ffmpeg -i input.mp4 -codec:v libx264 -bf 0 -codec:a copy -f mp4 input_no_b_frame.mp4
 ```
+**Q: When using lalserver, after pushing the stream, VLC, `ffplay` and other players are stuck at the last frame and won't exit?**
+First of all, lalserver has a timeout mechanism, after a period of time, it will disconnect the pull stream player. 
+The fact that the player does not exit at the last frame has something to do with the specific implementation of the specific player for the server side after the connection is closed. 
+Users can check whether the connection has been closed through lalserver's log, `netstat`, `tcpdump`, and other means. 
 
-##### Q: 使用lalserver，推流结束后，vlc、ffplay等播放器卡在最后一帧画面不退出？
+**Q: Why don't some protocols use the standard ports in the default configuration? For example, HTTP does not use port 80 and RTSP does not use port 554.**
+Because under Linux, binding ports below 1024 requires root privileges, most open source projects will use ports like 8080, 3000 instead of 80 as the default port for testing. 
+Superusers can modify the configuration to use the default ports under 1024 .
 
-首先，lalserver有超时机制，推流结束一段时候后，会主动断开拉流播放端的连接。  
-播放器卡在最后一帧画面不退出，和具体播放器对于server端关闭连接后的具体实现有关系。  
-用户可通过lalserver的日志、netstat、tcpdump等手段来查询连接是否已被关闭。  
+▌ Recording
+**Q: Can recordings be stored by hour? I want each hour to be stored as a separate video file.** (202205)
+There are two types of hourly storage:
 
-##### Q: 为什么默认配置中部分协议不使用对应的标准端口？比如HTTP不使用80端口，RTSP不使用554端口
+1. Each video file is 1 hour long. For example, if you start at 12:20, a new video file will be generated at 13:20 and 14:20.
+2. Video files are cut so that they all start at the begining of the hour. For example, if you start recording at 12:20, then new video files are generated  at 13:00 and 14:00 respectively.
 
-因为Linux系统下，绑定1024以下的端口需要root权限，所以大部分开源项目的测试默认端口会使用类似8080，3000这种端口，而非80端口。  
-用户在有权限的前提下，可以修改配置。
+For the first type, you can use HLS to record and set the length of individual slices to 1 hour.
 
-#### ▌ 录制
+The second type is slightly more troublesome, lalserver does not directly support it internally, currently there are several recommended ways:
 
-##### Q: 录制 能按小时存放吗？ 每个小时存放为一个视频文件 (202205)
+- Use lal's client-side wrapping, recording and other library code to pull streams from lalserver and record by yourself; in this way, the logic of cutting can be freely customised;
+- Wait for lalserver to provide HLS recording to generate a new TS file callback. In the callback, decide how to manage the generated TS file. _(TODO)_
 
-每小时存放分为两种：
+Also, if you want lalserver to provide direct support internally, you can go to GitHub and raise an issue, I will consider scheduling support, thanks.
 
-1. 每个视频文件时长为1个小时。比如12：20开始的，那么后面分别是13：20，14：20生成新的视频文件
-2. 到整点时生成新的录制文件。比如12：20开始的，那么后面分别是13：00，14：00生成新的视频文件
+▌ h265
+**Q: Does lal support h265 playback?**
+lal supports h265. if you want to pull h265 streams from lalserver and play them, you can do that, so long as the player supports it.
 
-对于第一种，可以使用hls录制，并且把单个切片时长设置为1小时。
+**Q: Why does it fail to play h265 FLV/RTMP streams with players like VLC?**
+lal supports h265 FLV/RTMP.
 
-第二种稍微麻烦一些，lalserver内部并没有直接支持，目前有以下几种推荐方式：
+But since the official standard of FLV/RTMP doesn't support h265, the native official version of `ffmpeg`, VLC, `flv.js`etc.  don't support playing h265 rtmp/flv directly. 
+You can use [thirdparty/build.sh](thirdparty/build.sh) in the lalext project to compile a `ffmpeg` that supports h265. 
+Also try: [EasyPlayer.js](https://github.com/tsingsee/EasyPlayer.js/).
 
-1. 使用lal中的客户端、转封装、录制等库代码，自己从lalserver拉流并录制，这种方式，切割的逻辑可自由定制
-2. 等lalserver提供hls录制生成新的ts文件的回调，在回调中决定如何管理已生成的ts文件 TODO
+▌ RTSP
+**Q: Does RTSP support multicast?**
+Not at the moment. Will develop later. _(TODO)_
 
-另外，如果想要lalserver内部直接提供支持，可以去github上提issue，我会考虑排期支持，感谢。
+▌ Application Scenarios
+**Q: Can lalserver do video conferencing?**
+Currently not supported. _(TODO)_
 
-#### ▌ h265
+**Q: In the application scenario of capturing IPcamera video, AI processing and then pushing streaming, how does this framework interface with AI processing?**
+lal mainly focuses on the transmission aspect, as for how to process the pre-encoding and post-decoding audio and video before and after transmission, lal is not too concerned. 
+For example, the stream pushed by IPcamera AI processing described in this question only needs to be encapsulated into a standard protocol format supported by lal, and then it can be used in the interface. 
 
-##### Q: 支持h265播放吗？
+▌ Compilation, runtime issues
+**Q: I don't know how I can run it?**
+See https://pengrl.com/#/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c
 
-lal支持h265。想从lalserver拉取h265的流并播放，只要播放器支持即可。
-
-##### Q: 为什么使用vlc等播放器播放h265 flv/rtmp失败了？
-
-lal支持h265 flv/rtmp。
-
-但是由于flv/rtmp官方标准不支持h265，所以原生官方版本的ffmpeg，vlc，[flv.js](https://github.com/bilibili/flv.js)都不支持直接播放h265 rtmp/flv。  
-你可以使用 [lalext](https://github.com/q191201771/lalext) 项目里`thirdparty/build.sh`编译一个支持h265的ffmpeg。  
-也可以试试： [EasyPlayer.js](https://github.com/tsingsee/EasyPlayer.js)。
-
-
-#### ▌ rtsp
-
-##### Q: rtsp支持组播吗
-
-目前不支持。后续会开发。 TODO
-
-#### ▌ 应用场景
-
-##### Q: lalserver能否做视频会议？
-
-目前不支持。 TODO
-
-##### Q: 在采集IPcamera 视频 AI处理然后推流的应用场景中， 这个框架怎样和AI处理衔接呢？
-
-lal主要聚焦在传输方面，至于传输前和传输后对编码前、解码后的音视频如何处理，lal并不太关心。  
-比如这个问题中所说的IPcamera AI处理后推的流，只需要封装成lal支持的标准协议格式，就能衔接使用。  
-
-#### ▌ 编译、运行问题
-
-##### Q: 不知道怎么能跑起来？
-
-见 https://pengrl.com/#/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c
-
-#### ▌ 待整理
-
-##### Q: lalserver的插件，webrtc的规划
-
-##### Q: rtsp支持RTP over TS和RTP over PS吗
-
-##### Q: 每种协议支持的编码格式和封装格式
-
-##### Q: 支持防盗链吗？
-
-##### Q: 支持鉴权吗？
-
-##### Q: 每种协议支持的编码格式和封装格式？
-
-##### Q: 支持加密吗？
-
-##### Q: 是否免费？
-
-##### Q: 支持回放吗？
-
-##### Q: obs推流到lalserver失败了，是什么问题，怎么排查？
-
-##### Q: lal的延迟有多大？
-
-##### Q: 海康威视监控摄像头，网页无法播放视频，现象：VLC 能够播放,但是等待时间略长 5秒左右，mpegts.js完全无法播放，西瓜播放器也无法播放。mpegts播放抓包，显示一直在进行数据拉取，时间轴一直在增加。但是始终无法播放。
-
+▌ To be sorted out
+Q: plugin for lalserver, planning for webrtc
+Q: rtsp support RTP over TS and RTP over PS?
+Q: encoding format and encapsulation format supported by each protocol
+Q: Does rtsp support anti-piracy?
+Q: Does rtsp support authentication?
+Q: What are the encoding and encapsulation formats supported by each protocol?
+Q: Does it support encryption?
+Q: Is it free?
+Q: Does it support playback?
+Q: What is the problem with obs pushing streams to lalserver and how can I troubleshoot it?
+Q: What is the latency of lal?
+Q: Hikvision surveillance camera, webpage can not play video, phenomenon: VLC can play, but the waiting time is slightly long 5 seconds or so, mpegts.js can not be played at all, watermelon player can not be played. mpegts playback capture packet, showing that it has been in the data pulling, the timeline has been increasing. But it never plays.
 (#153)
 
-##### Q: (#150)
-
-##### Q: (#126)
+Q: (#150)
+Q: (#126)

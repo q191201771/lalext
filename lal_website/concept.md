@@ -1,46 +1,46 @@
-> 重要概念 展示地址： https://pengrl.com/lal/#/concept  
-> 重要概念 文档存放地址：github [lalext项目](https://github.com/q191201771/lalext) 的 [lal_website/concept.md](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md)
+> Important Concepts Presented at: https://pengrl.com/lal/#/concept  
+> Important Concepts Documentation hosted at [lal_website/concept.md](https://github.com/q191201771/lalext/) on github [lalext project](https://github.com/q191201771/lalext) blob/master/lal_website/concept.md)
 >
-> 欢迎大家添加自己的问题，或者自问自答，或者回答文档里最下面待整理的问题。  
+> Feel free to add your own questions, or ask your own questions, or answer the questions at the bottom of the document.  
 >
-> 参与方式，可以提PR修改文档 [lal_website/concept.md](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md)，也可以到这个 [issue](https://github.com/q191201771/lalext/issues/5) 里直接跟帖。
+> Participate by submitting a PR to the document [lal_website/concept.md](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md), or by posting directly to this [issue]( https://github.com/q191201771/lalext/issues/5).
 
-# 重要概念
+# Important concepts
 
-- 首帧打开时间（秒开）
-- 延迟
-- 卡顿
+- Time to first frame (seconds to open)
+- Latency
+- Lag
 - SFU
-- 转封装
-- 编码解码
-- 纯音频流，纯视频流
+- Trans encapsulation
+- Encoding and decoding
+- Pure audio streaming, pure video streaming
 
-#### 首帧打开时间（秒开）
+#### Time to first frame (seconds to open)
 
-首帧打开时间，指的是从向播放器输入拉流url地址，到第一个视频画面渲染播放出来，整个过程消耗的时间。
+**Time to first frame** refers to the time elapsed from the moment the streaming URL is input in the player, to the rendering and playback of the first video frame.
 
-秒开，也即一秒内打开，后逐渐变为业内对首帧打开时间的一种约定俗称的称呼。(当然还可以2秒开，500毫秒开等等。。)
+**Seconds to open** gradually became the agreed name in the industry for the opening time of the first frame. (Of course, it can also be 2 seconds to open, 500 milliseconds to open, etc.).
 
-相应的一个常见的词是秒开率，表示观众在一秒内打开的比例。显然，秒开率越高越好。
+Another common term for this is _open rate_, which indicates the _percentage_ of viewers who open the first frame within one second. Obviously, the higher the open rate per second, the better.
 
-#### 延迟
+#### Latency
 
-延迟，指播放端播放的画面时间点，距离推流端生产推送这个画面的时间点的差值。
+**Latency** is the difference between the point in time shown on the screen on the playback side, and the point in time when the push stream side produces and pushes this screen frame.
 
-举个例子，主播在物理时间中午12点整说了一句话，播放端在12点过3秒听到这句话，那么延迟为3秒。
+For example, if the anchor of a news show says something at exactly 12:00 noon physical time, and the playback side hears this at 3 seconds past 12:00, then the delay is 3 seconds.
 
-#### 卡顿
+#### Lag
 
 #### SFU
 
-#### 装封装
+#### Encapsulation
 
-#### 编码解码
+#### encode/decode
 
-#### 纯音频流，纯视频流
+#### Pure audio stream, pure video stream
 
-纯音频流表示只有音频，没有视频的流。注意，这里说的没有视频，指的是完全没有视频数据，需要和传输了黑屏视频数据等情况区分。
+**Pure audio stream** means a stream with only audio and no video. Note that by _no video_, we mean no video data at all, which needs to be distinguished from the case where black screen video data is transmitted.
 
-纯视频流表示只有视频，没有音频的流。注意，这里说的没有音频，指的是完全没有音频数据，需要和传输了静音音频数据等情况区分。
+A **pure video stream** is a stream with only video and no audio. Note that by _no audio_, we mean no audio data at all, which needs to be distinguished from cases such as muted audio data being transferred.
 
 yoko, 202211
