@@ -1,187 +1,179 @@
-# lalserver 配置文件说明
+# lalserver configuration file description
 
-lalserver的配置文件为json格式。  
+The lalserver configuration file is in JSON format.  
 
-为了方便阅读、方便查找，本文档使用两种形式对配置文件进行说明：
+In order to make it easier to read and find, this document uses two forms of describing the configuration file:
 
-- 注释版： 一种是保持json原有格式，在行尾增加注释的方式
-- 拆解版： 另外一种是把一级子项作为一个单独的大标题，内部块block包含了它的子项
+- The annotated version keeps the original format of the JSON file and adds comments at the end of each line.
+- The other version uses the first level of sub-items as a separate header, and the internal block contains its sub-items.
 
 
-## 注释版
+## Annotated version
 
-```
+```json
 {
-  "# doc of config": "https://pengrl.com/lal/#/ConfigBrief", //. 配置文件对应的文档说明链接，在程序中没实际用途
-  "conf_version": "0.4.1",                                   //. 配置文件版本号，业务方不应该手动修改，程序中会检查该版本
-                                                             //  号是否与代码中声明的一致
+  "# doc of config": "https://pengrl.com/lal/#/ConfigBrief",	// A link to the documentation for the config file, which has no practical use in the application.
+  "conf_version": "0.4.1",	// Configuration file version number, should not be changed manually by the business side, the version is checked in the application to see if it is the same as the one declared in the code.
   "rtmp": {
-    "enable": true,                       //. 是否开启rtmp服务的监听
-                                          //  注意，配置文件中控制各协议类型的enable开关都应该按需打开，避免造成不必要的协议转换的开销
-    "addr": ":1935",                      //. RTMP服务监听的端口，客户端向lalserver推拉流都是这个地址
-    "rtmps_enable": true,                 //. 是否开启rtmps服务的监听
-                                          //  注意，rtmp和rtmps可以任意开启一个或全部打开或全部关闭
-    "rtmps_addr": ":4935",                //. RTMPS服务监听的端口地址
-    "rtmps_cert_file": "./conf/cert.pem", //. RTMPS的本地cert文件
-    "rtmps_key_file": "./conf/key.pem",   //. RTMPS的本地key文件
-    "gop_num": 0,                         //. RTMP拉流的GOP缓存数量，加速流打开时间，但是可能增加延时
-                                          //  如果为0，则不使用缓存发送
-    "single_gop_max_frame_num": 0,        //. GOP缓存功能开启时，单个GOP中缓存的帧数量的最大限制
-    "merge_write_size": 0,                //. 将小包数据合并进行发送，单位字节，提高服务器性能，但是可能造成卡顿
-                                          //  如果为0，则不合并发送
+    "enable": true,	// Whether to enable listening to the RTMP service.
+										// Note that the enable switch in the config file for each protocol type should be turned on only as needed to avoid unnecessary protocol conversion overhead.
+    "addr": ":1935",	// The port on which the RTMP service listens, and on which clients push and pull streams to lalserver.
+    "rtmps_enable": true,	// If the RTMPS service is enabled or not.
+													// Note that RTMP and RTMPS can be independently turned on or off.
+    "rtmps_addr": ":4935",	// The port address on which the RTMPS service listens.
+    "rtmps_cert_file": "./conf/cert.pem",	// Local cert file for RTMPS
+    "rtmps_key_file": "./conf/key.pem",	// Local key file for RTMPS
+    "gop_num": 0,	// Number of GOP caches for RTMP pull streams. This reduces the stream opening time, but may increase latency.
+									// If 0, then send the stream without cache.
+    "single_gop_max_frame_num": 0,	// Maximum limit on the number of frames cached in a single GOP when GOP caching is enabled.
+    "merge_write_size": 0	// Merge small packets of data into a single byte to improve server performance, but may cause lag.
+													// If 0, do not merge.
   },
-  "in_session": {                         //. 针对所有输入型流（包括所有协议、所有输入类型）的配置
-                                          //  详细介绍见： https://pengrl.com/lal/#/dummy_audio
-    "add_dummy_audio_enable": false,      //. 是否开启动态检测添加静音AAC数据的功能
-                                          //  如果开启，所有输入型流如果超过`add_dummy_audio_wait_audio_ms`时间依然没有
-                                          //  收到音频数据，则会自动为这路流叠加AAC的数据
-    "add_dummy_audio_wait_audio_ms": 150  //. 单位毫秒，具体见`add_dummy_audio_enable`
+  "in_session": {	// Configuration for all input streams (all protocols, all input types).
+									// For details see: https://pengrl.com/lal/#/dummy_audio
+  "add_dummy_audio_enable": false,	// Enable or disable dynamic detection of added muted AAC data.
+																		// If enabled, on any input stream that has exceeded `add_dummy_audio_wait_audio_ms` and still has not
+																		// received audio data, AAC data is automatically superimposed for it.
+    "add_dummy_audio_wait_audio_ms": 150	// In milliseconds, see `add_dummy_audio_enable` for details
   },
-  "default_http": {                       //. http监听相关的默认配置，如果hls, httpflv, httpts中没有单独配置以下配置项，
-                                          //  则使用default_http中的配置
-                                          //  注意，hls, httpflv, httpts服务是否开启，不由此处决定
-    "http_listen_addr": ":8080",          //. HTTP监听地址
-    "https_listen_addr": ":4433",         //. HTTPS监听地址
-    "https_cert_file": "./conf/cert.pem", //. HTTPS的本地cert文件地址
-    "https_key_file": "./conf/key.pem"    //. HTTPS的本地key文件地址
+  "default_http": {	// Default configuration for HTTP listening.
+  									// If hls, httpflv, httpts do not have the following configuration items configured separately,
+										// then the `default_http` configuration is used.
+										// Note that whether the hls, httpflv, httpts services are enabled or not is not determined here.
+    "http_listen_addr": ":8080",	// HTTP listener address
+    "https_listen_addr": ":4433",	// HTTPS listener address
+    "https_cert_file": "./conf/cert.pem",	// HTTPS local cert file address
+    "https_key_file": "./conf/key.pem"	// Local key file address for HTTPS
   },
   "httpflv": {
-    "enable": true,                //. 是否开启HTTP-FLV服务的监听
-    "enable_https": true,          //. 是否开启HTTPS-FLV监听
-    "url_pattern": "/",            //. 拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。
-                                   //  如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.flv`
-    "gop_num": 0,                  //. httpflv协议的Gop缓存功能，含义和 rtmp.gop_num 类似
-    "single_gop_max_frame_num": 0  //. 见 rtmp.gop_num
+    "enable": true,	// Whether to enable listening for HTTP-FLV services.
+    "enable_https": true,	// Whether to enable HTTPS-FLV listening.
+    "url_pattern":"/",	// The address of the pull stream URL routing path. Defaults to `/`, which means it is unrestricted and the route address can be any path address.
+												// If set to `/live/`, streams can only be pulled from `/live/` paths, e.g. `/live/test110.flv`.
+    "gop_num": 0,	// Gop caching for httpflv protocol, similar to `rtmp.gop_num`.
+    "single_gop_max_frame_num": 0	// See `rtmp.gop_num`.
   },
   "hls": {
-    "enable": true,                      //. 是否开启HLS服务的监听
-                                         //
-    "enable_https": true,                //. 是否开启HTTPS-HLS监听
-                                         //
-    "url_pattern": "/hls/",              //. 拉流url路由地址，默认值`/hls/`，对应的HLS(m3u8)拉流url地址：
-                                         //  - `/hls/{streamName}.m3u8`
-                                         //  - `/hls/{streamName}/playlist.m3u8`
-                                         //  - `/hls/{streamName}/record.m3u8`
-                                         //
-                                         //  playlist.m3u8文件对应直播hls，列表中只保存`<fragment_num>`个ts文件名称，会持续增
-                                         //  加新生成的ts文件，并去除过期的ts文件
-                                         //  record.m3u8文件对应录制hls，列表中会保存从第一个ts文件到最新生成的ts文件，会持
-                                         //  续追加新生成的ts文件
-                                         //
-                                         //  ts文件地址备注如下：
-                                         //  `/hls/{streamName}/{streamName}-{timestamp}-{index}.ts` 或
-                                         //  `/hls/{streamName}-{timestamp}-{index}.ts`
-                                         //
-                                         //  注意，hls的url_pattern不能和httpflv、httpts的url_pattern相同
-                                         //
-    "out_path": "./lal_record/hls/",     //. HLS的m3u8和文件的输出根目录
-                                         //
-    "fragment_duration_ms": 3000,        //. 单个TS文件切片时长，单位毫秒
-                                         //
-    "fragment_num": 6,                   //. playlist.m3u8文件列表中ts文件的数量
-                                         //
-    "delete_threshold": 6,               //. ts文件的删除时机
-                                         //  注意，只在配置项`cleanup_mode`为2时使用
-                                         //  含义是只保存最近从playlist.m3u8中移除的ts文件的个数，更早过期的ts文件将被删除
-                                         //  如果没有，默认值取配置项`fragment_num`的值
-                                         //  注意，该值应该不小于1，避免删除过快导致播放失败
-                                         //
-    "cleanup_mode": 1,                   //. HLS文件清理模式：
-                                         //
-                                         //  0 不删除m3u8+ts文件，可用于录制等场景
-                                         //
-                                         //  1 在输入流结束后删除m3u8+ts文件
-                                         //    注意，确切的删除时间点是推流结束后的
-                                         //    `fragment_duration_ms * (fragment_num + delete_threshold)`
-                                         //    推迟一小段时间删除，是为了避免输入流刚结束，HLS的拉流端还没有拉取完
-                                         //
-                                         //  2 推流过程中，持续删除过期的ts文件，只保留最近的
-                                         //    `delete_threshold + fragment_num + 1`
-                                         //    个左右的ts文件
-                                         //    并且，在输入流结束后，也会执行清理模式1的逻辑
-                                         //
-                                         //  注意，record.m3u8只在0和1模式下生成
-                                         //
-    "use_memory_as_disk_flag": false,    //. 是否使用内存取代磁盘，保存m3u8+ts文件
-                                         //  注意，使用该模式要注意内存容量。一般来说不应该搭配`cleanup_mode`为0或1使用
-                                         //
-    "sub_session_timeout_ms": 30000,     //. 统计HLS播放者信息时，判定HLS播放者超时离开的时间，单位是毫秒
-                                         //  如果为值0，则默认值为`fragment_num` * `fragment_duration_ms` * 2
-                                         //
-    "sub_session_hash_key": "q191201771" //. 私钥，计算播放者唯一ID时使用
-                                         //  注意，如果为空，则关闭统计HLS播放者信息的功能
+    "enable": true,	// Whether to enable listening for the HLS service
+    "enable_https": true,	// Whether to enable HTTPS-HLS listening.
+    "url_pattern": "/hls/",	// Pull stream URL routing address, defaults to `/hls/`, the corresponding HLS (m3u8) pull stream URL address:
+														// - `/hls/{streamName}.m3u8`
+														// - `/hls/{streamName}/playlist.m3u8`
+														// - `/hls/{streamName}/record.m3u8`
+														//
+														// The `playlist.m3u8` file corresponds to the live HLS, and only `<fragment_num>` TS file names are stored in the list, which is continuously incremented.
+														// Newly generated ts files are added and outdated ones are removed.
+														// `record.m3u8` file corresponds to the recording HLS, the list will keep from the first ts file to the latest generated ts file, and will keep
+														// appending the newly generated TS file, and removing the outdated ones.
+														// continue to append newly generated TS files
+														// The list will be kept from the first TS file to the latest generated TS file, and new generated ts files will be appended continuously.
+														// The address of the TS file is commented out as follows:
+														// `/hls/{streamName}/{streamName}-{timestamp}-{index}.ts` or
+														// `/hls/{streamName}-{timestamp}-{index}.ts`
+														//
+														// Note that the `url_pattern` of HLS cannot be the same as the `url_pattern` of httpflv or httpts.
+    "out_path": "./lal_record/hls/",	// Output root directory for HLS m3u8 and files.
+    "fragment_duration_ms": 3000,	// Duration of a single TS file fragmentation, in milliseconds.
+    "fragment_num": 6,	// Number of TS files in `playlist.m3u8` file list
+    "delete_threshold": 6,	// Deletion threshold for TS files.
+														// Note that this is only used if `cleanup_mode` is 2,
+														// meaning that only the most recent TS files removed from `playlist.m3u8` will be saved,
+														// any TS files expired earlier will be deleted.
+														// If not, the default value is the value of `fragment_num`.
+														// Note that this value should not be less than 1 to avoid deleting too fast and causing playback to fail.														
+    "cleanup_mode": 1,	// HLS file cleanup mode:
+												//
+												// 0 Do not delete m3u8+ts files, can be used for recording and other scenarios.
+												//
+												// 1 Delete m3u8+ts files at the end of the input stream.
+												// Note that the exact point of deletion is after the end of the push stream
+												// `fragment_duration_ms * (fragment_num + delete_threshold)`
+												// Deletion is delayed for a small period of time to avoid the pull side of HLS not finishing pulling just after the input stream ends.
+												//
+												// 2 Continuously delete out-of-date TS files during the push stream, keeping only the most recent ones
+												// `delete_threshold + fragment_num + 1`.
+												// and only the last `delete_threshold + fragment_num + 1` are retained.
+												// And, at the end of the input stream, the cleanup mode 1 logic is also performed.
+												//
+												// Note that `record.m3u8` is only generated in modes 0 and 1
+												//
+    "use_memory_as_disk_flag": false,	// Whether to use memory instead of disk to save m3u8+ts files.
+																			// Note that you should be careful about memory capacity when using this mode.
+																			// Generally it should not be used with `cleanup_mode` of 0 or 1.
+    "sub_session_timeout_ms": 30000,	// The time in milliseconds after which the HLS player is determined to have timed out and left when counting HLS player information.
+																			// If the value is set to 0, defaults to `fragment_num` * `fragment_duration_ms` * 2
+    "sub_session_hash_key": "q191201771"	// Private key, used when calculating the unique ID of the player.
+																					// Note that if null, the counting of HLS player information is disabled.
   },
   "httpts": {
-    "enable": true,                //. 是否开启HTTP-TS服务的监听。注意，这并不是HLS中的TS，而是在一条HTTP长连接上持续性传输TS流
-    "enable_https": true,          //. 是否开启HTTPS-TS监听
-    "url_pattern": "/",            //. 拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。
-                                   //  如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.ts`
-    "gop_num": 0,                  //. 见 rtmp.gop_num
-    "single_gop_max_frame_num": 0  //. 见 rtmp.single_gop_max_frame_num
+    "enable": true,	// Whether to enable listening for the HTTP-TS service. Note that this is not TS in HLS, but rather the persistent transmission of TS streams over a long HTTP connection.
+    "enable_https": true,	// Whether or not to enable HTTPS-TS listening.
+    "url_pattern": "/",	// The address of the pull stream URL routing path. Defaults to `/`, which means it is unrestricted and can be any path address.
+												// If set to `/live/`, streams can only be pulled from `/live/` paths, e.g. `/live/test110.ts`.
+    "gop_num": 0,	// See `rtmp.gop_num`.
+    "single_gop_max_frame_num": 0	// See `rtmp.single_gop_max_frame_num`.
   },
   "rtsp": {
-    "enable": true,                       //. 是否开启rtsp服务的监听
-    "addr": ":5544",                      //. rtsp监听地址
-    "rtsps_enable": true,                 //. 是否开启rtsps服务的监听
-                                          //  注意，rtsp和rtsps可以任意开启一个或全部打开或全部关闭
-    "rtsps_addr": ":5322",                //. RTSPS服务监听的端口地址
-    "rtsps_cert_file": "./conf/cert.pem", //. RTSPS的本地cert文件
-    "rtsps_key_file": "./conf/key.pem",   //. RTSPS的本地key文件
-    "out_wait_key_frame_flag": true,      //. rtsp发送数据时，是否等待视频关键帧数据再发送
-                                          //
-                                          //  该配置项主要决定首帧、花屏、音视频同步等问题
-                                          //
-                                          //  如果为true，则音频和视频都等待视频关键帧才开始发送。
-                                          // （也即，视频关键帧到来前，音频或视频全部丢弃不发送）
-                                          //
-                                          //  如果为false，则音频和视频都直接发送。（也即，音频和视频都不等待视频关键帧，都不等待任何数据）
-                                          //
-                                          //  注意，纯音频的流，如果该标志为true，理论上音频永远等不到视频关键帧，也即音频没有了发送机会，
-                                          //  为了应对这个问题，lalserver会尽最大可能判断是否为纯音频的流，
-                                          //  如果判断成功为纯音频的流，音频将直接发送。
-                                          //  但是，如果有纯音频流，依然建议将该配置项设置为false
-                                          //
-    "auth_enable": false,                 //. 是否开启rtsp服务鉴权功能
-    "auth_method": 1,                     //. rtsp鉴权方式, 0-Basic鉴权方式, 1-Digest鉴权方式(MD5算法)
-    "username": "q191201771",             //. rtsp服务账号, 开启鉴权功能需配置
-    "password": "pengrl"                  //. rtsp服务密码, 开启鉴权功能需配置
+    "enable": true,	// Whether to enable listening to the RTSP service.
+    "addr": ":5544",	// RTSP listening address.
+    "rtsps_enable": true,	// Whether or not to enable listening for the RTSPS service.
+													// Note that RTSP and RTSPS can be independently turned on or off.have either one or all of them turned on or off.
+    "rtsps_addr": ":5322",	// The port address on which the RTSPS service listens.
+    "rtsps_cert_file": "./conf/cert.pem",	// RTSPS's local cert file.
+    "rtsps_key_file": "./conf/key.pem",	// RTSPS's local key file.
+    "out_wait_key_frame_flag": true,	// Whether or not to wait for the video keyframe data before sending it when RTSP sends data.
+																			//
+																			// This configuration item mainly determines the first frame, splash screen, audio/video synchronisation, etc.
+																			// If true, both audio and video will wait for the video keyframe to be sent.
+																			// (i.e., all audio or video is discarded and not sent until the video keyframe arrives)
+																			//
+																			// If false, send both audio and video directly (i.e., neither audio nor video waits for the video keyframe, neither waits for any data).
+																			//
+																			// Note that for audio-only streams, if this flag is true, the audio theoretically never waits for a video keyframe, i.e., the audio has no chance to be sent,
+																			// and if it is false, the audio is sent directly to the video.
+																			// To avoid this, lalserver will do its best to determine if the stream is audio-only.
+																			// If the stream is audio-only, the audio will be sent directly.
+																			// However, if there is a pure audio stream, it is still recommended to set this configuration item to false.
+    "auth_enable": false,	// Whether or not to enable authentication for the RTSP service.
+    "auth_method": 1,	// RTSP authentication method: 0 - Basic authentication method, 1 - Digest authentication method (MD5 algorithm)
+    "username": "q191201771",	// RTSP service account, configuration is required to enable authentication.
+    "password": "pengrl"	// Password for RTSP service, required to enable authentication.
   },
   "record": {
-    "enable_flv": true,                      //. 是否开启flv录制
-    "flv_out_path": "./lal_record/flv/",     //. flv录制目录
-    "enable_mpegts": true,                   //. 是否开启mpegts录制。注意，此处是长ts文件录制，hls录制由上面的hls配置控制
-    "mpegts_out_path": "./lal_record/mpegts" //. mpegts录制目录
+    "enable_flv": true,	// Whether to enable FLV recording.
+    "flv_out_path": "./lal_record/flv/",	// FLV recording directory.
+    "enable_mpegts": true,	// Enable/disable MPEG-TS recording. Note that this is a long TS file recording, HLS recording is controlled by the HLS configuration above.
+    "mpegts_out_path": "./lal_record/mpegts"	// MPEG-TS recording directory.
   },
   "relay_push": {
-    "enable": false, //. 是否开启中继转推功能，开启后，自身接收到的所有流都会转推出去
-    "addr_list":[    //. 中继转推的对端地址，支持填写多个地址，做1对n的转推。格式举例 "127.0.0.1:19351"
+    "enable": false,	// Whether to enable relay push; when enabled, all streams received by itself are forwarded out.
+    "addr_list": [	// The address of the relay to be forwarded, support multiple addresses, do 1 to n forwarding. Format example:
+      "127.0.0.1:19351"
     ]
   },
-  "static_relay_pull": { //. 静态回源拉流pull（本服务去其他地方拉流回来）功能。
-                         //  当自身接收到拉流sub请求，而输入流不存在时，会从其他服务器拉取这个流到本地。
-                         //  当没有sub拉流后，会自动关闭pull请求。
-                         //  当pull连接失败或者中途断开连接，会自动重试。
-                         //  注意，如果静态回源功能没法满足你的需求，建议使用HTTP API做更高定制化的回源功能。
-                         //  注意，请不要同时使用配置文件控制的静态回源功能和HTTP API控制的回源功能，
-                         //  并且，statc_relay_pull中的配置项和HTTP API中的回源功能无关。
-                         //
-    "enable": false,     //. 是否开启
-                         //  注意，只控制静态回源功能。如果你使用HTTP API，那么这里需要关闭
-                         //
-    "addr": ""           //. 回源拉流的地址，格式举例 "127.0.0.1:19351"
-                         //  注意，回源的url path（也即流名称等）从拉流请求获取
+  "static_relay_pull": {	// Static return pull function (this service pulls a stream from elsewhere).
+													// When lalserver receives a pull stream sub request and the input stream does not exist, it will pull this stream locally from another server.
+													// When there is no sub pull request, the pull request is automatically closed.
+													// When a pull connection fails or is disconnected, it is automatically retried.
+													// Note that if static pullbacks don't meet your needs, it's recommended to use the HTTP API for more customised pullbacks.
+													// Note that you should not use both the configuration file-controlled static repo function and the HTTP API-controlled repo function at the same time.
+													// Also, the configuration items in `static_relay_pull` have nothing to do with the HTTP API.
+    "enable": false,	// Whether to enable this function or not. 
+											// Note that only the static return function is controlled; if you are using the HTTP API, then it needs to be turned off there instead.
+
+    "addr": ""	// The address of the pullback stream, in the format "127.0.0.1:19351".
+								// Note that the URL path (i.e. the stream name, etc.) is obtained from the pull stream request itself.
   },
   "http_api": {
-    "enable": true, //. 是否开启HTTP API接口
-    "addr": ":8083" //. 监听地址
+    "enable": true,	// Whether to enable the HTTP API interface.
+    "addr": ":8083"	// Listening address (with port number).
   },
-  "server_id": "1", //. 当前lalserver唯一ID。多个lalserver HTTP Notify向同一个地址回调时，可通过该ID区分lalserver节点
-  "http_notify": {                                               // ----- HTTP-Notify文档见： https://pengrl.com/lal/#/HTTPNotify
-    "enable": true,                                              //. 是否开启HTTP Notify事件回调
-    "update_interval_sec": 5,                                    //. update事件回调间隔，单位秒
-    "on_server_start": "http://127.0.0.1:10101/on_server_start", //. 各事件HTTP Notify事件回调地址
-    "on_update": "http://127.0.0.1:10101/on_update",             //  注意，对于不关心的事件，可以设置为空
-    "on_pub_start": "http://127.0.0.1:10101/on_pub_start",
+  "server_id": "1",	// Unique ID of the current lalserver, which can be used to distinguish lalserver nodes when multiple lalserver HTTP Notify callbacks are made to the same address.
+  "http_notify": {	// ----- HTTP-Notify documentation is available at: https://pengrl.com/lal/#/HTTPNotify
+    "enable": true,	// Whether to enable HTTP Notify event callbacks.
+    "update_interval_sec": 5,	// Interval between update event callbacks, in seconds.
+    "on_server_start": "http://127.0.0.1:10101/on_server_start", // HTTP Notify event callback address for each event.
+    "on_update": "http://127.0.0.1:10101/on_update", // Note that this can be set to null for events that you don't care about.
     "on_pub_stop": "http://127.0.0.1:10101/on_pub_stop",
     "on_sub_start": "http://127.0.0.1:10101/on_sub_start",
     "on_sub_stop": "http://127.0.0.1:10101/on_sub_stop",
@@ -189,150 +181,149 @@ lalserver的配置文件为json格式。
     "on_relay_pull_stop": "http://127.0.0.1:10101/on_relay_pull_stop",
     "on_rtmp_connect": "http://127.0.0.1:10101/on_rtmp_connect"
   },
-  "simple_auth": {                    // ----- 鉴权文档见： https://pengrl.com/lal/#/auth
-    "key": "q191201771",              // 私有key，计算md5鉴权参数时使用
-    "dangerous_lal_secret": "pengrl", // 后门鉴权参数，所有的流可通过该参数值鉴权
-    "pub_rtmp_enable": false,         // rtmp推流是否开启鉴权，true为开启鉴权，false为不开启鉴权
-    "sub_rtmp_enable": false,         // rtmp拉流是否开启鉴权
-    "sub_httpflv_enable": false,      // httpflv拉流是否开启鉴权
-    "sub_httpts_enable": false,       // httpts拉流是否开启鉴权
-    "pub_rtsp_enable": false,         // rtsp推流是否开启鉴权
-    "sub_rtsp_enable": false,         // rtsp拉流是否开启鉴权
-    "hls_m3u8_enable": true           // m3u8拉流是否开启鉴权
+  "simple_auth": {	// ----- See https://pengrl.com/lal/#/auth for authentication documentation.
+    "key": "q191201771",	// Private key, used to calculate MD5 authentication parameters.
+    "dangerous_lal_secret": "pengrl",	// Backdoor authentication parameter, all streams can be authenticated with this value.
+    "pub_rtmp_enable": false,	// Whether or not RTMP push streams are enabled for authentication, true to enable authentication, false to disable authentication.
+    "sub_rtmp_enable": false,	// If RTMP pull is enabled or not .
+    "sub_httpflv_enable": false,	// Whether to enable authentication for httpflv pulls.
+    "sub_httpts_enable": false,	// If HTTP-TS pull is enabled or not .
+    "pub_rtsp_enable": false,	// If RTSP push is enabled or not.
+    "sub_rtsp_enable": false,	// If RTSP pull is enabled or not.
+    "hls_m3u8_enable": true	// If m3u8 pull is enabled or not.
   },
   "pprof": {
-    "enable": true, //. 是否开启Go pprof web服务的监听
-    "addr": ":8084" //. Go pprof web地址
+    "enable": true,	// Whether to enable listening to the Go pprof web service.
+    "addr": ":8084"	// Go pprof web address (with port number).
   },
   "log": {
-    "level": 1,                         //. 日志级别，0 trace, 1 debug, 2 info, 3 warn, 4 error, 5 fatal
-    "filename": "./logs/lalserver.log", //. 日志输出文件
-    "is_to_stdout": true,               //. 是否打印至标志控制台输出
-    "is_rotate_daily": true,            //. 日志按天翻滚
-    "short_file_flag": true,            //. 日志末尾是否携带源码文件名以及行号的信息
-    "assert_behavior": 1                //. 日志断言的行为，1 只打印错误日志 2 打印并退出程序 3 打印并panic
+    "level": 1,	// Log level: 0 — trace, 1 — debug, 2 — info, 3 — warn, 4 — error, 5 — fatal.
+    "filename": "./logs/lalserver.log",	// Log output file.
+    "is_to_stdout": true,	// Whether to print logs to the console.
+    "is_rotate_daily": true,	// Logs are rolled over on a daily basis.
+    "short_file_flag": true,	// Whether or not to display the source file name and line number at the end of the log.
+    "assert_behavior": 1	// The behaviour of the log assertion: 1 — prints only the error log, 2 — prints and exits the application, 3 — prints and panics.
   },
   "debug": {
-    "log_group_interval_sec": 30,          // 打印group调试日志的间隔时间，单位秒。如果为0，则不打印
-    "log_group_max_group_num": 10,         // 最多打印多少个group
-    "log_group_max_sub_num_per_group": 10  // 每个group最多打印多少个sub session
+    "log_group_interval_sec": 30,	// Interval in seconds between printing group debug logs. If set to 0, logs are not printed.
+    "log_group_max_group_num": 10,	// Maximum number of groups to be printed.
+    "log_group_max_sub_num_per_group": 10	// The maximum number of sub sessions to print per group.
   }
 }
 ```
 
-
-## 拆解版
+## Descriptive version
 
 ### ▌ "# doc of config"
 
-类型: string  
-值举例: "https://pengrl.com/lal/#/ConfigBrief"
+Type: string  
+Value example: "https://pengrl.com/lal/#/ConfigBrief"
 
-配置文件对应的文档说明链接，在程序中没实际用途
+Link to the documentation for the config file. Not used by the application.
 
 ### ▌ "conf_version"
 
-类型: string  
-值举例: "0.4.1"
+Type: string  
+Example: "0.4.1"
 
-配置文件版本号，业务方不应该手动修改，程序中会检查该版本号是否与代码中声明的一致
+Configuration file version number, Should not be changed manually by the business side, the program will check if the version number is the same as the one declared in the code.
 
 ### ▌ "rtmp"
 
 #### ✸ "rtmp/enable"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value example: true
 
-是否开启rtmp服务的监听  
+Whether to enable listening for the RTMP service.  
 
-注意，配置文件中控制各协议类型的enable开关都应该按需打开，避免造成不必要的协议转换的开销
+Note that the enable switches in the configuration file that control each protocol type should be turned on as needed to avoid unnecessary overhead of protocol conversions
 
 #### ✸ "rtmp/addr"
 
-类型: string  
-值举例: "1935"
+Type: string  
+Example value: "1935"
 
-RTMP服务监听的端口，客户端向lalserver推拉流都是这个地址
+The port on which the RTMP service listens, and which the client pushes and pulls streams to the lalserver.
 
 #### ✸ "rtmp/rtmps_enable"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value Example: true
 
-是否开启rtmps服务的监听
+Whether to enable listening for the RTMPS service.
 
-注意，rtmp和rtmps可以任意开启一个或全部打开或全部关闭
+Note that RTMP and RTMPS can have any one or all of them turned on or all of them turned off.
 
 #### ✸ "rtmp/rtmps_addr"
 
-类型: string  
-值举例: ":4935"
+Type: string  
+Example value: ":4935"
 
-RTMPS服务监听的端口地址
+Port address on which the RTMPS service listens
 
 #### ✸ "rtmp/rtmps_cert_file"
 
-类型: string  
-值举例: "./conf/cert.pem"
+Type: string  
+Value example: `"./conf/cert.pem"`
 
-RTMPS的本地cert文件
+Local cert file for RTMPS
 
 #### ✸ "rtmp/rtmps_key_file"
 
-类型: string  
-值举例: "./conf/key.pem"
+Type: string  
+Value example: `"./conf/key.pem"`
 
-RTMPS的本地key文件
+Local key file for RTMPS
 
 #### ✸ "rtmp/gop_num"
 
-类型: int  
-值举例: 0
+Type: int  
+Value example: 0
 
-RTMP拉流的GOP缓存数量，加速流打开时间，但是可能增加延时
+Number of GOP caches for RTMP pull streams, speeds up stream open time, but may increase latency
 
-如果为0，则不使用缓存发送
+If 0, then no cache is used for sending
 
 #### ✸ "rtmp/single_gop_max_frame_num"
 
-类型: int  
-值举例: 0
+Type: int  
+Value example: 0
 
-GOP缓存功能开启时，单个GOP中缓存的帧数量的最大限制
+Maximum limit on the number of frames cached in a single GOP when GOP caching is on
 
 #### ✸ "rtmp/merge_write_size"
 
-类型: int  
-值举例: 0
+Type: int  
+Value example: 0
 
-将小包数据合并进行发送，单位字节，提高服务器性能，但是可能造成卡顿
+Merge small packets of data to be sent in bytes, improves server performance, but may cause lagging
 
-如果为0，则不合并发送
+If 0, do not merge and send
 
 ### ▌ "in_session"
 
-针对所有输入型流（包括所有协议、所有输入类型）的配置
+Configuration for all input type streams (including all protocols, all input types)
 
-详细介绍见： https://pengrl.com/lal/#/dummy_audio
+For details see: https://pengrl.com/lal/#/dummy_audio
 
 #### ✸ "in_session/add_dummy_audio_enable"
 
-类型: bool  
-值举例: false
+Type: bool  
+Value example: false
 
-是否开启动态检测添加静音AAC数据的功能
+Whether or not to enable dynamic detection of adding muted AAC data
 
-如果开启，所有输入型流如果超过`add_dummy_audio_wait_audio_ms`时间依然没有
+If enabled, all input-type streams that have exceeded the `add_dummy_audio_wait_audio_ms` time and still have not
 
-收到音频数据，则会自动为这路流叠加AAC的数据
+receive audio data, then AAC data will be automatically overlayed for this stream
 
 #### ✸ "in_session/add_dummy_audio_wait_audio_ms"
 
-类型: int  
-值举例: 150
+Type: int  
+Value example: 150
 
-单位毫秒，具体见`add_dummy_audio_enable`
+Unit milliseconds, see `add_dummy_audio_enable` for details
 
 ### ▌ "default_http"
 
@@ -342,197 +333,197 @@ TODO
 
 #### ✸ "httpflv/enable"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value Example: true
 
-是否开启HTTP-FLV服务的监听
+Whether to enable listening for the HTTP-FLV service
 
 #### ✸ "httpflv/enable_https"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value example: true
 
-是否开启HTTPS-FLV监听
+Whether to enable HTTPS-FLV listening
 
 #### ✸ "httpflv/url_pattern"
 
-类型: string  
-值举例: "/"
+Type: string  
+Value example: "/"
 
-拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。  
-如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.flv`
+Address of the pull stream URL routing path. The default value is `/`, which means it is not restricted and the routing address can be any path address.  
+If set to `/live/`, the stream can only be pulled from `/live/` path, such as `/live/test110.flv`.
 
 #### ✸ "httpflv/gop_num"
 
-类型: int  
-值举例: 0
+Type: int  
+Value example: 0
 
-httpflv协议的Gop缓存功能，含义和 rtmp.gop_num 类似
+Gop caching function for the httpflv protocol, meaning similar to `rtmp.gop_num`
 
 #### ✸ "httpflv/single_gop_max_frame_num"
 
-类型: int  
-值举例: 0
+Type: int  
+Value example: 0
 
-见 rtmp.single_gop_max_frame_num
+See `rtmp.single_gop_max_frame_num`
 
 ### ▌ "hls"
 
 #### ✸ "hls/enable"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value Example: true
 
-是否开启HLS服务的监听
+Whether to enable listening for HLS services
 
 #### ✸ "hls/enable_https"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value example: true
 
-是否开启HTTPS-HLS监听
+Whether to enable HTTPS-HLS listening
 
 #### ✸ "hls/url_pattern"
 
-类型: string  
-值举例: "/hls/"
+Type: string  
+Value example: "/hls/"
 
-拉流url路由地址，默认值`/hls/`，对应的HLS(m3u8)拉流url地址：
+Pull stream URL routing address, default value `/hls/`, the corresponding HLS (m3u8) pull stream URL address:
 
 - `/hls/{streamName}.m3u8`
 - `/hls/{streamName}/playlist.m3u8`
 - `/hls/{streamName}/record.m3u8`
 
-playlist.m3u8文件对应直播hls，列表中只保存`<fragment_num>`个ts文件名称，会持续增加新生成的ts文件，并去除过期的ts文件。  
-record.m3u8文件对应录制hls，列表中会保存从第一个ts文件到最新生成的ts文件，会持续追加新生成的ts文件。  
+playlist.m3u8 file corresponds to live hls, only `<fragment_num>` ts file names are saved in the list, new generated ts files will be added continuously and outdated ts files will be removed.  
+record.m3u8 file corresponds to recording hls, the list will save from the first ts file to the latest generated ts file, and will keep adding new generated ts files.  
 
-ts文件地址备注如下：
+The address of the ts file is commented as follows:
 
-`/hls/{streamName}/{streamName}-{timestamp}-{index}.ts` 或 `/hls/{streamName}-{timestamp}-{index}.ts`
+`/hls/{streamName}/{streamName}-{timestamp}-{index}.ts` or `/hls/{streamName}-{timestamp}-{index}.ts`.
 
-注意，hls的url_pattern不能和httpflv、httpts的url_pattern相同
+Note that the `url_pattern` of HLS cannot be the same as the ` url_pattern` of httpflv and httpts
 
 
 #### ✸ "hls/out_path"
 
-类型: string  
-值举例: "./lal_record/hls/"
+Type: string  
+Value example: `"./lal_record/hls/"`
 
-HLS的m3u8和文件的输出根目录
+Output root directory for HLS m3u8 and files
 
 
 #### ✸ "hls/fragment_duration_ms"
 
-类型: int  
-值举例: 3000
+Type: int  
+Value example: 3000
 
-单个TS文件切片时长，单位毫秒
+Duration of a single TS file slice in milliseconds
 
 
 #### ✸ "hls/fragment_num"
 
-类型: int  
-值举例: 6
+Type: int  
+Example values: 6
 
-playlist.m3u8文件列表中ts文件的数量
+Number of ts files in the playlist.m3u8 file list
 
 #### ✸ "hls/delete_threshold"
 
-类型: int   
-值举例: 6
+Type: int   
+Value example: 6
 
-ts文件的删除时机。  
-注意，只在配置项`cleanup_mode`为2时使用。  
-含义是只保存最近从playlist.m3u8中移除的ts文件的个数，更早过期的ts文件将被删除。  
-如果没有，默认值取配置项`fragment_num`的值。  
-注意，该值应该不小于1，避免删除过快导致播放失败。  
+The timing of ts file deletions.  
+Note that it is only used when the configuration item `cleanup_mode` is 2.  
+The implication is that only the number of recently removed ts files from playlist.m3u8 will be saved, earlier expired ts files will be deleted.  
+If not, the default value takes the value of the configuration item `fragment_num`.  
+Note that the value should be no less than 1 to avoid removing too fast and causing playback failure.  
 
 #### ✸ "hls/cleanup_mode"
 
-类型: int  
-值举例: 1
+Type: int  
+Value example: 1
 
-```
-HLS文件清理模式：
+``.
+HLS file cleanup mode:
 
-0 不删除m3u8+ts文件，可用于录制等场景
+0 Does not delete m3u8+ts files, can be used for recording and other scenarios
 
-1 在输入流结束后删除m3u8+ts文件
-  注意，确切的删除时间点是推流结束后的
+1 Delete m3u8+ts files at the end of the input stream.
+  Note that the exact point in time for deletion is after the push stream ends
   `fragment_duration_ms * (fragment_num + delete_threshold)`
-  推迟一小段时间删除，是为了避免输入流刚结束，HLS的拉流端还没有拉取完
+  The reason for delaying the deletion for a small period of time is to avoid that the input stream has just finished and the pull side of the HLS has not finished pulling yet
 
-2 推流过程中，持续删除过期的ts文件，只保留最近的
+2 Continuously delete outdated ts files during the push flow, keeping only the most recent
   `delete_threshold + fragment_num + 1`
-  个左右的ts文件
-  并且，在输入流结束后，也会执行清理模式1的逻辑
+  and keep only the latest `delete_threshold + fragment_num + 1` or so
+  And, at the end of the input stream, the logic of cleanup mode 1 is also executed
 
-注意，record.m3u8只在0和1模式下生成
-```
+Note that record.m3u8 is only generated in modes 0 and 1
+``
 
 #### ✸ "hls/use_memory_as_disk_flag"
 
-类型: bool  
-值举例: false
+Type: bool  
+Value example: false
 
-是否使用内存取代磁盘，保存m3u8+ts文件。  
-注意，使用该模式要注意内存容量。一般来说不应该搭配`cleanup_mode`为0或1使用
+Whether to use memory instead of disk to save m3u8+ts files.  
+Note that you should be careful about memory capacity when using this mode. Generally it should not be used with `cleanup_mode` of 0 or 1
 
 xxx
 
 #### ✸ "hls/sub_session_timeout_ms"
 
-类型: int  
-值举例: 30000
+Type: int  
+Value example: 30000
 
-统计HLS播放者信息时，判定HLS播放者超时离开的时间，单位是毫秒。  
-如果为值0，则默认值为`fragment_num` * `fragment_duration_ms` * 2
+The time in milliseconds after which the HLS player is determined to have timed out and left when counting HLS player information.  
+If value 0, the default value is `fragment_num` * `fragment_duration_ms` * 2
 
 #### ✸ "hls/sub_session_hash_key"
 
-类型: string  
-值举例: "q191201771"
+Type: string  
+Example value: "q191201771"
 
-私钥，计算播放者唯一ID时使用。  
-注意，如果为空，则关闭统计HLS播放者信息的功能
+Private key, used when calculating the unique ID of the player.  
+Note that if empty, the function of counting HLS player information is disabled
 
 ### ▌ "httpts"
 
 #### ✸ "httpts/enable"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value Example: true
 
-是否开启HTTP-TS服务的监听。注意，这并不是HLS中的TS，而是在一条HTTP长连接上持续性传输TS流
+Whether or not to enable listening for the HTTP-TS service. Note that this is not TS in HLS, but rather the persistent transmission of TS streams over a long HTTP connection
 
 #### ✸ "httpts/enable_https"
 
-类型: bool  
-值举例: true
+Type: bool  
+Value Example: true
 
-是否开启HTTPS-TS监听
+Whether to enable HTTPS-TS listening
 
 #### ✸ "httpts/url_pattern"
 
-类型: string  
-值举例: "/"
+Type: string  
+Value example: "/"
 
-拉流url路由路径地址。默认值为`/`，表示不受限制，路由地址可以为任意路径地址。  
-如果设置为`/live/`，则只能从`/live/`路径下拉流，比如`/live/test110.ts`
+Address of the pull stream URL routing path. The default value of `/` means that it is not restricted and the routing address can be any path address.  
+If set to `/live/`, the stream can only be pulled from `/live/` path, such as `/live/test110.ts`.
 
 #### ✸ "httpts/gop_num"
 
-类型: int  
-值举例: 0
+Type: int  
+Value example: 0
 
-见 rtmp.gop_num
+See rtmp.gop_num
 
 #### ✸ "httpts/single_gop_max_frame_num"
 
-类型: int  
-值举例: 0
+Type: int  
+Value example: 0
 
-见 rtmp.single_gop_max_frame_num
+See rtmp.single_gop_max_frame_num
 
 ### ▌ "rtsp"
 
@@ -577,5 +568,3 @@ TODO
 ### ▌ "debug"
 
 TODO
-
-202301, mod by yoko

@@ -1,100 +1,100 @@
-# LAL v0.36.7发布，Customize Sub，我有的都给你
+# LAL v0.36.7 released, Customize Sub, I have all for you!
 
-Go语言流媒体开源项目 [LAL](https://github.com/q191201771/lal) 今天发布了v0.36.7版本。
+Go language streaming open source project [LAL](https://github.com/q191201771/lal) released v0.36.7 today.
 
-> LAL 项目地址：https://github.com/q191201771/lal
+> LAL project address: https://github.com/q191201771/lal
 
-老规矩，简单介绍一下：
+The old rules — a brief introduction:
 
-▦ Customize Sub，我有的都给你
+▦ Customize Sub, I have all for you!
 
-这是提供给用lalserver做二次开发的小伙伴们的一个重要的功能，业务方可以通过设置回调函数的方式获取lalserver内部的流。
+This is an important feature for those who use lalserver for secondary development. The business side can get the streams inside lalserver by setting the callback function.
 
-获取到流有什么用呢，拿lal的衍生项目lalmax来举例，它基于lalserver的Customize Sub，为所有输入lalserver中的流扩展了srt和webrtc播放的能力。
+What is the use of getting the streams? Take lal's derivative project **lalmax** for example, it is based on lalserver's Customize Sub, which extends the ability of SRT and WebRTC playback for all the streams inputted into lalserver.
 
-这里也简单介绍一下lalmax，它将会是lal整体版图中的一个重要项目，它基于lalserver提供的二次开发接口，与第三方库结合，支持更多的协议、实现更丰富的功能。  
-相应的，lal项目会持续保持自身无第三方依赖，高性能等特点。  
-lalmax项目地址： https://github.com/q191201771/lalmax
+Here is also a brief introduction to **lalmax**, which will be an important project in the overall lal ecosystem. It is based on the secondary development interface provided by lalserver, and combines it with third-party libraries to support more protocols and provide richer functionality.  
+Accordingly, lal project will continue to maintain its own no third-party dependencies, high performance and other features.  
+The lalmax project is located at https://github.com/q191201771/lalmax
 
-如果你想更好的理解Custmize Sub，可以先看看与Customize二次开发相关的另外两篇文档：
+If you want to understand the Customize Sub better, you can read the following two documents related to Customize secondary development first:
 
-- [2.6 lalserver 二次开发(插件化)](https://pengrl.com/#/customize)
-- [|-- 2.6.1 二次开发-pub接入自定义流](https://pengrl.com/#/customize_pub)
+- [2.6 lalserver secondary development (plug-in)](https://pengrl.com/#/customize)
+- [|-- 2.6.1 Secondary Development - pub access to custom streams](https://pengrl.com/#/customize_pub)
 
-如果你想直接看代码：
+If you want to see the code directly:
 
-- lal中相应的API签名： https://github.com/q191201771/lal/blob/master/pkg/logic/logic.go#L43
-- lalmax使用示例： https://github.com/q191201771/lalmax/blob/master/main.go#L39
+- The corresponding API signature in lal: https://github.com/q191201771/lal/blob/master/pkg/logic/logic.go#L43
+- Example of lalmax usage: https://github.com/q191201771/lalmax/blob/master/main.go#L39
 
-▦ rtmp兼容性优化
+▦ RTMP compatibility optimisation
 
-- amf编码中有两个不包含有效内容、没什么实际卵用的格式叫Undefined和Unsupported，之前lal没有解析，而现实中竟然真的有客户端会用它。
-- 兼容publish信令中没有pubType字段的情况。是的，有的客户端就是这么任性，关键用的人还不少，不兼容还不行，气不气。
-- 处理音频格式写在metadata中，而非单独seq header包的情况。
-- Rtmp2AvPacketRemuxer增加参数用于指定是否需要丢弃SEI
+- There are two formats in the AMF encoding that don't contain valid content and are not really useful, called Undefined and Unsupported, which were not parsed by lal before, but are actually used by some clients in reality.
+- Compatible with publish signalling without a pubType field. Yes, some clients are capricious, but since they are used by many people, they will angrily complain when the streaming doesn't work as expected..
+- Handles the case where the audio format is written in the metadata instead of in a separate seq header packet.
+- `Rtmp2AvPacketRemuxer` — add parameter to specify whether SEI needs to be discarded or not.
 
-▦ rtsp优化
+▦ RTSP optimisation
 
-- 支持处理时间戳翻滚的情况。也就是时间戳递增到一个非常大的数后，重新回到一个小的数继续递增。
-- package rtsp中新增加了一个配置变量BaseInSessionTimestampFilterFlag，用于决定rtsp合成的帧级别packet的时间戳是使用rtp中的时间戳，还是重置成从0开始。
+- Support for handling timestamp rollover cases. That is, the timestamp is incremented to a very large number and then reverts back to a smaller number to continue incrementing.
+- Package RTSP: A new configuration variable `BaseInSessionTimestampFilterFlag` has been added to determine whether the timestamps of RTSP-synthesised frame-level packets use the timestamps in RTSP, or are reset to start at 0.
 
-▦ lalserver优化
+▦ lalserver optimisation
 
-- 将NotifyHandler回调异步化到独立协程中。目的是方便业务方在回调中自由的调用lalserver的其他API接口
-- http api中的流信息中增加fps字段
-- 在业务方WithOnHookSession的情况下，停用auto stop relay pull功能
+- Asynchronise NotifyHandler callbacks into a separate goroutine. The purpose is to make it easier for the business side to freely call other API interfaces of lalserver via callbacks.
+- Add fps field to the streaming information available from the HTTP API.
+- Disable auto stop relay pull function in case of business side `WithOnHookSession`
 
-▦ bug修复
+▦ Bug fixes
 
-首先是一个比较严重的bug，会导致hls无法播放，这是在上个版本v0.35.4引入的，原因是转ts时，pmt中的avc标志笔误写错了写成aac了。。
+Firstly, there is a serious bug that causes HLS to be unplayable, which was introduced in the last version v0.35.4: when converting TS files, the AVC flag in PMT was wrongly written as AAC due to a typo.
 
-然后是协议处理上的bug：
+Furthermore, the following bugs in protocol handling were addressed:
 
-- rtp: 修复解析ext扩展数据的bug
-- remux: Rtmp2AvPacketRemuxer多slice时append sps错误导致花屏
-- rtmp2mpegts: 确保pts有值
-- rtmp: 当ClientSession配置项WriteChanSize为0时，不必要开启异步发送
+- rtp: fix bug in parsing ext extension data
+- remux: `Rtmp2AvPacketRemuxer` multi-slice append sps error caused splash screen.
+- rtmp2mpegts: make sure pts has a value
+- rtmp: Asynchronous sending is not necessary when `WriteChanSize` is 0 in `ClientSession` configuration.
 
-lalserver中释放资源的bug：
+Bug with releasing resources in lalserver:
 
-播放不存在的rtsp流，超时没有彻底释放
+- When playing non-existent RTSP streams, timeout does not release completely.
 
-其他一些小bug：
+Some other minor bugs:
 
-使用hls中的回调对象IMuxerObserver前，先检查是否为nil
+- Check if nil before using callback object `IMuxerObserver` in HLS
 
-▦ 更多
+▦ More
 
-还有一些修改不逐个介绍了，大致如下：
+There are some other changes not presented individually, roughly as follows:
 
 > - [chore] all shell file go to script folder
-> - [chore] 所有脚本+x增加执行权限，保证CI正常运行
-> - [chore] 修复macos平台readlink没有-f参数导致脚本执行失败的问题
-> - [fix] webui: read null when no group
+> - [chore] all scripts +x to add execute permissions to make sure CI works properly.
+> - [chore] fix macOS readlink no -f parameter causes script execution failure problem
+> - [fix] WebUI: read null when no group
 > - [fix] connection: not working set ModWriteChanSize
 > - [fix] not working timout for RTMP server session
 > - [test] dump rtsp test support video
-> - [refactor] 整理所有跨域的代码
-> - [refactor] 整理所有超时相关的代码
-> - [refactor] hevc: 暴露hevc.Context中的所有字段
-> - [refactor] avc: 暴露avc.Context中的Sps结构体字段
->
-> 以上内容摘取自 [《lal CHANGELOG版本日志》](https://pengrl.com/lal/#/CHANGELOG) ，你可以通过源文档获取更详细的内容。
+> - [refactor] Fixing all cross-domain code
+> - [refactor] fix all timeout related code
+> - [refactor] HEVC: expose all fields in hevc.Context
+> - [refactor] AVC: Expose sps struct fields in avc.Context
+>Avc: Exposes the Sps struct field in avc.Context.
+> The above is extracted from the ["lal changelog"](https://pengrl.com/lal/#/CHANGELOG) , you can get more details from the source document.
 
-▦ 开发者
+▦ Developers
 
-感谢参与这个版本的开源贡献者：yoko(阿亮), ZSC714725(阿响), HustCoderHu(小虎), Jae-Sung Lee(阿韩)
+Thanks to the open source contributors who worked on this release: yoko(Liang), ZSC714725(Ah Loud), HustCoderHu(Xiao Hu), Jae-Sung Lee(Ah Han)
 
-▦ 进一步了解lal
+▦ Learn more about lal
 
-- [github](https://github.com/q191201771/lal)
-- [官方文档](https://pengrl.com/lal)
-- [联系作者](https://pengrl.com/lal/#/Author)
+- [GitHub](https://github.com/q191201771/lal)
+- [Official Documentation](https://pengrl.com/lal)
+- [Contact Author](https://pengrl.com/lal/#/Author)
 
-微信扫码加我好友（进微信群）：
+WeChat scan code to add yourself as a friend (into the WeChat group):
 
-![wechat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
+! [WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
 
-本文完，祝你今天开心。
+End of this article. Have a nice day!
 
 yoko, 202307

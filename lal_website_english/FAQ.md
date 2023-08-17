@@ -1,6 +1,6 @@
 # lal FAQ
 The FAQ is displayed at: https://pengrl.com/lal/#/FAQ 
-The FAQ documentation is hosted at [lal_website/FAQ.md](https://github.com/lalext/lal_website/FAQ.md) on the GitHub lalext project.
+The FAQ documentation is hosted at [lal_website/FAQ.md](https://github.com/lalext/lal_website/FAQ.md) on the [lalext project on GitHub](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md).
 
 You are welcome to add your own questions, or ask your own questions, or answer the questions at the bottom of the document. 
 

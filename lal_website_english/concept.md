@@ -1,9 +1,9 @@
 > Important Concepts Presented at: https://pengrl.com/lal/#/concept  
-> Important Concepts Documentation hosted at [lal_website/concept.md](https://github.com/q191201771/lalext/) on github [lalext project](https://github.com/q191201771/lalext) blob/master/lal_website/concept.md)
+> Important Concepts Documentation hosted at [lal_website/concept.md](https://github.com/q191201771/lalext/) on the [lalext project on GitHub](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md).
 >
 > Feel free to add your own questions, or ask your own questions, or answer the questions at the bottom of the document.  
 >
-> Participate by submitting a PR to the document [lal_website/concept.md](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md), or by posting directly to this [issue]( https://github.com/q191201771/lalext/issues/5).
+> Participate by submitting a PR to the document [lal_website/concept.md](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md), or by posting directly to this [issue](https://github.com/q191201771/lalext/issues/5).
 
 # Important concepts
 

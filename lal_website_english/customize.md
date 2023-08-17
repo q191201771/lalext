@@ -1,138 +1,133 @@
-# lalserver 二次开发
+# lalserver secondary development
 
-### ▦ lal的正确使用姿势
+### ▦ lal ecosystem
 
-从入门到通(fang)关(qi)：
+From the introductory level to expert:
 
-| 编号   | 方式                                                 | 可满足业务方多少功能需求 | 相关文档                                                                                                                           |
-|------|----------------------------------------------------|--------------|--------------------------------------------------------------------------------------------------------------------------------|
-| 1    | 直接启动lalserver                                      | 60%          | [lalserver 安装、运行](https://pengrl.com/lal/#/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c)    |
-| 2    | 改改lalserver配置文件                                    | 70%          | [lalserver 配置文件说明](https://pengrl.com/lal/#/ConfigBrief)                                                                       |
-| 3    | 业务方服务与lalserver的HTTP Notify(回调事件)，HTTP API(接口)配合   | 80%          | [lalserver HTTP Notify事件回调](https://pengrl.com/lal/#/HTTPNotify) <br> [lalserver HTTP API接口](https://pengrl.com/lal/#/HTTPAPI) |
-| 4    | 与lal中的其他demo配合                                     | 85%          | [Demo 介绍](https://pengrl.com/lal/#/DEMO)                                                                                       |
-| 5    | 与lalext中的扩展配合                                      | 90%          | [lalext](https://github.com/q191201771/lalext)                                                                                 |
-| 6    | 基于lalserver做二次开发                                   | 95%          | [lalserver 二次开发](https://pengrl.com/lal/#/customize)                                                                      |
-| 7    | 丢掉lalserver，基于lal库做自己的应用                           | 99%          | nil                                                                                                                            |
-| 8    | 丢掉lal                                              | 100%         | nil                                                                                                                            |
+| Level |         Mode/style                                                     | Functionality (business side) | Relevant documentation                                                                                                          |
+|---|------------------------------------------------------------------------|-----:|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Start the lalserver directly                                           |  60% | [lalserver Installation and Operation](https://pengrl.com/lal/#/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c)   |
+| 2 | Changing the lalserver configuration file                              |  70% | [lalserver Configuration File Description](https://pengrl.com/lal/#/ConfigBrief)                                                                     |
+| 3 | Business-side services work with lalserver's HTTP Notify/HTTP API.     |  80% | [lalserver HTTP Notify event callbacks](https://pengrl.com/lal/#/HTTPNotify) \|  [lalserver HTTP API connection](https://pengrl.com/lal/#/HTTPAPI) |
+| 4 | Work with other demos in lal                                           |  85% | [Introduction to the demos](https://pengrl.com/lal/#/DEMO)                                                                                        |
+| 5 | Work with lalext extensions                                            |  90% | [lalext](https://github.com/q191201771/lalext)                                                                                 |
+| 6 | Secondary development based on lalserver                               |  95% | [lalserver secondary development](https://pengrl.com/lal/#/customize)                                                                                   |
+| 7 | Ditch lalserver and make your own application built on the lal library |  99% | nil                                                                                                                                                        |
+| 8 | Drop lal completely                                                    | 100% | nil                                                                                                                                                        |
 
-越上面，越易用，越下面，越灵活。  
+The higher the level, the easier it is to use, and the lower down, the more flexible it is. 
 
-本文聚焦第6关副本——基于lalserver做二次开发。
+This article focuses on level 6  — doing secondary development based on lalserver.
 
-### ▦ lalserver 二次开发
+### ▦ lalserver secondary development
 
-#### ✒ lal项目中的lalserver是什么？
+#### ✒ How does lalserver fit into the lal project?
 
-从功能角度看，lalserver是lal项目中的一个**开箱即用**的流媒体服务器应用。它最基础的功能是接收**标准协议**流（如rtmp、rtsp等）作为输入，完成协议转换、转发、录制等等一系列功能。  
-从代码模型（程序、进程）角度，lalserver是一个包含了main函数的、编译出来就是exe的、直接可以运行的程序。  
+From a functional point of view, lalserver is an **out-of-the-box** streaming server application in the overall lal project. Its most basic function is to receive **standard protocol** streams (e.g. RTMP, RTSP, etc.) as input, and complete a series of functions such as protocol conversion, forwarding, recording, and so on.  
+From the code model (programme, process) point of view, lalserver is a directly runnable programme that contains the main function and compiles as an executable binary.  
 
-> main方法的代码见 https://github.com/q191201771/lal/blob/master/app/lalserver/main.go
+The code for the main method is available at https://github.com/q191201771/lal/blob/master/app/lalserver/main.go.
 
-#### ✒ 如何集成lalserver？
+#### ✒ How to integrate lalserver with code from third parties?
 
-有的业务方，想集成lalserver，也即将lalserver的功能作为自身exe的一部分，这是可行的。  
-事实上，如果你打开上面的main.go查看，会发现它只有短短20行代码，就干了两件简单的事：
+There are business parties that want to integrate lalserver, i.e. make the lalserver functionality part of their own applications, which is perfectly possible.  
+In fact, if you open the `main.go` file above and check it out, you'll see that it's just 20 lines of code that does two simple things:
 
-1. 读取命令行参数
-2. 创建初始化一个ILalServer对象，并调用它的RunLoop方法运行
+1. read the command line arguments
+2. create and initialise an `ILalServer` object and call its `RunLoop` method to run it.
 
-相关代码如下：
+The relevant code is as follows:
 
-```
+```go
 	lals := logic.NewLalServer(func(option *logic.Option) {
 		option.ConfFilename = confFilename
 	})
 	err := lals.RunLoop()
 
-// 代码基于v0.31.1版本，代码位置： https://github.com/q191201771/lal/blob/master/app/lalserver/main.go#L27
+// Code based on version v0.31.1, code location: https://github.com/q191201771/lal/blob/master/app/lalserver/main.go#L27
 ```
 
-因此，业务方要集成lalserver，只需要在自己的代码中创建ILalServer并使用即可。
+So, for the business side to integrate lalserver, you just need to create ILalServer in your own code and use it.
 
-#### ✒ 什么是lalserver 二次开发？
+#### ✒ What is lalserver secondary development?
 
-根据上文，你大致可以把lalserver应用看成是对ILalServer对象的一个套壳，这么说也没啥毛病。下面我们再展开说说。
+Based on the above, you can roughly think of a lalserver application as a shell for the ILalServer object, and there's nothing wrong with saying that. Let's expand on that.
 
-lal项目中，package库可以粗略的分为两大部分：
+In the lal project, the package library can be roughly divided into two main parts:
 
-1. 协议库，它是逻辑无关的、纯粹的，只包含标准协议栈、网络IO等。  
-2. lalserver专有的库，叫pkg/logic，它包含的是lalserver的专有逻辑。  
+1. protocol libraries, which are logic-independent and pure Go, and contain only standard protocol stacks, network I/O, etc.  
+2. lalserver proprietary library, called pkg/logic, which contains lalserver's proprietary logic.  
 
-lalserver二次开发，就是既使用lalserver的logic库的基础功能，又不完全使用，自己还搞点定制化、插件化的开发。  
-你可以理解为，logic内提供了很多默认的实现，比如已接入了一些标准协议，流管理、流转发、鉴权、配置管理等等，  
-如果满足不了你的需求，比如你想接入自定义的协议，自定义鉴权等等，你可以针对性的做二次开发。  
+lalserver secondary development is to use lalserver's logic from the library of  basic functions, but also engage in a little customisation and plug-in development.  
+You can understand that logic provides a lot of the default implementation, such as: access to a number of standard protocols, flow management, flow forwarding, authentication, configuration management, and so on.  
+If the basic library can't meet your needs — for example, you want to access custom protocols, custom authentication and so on — you can target the secondary development.  
 
-lalserver二次开发的能力边界，取决于logic提供的接口。我们的目标是：
+The boundary of lalserver secondary development capability depends on the interface provided by logic. Our goal is:
 
-1. 凯撒的归凯撒，上帝的归上帝。业务方不要魔改lal pkg库中的代码
-   1. 通用的，尽量提PR，为开源做贡献
-   2. 业务方特有的逻辑，可以通过插件注册扩展
-2. 封装易用性。业务方可以尽量少的关心细节，做到面向接口开发
+1. What is Caesar's to Caesar, God's to God. The business side should not modify the code in the lal pkg library.
+   1. Generic code, try to mention PR, contribute to open source;
+   2. Business-side-specific logic, can be extended through plug-in registration.
+2. Encapsulate ease of use. The business side can care as little as possible about the details to do interface-oriented development.
 
-#### ✒ 如何二次开发？
+#### ✒ How to develop *twice*?
 
-上文`如何集成lalserver`中的代码(`app/lalserver/main.go`)演示了LalServer对象的最简单用法，接下来，我进一步讲解扩展ILalServer的两种手段：
+The code in `How to Integrate lalserver` above (`app/lalserver/main.go`) demonstrates the simplest usage of the LalServer object. Next, I further explain the two ways of extending `ILalServer`:
 
-第一种手段，是初始化时的配置。
+The first method is to change the configuration during initialisation.
 
-配置项相关代码如下：
+The code associated with the configuration items is as follows:
 
-```
+```go
 type Option struct {
-	// ConfFilename 配置文件，注意，如果为空，内部会尝试从 DefaultConfFilenameList 读取默认配置文件
-	//
+	// ConfFilename configuration file. Note that if it's empty, internally it will try to read the default configuration file from DefaultConfFilenameList.
 	ConfFilename string
 
-	// NotifyHandler
-	//
-	// 事件监听
-	// 业务方可实现 INotifyHandler 接口并传入从而获取到对应的事件通知。
-	// 如果不填写保持默认值nil，内部默认走http notify的逻辑（当然，还需要在配置文件中开启http notify功能）。
-	// 注意，如果业务方实现了自己的事件监听，则lal server内部不再走http notify的逻辑（也即二选一）。
+	// NotifyHandler event listener.
+	// The business side can implement the INotifyHandler interface and pass it in to get notified of events.
+	// If not filled in, the default value is nil, and http notify is used internally (of course, http notify needs to be enabled in the config file).
+	// Note that if the business side implements its own event listener, the lal server no longer uses HTTP notify logic (i.e., it's an either/or).
 	//
 	NotifyHandler INotifyHandler
 
-	// TODO(chef): [refactor] 考虑用INotifyHandler实现ModConfigGroupCreator和IAuthentication 202209
+	// TODO(yoko): [refactor] Consider implementing ModConfigGroupCreator and IAuthentication 202209 with INotifyHandler.
 
-	// ModConfigGroupCreator
-	// This func help us modify the group configuration base on appName or streamName
-	// so that group can have it own configuration (configuration can be in other source like db)
+	// ModConfigGroupCreator.
+	// This func helps us modify the group configuration base on appName or streamName // so that group can have it owned.
+	// so that group can have it's own configuration (configuration can be in other source like db)
 	// It will help us reduce resource usage if we just want some specific group record flv or hls...
-	ModConfigGroupCreator ModConfigGroupCreator
+	ModConfigGroupCreator IModConfigGroupCreator
 
-	// Authentication
-	// This interface make authenticate customizable so that we can implement any authenticate strategy like jwt...
+	// Authentication.
+	// This interface makes authentication customisable so that we can implement any authentication strategy such as JWT...
 	Authentication IAuthentication
 }
 
-// 代码基于v0.31.1版本，代码位置： https://github.com/q191201771/lal/blob/master/pkg/logic/logic.go#L83
+// Code based on version v0.31.1, code location： https://github.com/q191201771/lal/blob/master/pkg/logic/logic.go#L83
 ```
 
-第二种手段，是LalServer对象上的提供的方法。
+The second way is to use the methods provided by the `ILalServer` object.
 
-ILalServer接口定义如下：
-
-```
+The `ILalServer` interface is defined as follows:
+```go
 type ILalServer interface {
 	RunLoop() error
 	Dispose()
 
-	// AddCustomizePubSession 定制化增强功能。业务方可以将自己的流输入到 ILalServer 中
+	// AddCustomizePubSession customisation enhancements. The business side can feed their own streams into the ILalServer
 	//
-	// @example 示例见 lal/app/demo/customize_lalserver
-	//
-	// @doc 文档见 <lalserver二次开发 - pub接入自定义流> https://pengrl.com/lal/#/customize_pub
-	//
+	// @example See lal/app/demo/customize_lalserver for an example.
+	// @example
+	// @doc documentation is available at «lalserver secondary development - pub access to custom streams» https://pengrl.com/lal/#/customize_pub
+	// 
 	AddCustomizePubSession(streamName string) (ICustomizePubSessionContext, error)
 
-	// DelCustomizePubSession 将 ICustomizePubSessionContext 从 ILalServer 中删除
+	// DelCustomizePubSession removes ICustomizePubSessionContext from ILalServer.
 	//
 	DelCustomizePubSession(ICustomizePubSessionContext)
 
 	// StatLalInfo StatAllGroup StatGroup CtrlStartPull CtrlKickOutSession
-	//
-	// 一些获取状态、发送控制命令的API。
-	// 目的是方便业务方在不修改logic包内代码的前提下，在外层实现一些特定逻辑的定制化开发。
+	// — Some APIs for getting state and sending control commands.
+	// The purpose is to allow the business side to implement some custom logic in the outer layer without modifying the code in the logic package.
 	//
 	StatLalInfo() base.LalInfo
 	StatAllGroup() (sgs []base.StatGroup)
@@ -142,13 +137,13 @@ type ILalServer interface {
 	CtrlKickSession(info base.ApiCtrlKickSessionReq) base.HttpResponseBasic
 }
 
-// 代码基于v0.31.1版本，代码位置： https://github.com/q191201771/lal/blob/master/pkg/logic/logic.go#L18
+// Code based on version v0.31.1, code location: https://github.com/q191201771/lal/blob/master/pkg/logic/logic.go#L18
 ```
 
-特定功能二次开发的具体文档：
+Documentation for secondary development of specific features:
 
-- [二次开发-pub接入自定义流](https://pengrl.com/lal/#/customize_pub)
+- [secondary-development-pub-access-custom-streams](https://pengrl.com/lal/#/customize_pub)
 
-有不明白的地方联系我，我会进一步丰富文档。
+Contact me if you don't understand anything, I will further update the documentation.
 
-this note updated at 2210 by yoko
+This note updated at 2210 by yoko
