@@ -1,92 +1,82 @@
-# LAL v0.32.0 released: better support for pure video streaming
+# LAL v0.32.0发布，更好的支持纯视频流
 
-The Go language streaming open source project [LAL](https://github.com/q191201771/lal) released v0.32.0 today. Exactly one month from the last version, [LAL](https://github.com/q191201771/lal) still maintains the state of efficient iteration.
+Go语言流媒体开源项目 [LAL](https://github.com/q191201771/lal) 今天发布了v0.32.0版本。距离上个版本刚好一个月时间，[LAL](https://github.com/q191201771/lal) 依然保持着高效迭代的状态。
 
-> LAL project address: https://github.com/q191201771/lal
+> LAL 项目地址：https://github.com/q191201771/lal
 
-I'd like to pick three important changes and briefly introduce them:
+挑三个比较重要的修改简单介绍一下：
 
-#### ▌I, Automatic overlay of muted audio
+#### ▌ 一，自动叠加静音音频
 
-This is to better support [pure video streaming](https://pengrl.com/lal/#/concept?id=%e7%ba%af%e9%9f%b3%e9%a2%91%e6%b5%81%ef%bc%8c%e7%ba%af%e8%a7%86%e9%a2%91%e6% b5%81), to solve the problem that the first frame opening time may be particularly slow and delayed when many players play live streams of pure video.
+这个是为了更好的支持 [纯视频流](https://pengrl.com/lal/#/concept?id=%e7%ba%af%e9%9f%b3%e9%a2%91%e6%b5%81%ef%bc%8c%e7%ba%af%e8%a7%86%e9%a2%91%e6%b5%81) ，解决很多播放器播放纯视频的直播流时，可能出现首帧打开时间特别慢、延迟大的问题。
 
-For details, I've written a separate document: [lalserver auto overlay mute audio](https://pengrl.com/lal/#/dummy_audio)
+详情我单独写了一篇文档： [《lalserver 自动叠加静音音频》](https://pengrl.com/lal/#/dummy_audio)
 
-#### ▌II. Support for RTMPS and RTSPS
+#### ▌ 二，支持RTMPS，RTSPS
 
-Encryption of RTMP and RTSP protocols based on TLS/SSL brings higher security.
+基于TLS/SSL对RTMP和RTSP协议进行加密，带来更高的安全性。
 
-RTMPS and RTSPS can be enabled through the configuration file of [lalserver](https://github.com/q191201771/lal). Here is an example for RTMPS:
+RTMPS和RTSPS可以通过 [lalserver](https://github.com/q191201771/lal) 的配置文件开启，比如RTMPS对应的配置：
 
-```go
+```
   "rtmp": {
-    // Whether to enable listening for the rtmp service.
-    // Note that the enable switch in the config file for each protocol type should be turned on as needed to avoid unnecessary protocol conversion overhead.
+    //. 是否开启rtmp服务的监听
+    //  注意，配置文件中控制各协议类型的enable开关都应该按需打开，避免造成不必要的协议转换的开销
     "enable": true,
 
-    // The port on which the RTMP service listens, and where clients push and pull streams to and from the lalserver.
+    //. RTMP服务监听的端口，客户端向lalserver推拉流都是这个地址//. RTMP服务监听的端口，客户端向lalserver推拉流都是这个地址
     "addr": ":1935",
 
-    // Whether or not to enable the RTMPS service.
-    // Note that RTMP and RTMPS can have either one or all of them turned on or off.
+    //. 是否开启rtmps服务的监听
+    //  注意，rtmp和rtmps可以任意开启一个或全部打开或全部关闭
     "rtmps_enable": true,
 
-    // Port address on which the RTMPS service listens.
+    //. RTMPS服务监听的端口地址
     "rtmps_addr": ":4935",
 
-    // Local cert file for RTMPS.
+    //. RTMPS的本地cert文件 
     "rtmps_cert_file": "./conf/cert.pem",
 
-    // Local key file for RTMPS.
+    //. RTMPS的本地key文件
     "rtmps_key_file": "./conf/key.pem",
     ...
   },
 ```
 
-> Hint: the above is sourced from ["lalserver configuration file description"](https://pengrl.com/lal/#/ConfigBrief), open the source document for a more friendly reading format.
+> 提示，以上内容来源 [《lalserver配置文件说明》](https://pengrl.com/lal/#/ConfigBrief) ，打开源文档可以获得更友好的阅读格式。
 
-#### ▌III, Better support for more RTSP cameras
+#### ▌ 三，更好的支持更多的RTSP摄像头
 
-For example:
+比如：
 
-- RTP stack support parsing padding and CSRC in header
-- Fix the problem that AAC RTP type is not a standard value which leads to failure to merge frames. Improved compatibility.
-- Fix a bug which made RTSP auth fail sometimes.
+- rtp协议栈支持解析header中的padding和csrc
+- 修复aac rtp type不是标准值导致无法合帧的问题。提高兼容性
+- 修复rtsp auth可能失败的bug
 
-All of the above enhancements were made in response to real community feedback.
+以上处理都是对社区真实反馈的响应。
 
-#### ▌IV. More changes
+#### ▌ 更多修改
 
-There are a few more modifications that I won't introduce one by one, they are roughly as follows:
+还有一些修改不逐个介绍了，大致如下：
 
-> - [feat] Demo: pullhttpflv pullhttp-flv can be stored as flv file.
+> - [feat] demo: pullhttpflv拉取http-flv时可以存储为flv文件
+> - [opt] 二次开发: 当DelCustomizePubSession后，调用被删除对象的FeedAvPacket方法将返回错误
+> - [opt] 二次开发: 支持直接使用json字符串作为配置内容初始化ILalServer
+> - [opt] 兼容性优化。转ts时，如果调整时间戳失败则使用调整前的时间戳。
+> - [opt] 兼容性优化。当rtmps和rtsps加载签名文件失败时，只打印日志而不退出lalserver
+> - [fix] http-api: 修复sub http-flv remote_addr字段没有值的bug
+> - [log] 打印rtsp信令。丰富多处错误日志，比如转hls异常
+> - [doc] 新增文档：重要概念 https://pengrl.com/lal/#/concept
 >
-> - [opt] Secondary: after DelCustomizePubSession, calling FeedAvPacket method of the deleted object will return an error.
->
-> - [opt] Secondary Development: Support initialising ILalServer directly using JSON string as configuration content.
->
-> - [opt] Compatibility optimisation. Use pre-adjustment timestamp if timestamp adjustment fails when transferring ts.
->
-> - [opt] Compatibility optimisation. When rtmps and rtsps fail to load signature files, only print logs without exiting lalserver.
->
-> - [fix] http-api: fix bug where sub http-flv remote_addr field had no value.
->
-> - [log] Print RTSP signalling. Enriched several error logs, e.g. transferring its exceptions.
->
-> - [doc] New document: important concepts https://pengrl.com/lal/#/concept
->
-> - [doc] Added documentation: important concepts
->
->   
->
->   The above is extracted from ["lal CHANGELOG Release Log"](https://pengrl.com/lal/#/CHANGELOG), you can get more details from the source document.
+> 以上内容摘取自 [《lal CHANGELOG版本日志》](https://pengrl.com/lal/#/CHANGELOG) ，你可以通过源文档获取更详细的内容。
 
-#### Learn more about lal
+#### 进一步了解lal
 
 - [github](https://github.com/q191201771/lal)
-- [Official documentation](https://pengrl.com/lal)
-- [Contact Author](https://pengrl.com/lal/#/Author)
+- [官方文档](https://pengrl.com/lal)
+- [联系作者](https://pengrl.com/lal/#/Author)
 
-End of this article. Have a nice day! 
+
+本文完，祝你今天开心。
 
 yoko, 202211

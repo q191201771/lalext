@@ -1,64 +1,65 @@
-# LAL v0.35.4 released, OBS support RTMP H265 push streaming, I followed the
+# LAL v0.35.4发布，OBS支持RTMP H265推流，我跟了
 
-Go language streaming open source project [LAL](https://github.com/q191201771/lal) released v0.35.4 today.
+Go语言流媒体开源项目 [LAL](https://github.com/q191201771/lal) 今天发布了v0.35.4版本。
 
-> LAL project address: https://github.com/q191201771/lal
+> LAL 项目地址：https://github.com/q191201771/lal
 
-The old rules — a brief introduction:
+老规矩，简单介绍一下：
 
-### ▦ i. OBS supports RTMP H265 push streaming
+### ▦ 一. OBS支持RTMP H265推流
 
-The new standard, generally known as _enhanced RTMP_, has already been implemented in the new version of OBS (version 29.1+ [click to download the OBS installer](https://github.com/obsproject/obs-studio/releases)). To be able to use it, LAL has also made the corresponding adaptation; in other words, now you can use OBS to push H265 RTMP stream to LAL.
+新出的标准，一般被称为enhanced RTMP，OBS新版(29.1+版本，[点我去下载安装包](https://github.com/obsproject/obs-studio/releases))已经实现可以使用，LAL也做了相应的适配，换言之，你可以使用OBS推送H265的RTMP流给LAL了。
 
-**Tip:** The advantage of using H265 is that compared to H264, it requiers a lower bitrate but has a higher image quality.
+Tips: 使用H265的好处是相较于H264，占用更低的码率却拥有更高的图像质量。
 
-A few details worth noting:
+值得注意的几点细节：
 
-1. After LAL converts a stream to a different encapsulation protocol (e.g. RTSP, HLS), the output protocol is still the standard protocol, which is not different from the original one.
-2. Even when the LAL output is set to RTMP/FLV, it nevertheless keeps the enhanced RTMP format. Currently, the only player adapted to the enhanced RTMP is `mpegts.js`, but subsequent `ffmpeg` and VLC versions (as well as other players) will soon support it as well.
-3. Enhanced RTMP and the previous Jinshan Cloud protocol to enable HEVC over RTMP (that is, codecid = 12, supported by most of the Chinese domestic CDN providers) are two different things. LAL supports both; the current strategy is to use the RTMP/FLV protocol for input and output, but subsequent versions may require conversion (e.g. through the configuration file or by having URL parameters, etc.).
+1. LAL转换为其他封装协议（比如RTSP、HLS）后，输出的协议依然是标准协议，这点和之前没啥区别。
+2. LAL输出是RTMP/FLV时，依然保持enhanced RTMP格式，目前适配了enhanced RTMP的播放器只有mpegts.js，后续ffmpeg和VLC等播放器应该也会很快跟上支持。
+3. enhanced RTMP和之前金山云搞的HEVC over RTMP（就是codecid=12那个，国内大部分CDN产商都支持了）是两套东西，LAL两种格式都支持了，目前的策略是进来的RTMP/FLV是啥格式，出去的RTMP/FLV就是啥格式，后续可能会考虑转换（比如通过配置或url参数等）。
 
-For details on the implementation of the enhanced RTMP protocol, and how to use its OBS counterpart, you can take a look at our article: [《enhanced RTMP》](https://pengrl.com/lal/#/enhanced_rtmp)
+关于enhanced RTMP协议实现细节、OBS对应的使用方法可以看看我们的这篇文章： [《enhanced RTMP》](https://pengrl.com/lal/#/enhanced_rtmp)
 
-### ▦ ii. G711A/G711U
+### ▦ 二. G711A/G711U
 
-The last version already supported G711 audio encoding format, but it left a feature to be implemented: RTSP to RTMP with video only, without sound. This version supports that as well.
+上个版本支持G711音频编码格式时留了个待完成的尾巴，RTSP转RTMP只有视频没有声音，这个版本支持了。
 
-We're in the process of finishing up the overall G711 implementation: https://www.yuque.com/pengrl/public/psxbp37r3yqopnxx
+G711的整体情况我们正在整理中： https://www.yuque.com/pengrl/public/psxbp37r3yqopnxx
 
-### ▦ iii. RTSP TCP/UDP switching
+### ▦ 三. RTSP TCP/UDP 切换
 
-An optimisation: some RTSP sources don't support TCP to transfer audio/video data, they will reply with status code 461 to the other end in the SETUP signaling phase to indicate that they don't support TCP. The new version of LAL will try to switch to UDP SETUP when it receives the 461, and vice versa for UDP to TCP.
+一个优化： 有的RTSP源不支持TCP传输音视频数据，会在SETUP信令阶段给对端回复status code 461，用于表明自身不支持TCP，新版本的LAL收到461后会尝试切换UDP SETUP。反之UDP切TCP也是一样的道理。
 
-### ▦ more
+### ▦ 更多
 
-There are a few more modifications, not covered individually, and roughly as follows:
+还有一些修改不逐个介绍了，大致如下：
 
-> - [opt] mpegts packs patpmt according to encoding format (improves compatibility with pure video streaming)
-> - [opt] HTTP-API: cross-domain support.
-> - [fix] rtmp: parse amf strict array
-> - [fix] rtmp to mpegts handling timestamps incorrectly, causing ffplay to get an error when playing hls with b-frames
+> - [opt] mpegts根据编码格式打包patpmt（提高纯视频流的兼容性）
+> - [opt] HTTP-API: 支持跨域
+> - [fix] rtmp: 解析amf strict array
+> - [fix] rtmp转mpegts处理时间戳错误，导致有b帧时ffplay播放hls报错
 > - [fix] GetSamplingFrequency missing 24000
 > - [fix] simplifing logic to enable `fragment_duration_ms` on configuration to be under thousands (but not below hundreds)
-> - [fix] Fix a crash when CustomizePubSessionContext uses dumpFile null pointer.
+> - [fix] 解决CustomizePubSessionContext使用dumpFile空指针导致崩溃的问题
 > - [test] unit test for base.DumpFile
 >
-> The above is extracted from ["lal CHANGELOG version log"](https://pengrl.com/lal/#/CHANGELOG), you can get more details from the source document.
+> 以上内容摘取自 [《lal CHANGELOG版本日志》](https://pengrl.com/lal/#/CHANGELOG) ，你可以通过源文档获取更详细的内容。
 
-### ▦ Developer.
+### ▦ 开发者
 
-Thanks to the open source contributors involved in this release: yoko, ZSC714725, joaop, sanenchen, yang heng01~, penglh, LiH0820
+感谢参与这个版本的开源贡献者：yoko, ZSC714725, joaop, sanenchen, yang heng01~, penglh, LiH0820
 
-### ▦ Further information about lal
+### ▦ 进一步了解lal
 
 - [github](https://github.com/q191201771/lal)
-- [official documentation](https://pengrl.com/lal)
-- [contact author](https://pengrl.com/lal/#/Author)
+- [官方文档](https://pengrl.com/lal)
+- [联系作者](https://pengrl.com/lal/#/Author)
 
-WeChat scan code to add yourself as a friend (into the WeChat group):
+微信扫码加我好友（进微信群）：
 
-! [WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
+![wechat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
 
-End of this article. Have a nice day!
+本文完，祝你今天开心。
 
 yoko, 202304
+

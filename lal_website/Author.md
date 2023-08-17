@@ -1,19 +1,17 @@
-Thank you for your interest in the lal project.
+感谢您关注lal项目。  
+lal的所有代码、文档都开源免费，你只要不犯法可以随意使用。  
+微信群和QQ群也是免费的，旨在给大家提供一个交流的平台。  
+如果你想支持我的项目，可以给我发个红包请我喝杯咖啡。
 
-All the code and documents are open source and free, you can use them fr asas long as you do not break the law.  
-WeChat and QQ groups are also free, aiming to provide a platform for everyone to communicate. 
+- 微信： q191201771
+- QQ： 191201771
+- 微信群： 加我微信好友后，告诉我拉你进群
+- QQ群： 635846365
+- 邮箱：191201771@qq.com
+- lal github地址： https://github.com/q191201771/lal
+- lal官方文档： https://pengrl.com/lal
 
-If you want to support my project, you can send a donation to buy me a cup of coffee.
+作者微信，扫码加好友：
 
-- WeChat: q191201771
-- QQ: 191201771
-- WeChat group: Add me as a friend on WeChat and tell me to pull you into the group!
-- QQ group: 635846365
-- E-mail: 191201771@qq.com
-- lal github address: https://github.com/q191201771/lal
-- lal official document: https://pengrl.com/lal
-
-The add the author on WeChat as a friend, scan the following QR code::
-
-! [lal author wechat](https://pengrl.com/images/yoko_vx.jpeg?date=220329)
+![lal作者微信](https://pengrl.com/images/yoko_vx.jpeg?date=220329)
 

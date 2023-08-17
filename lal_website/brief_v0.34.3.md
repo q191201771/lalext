@@ -1,121 +1,121 @@
-# LAL v0.34.3 released, G711 audio is here, and so is the Web UI!
+# LAL v0.34.3发布，G711音频来了，Web UI也来了
 
-The Go language streaming open source project [LAL](https://github.com/q191201771/lal) released v0.34.3 today.
+Go语言流媒体开源项目 [LAL](https://github.com/q191201771/lal) 今天发布了v0.34.3版本。
 
-> LAL project address: https://github.com/q191201771/lal
+> LAL 项目地址：https://github.com/q191201771/lal
 
-The old rules — first, a brief introduction:
+老规矩，简单介绍一下：
 
-#### ▦ i. Audio G711
+#### ▦ 一. 音频G711
 
-Added support for audio G711A/G711U (also known as PCMA/PCMU). The main manifestations are:
+新增了对音频G711A/G711U(也被称为PCMA/PCMU)的支持。主要表现在：
 
-✒ 1) RTMP G711 as input
+✒ 1) rtmp G711作为输入
 
-1.1) RTMP-in-RTMP-out:
+1.1) 首先是rtmp进，rtmp出
 
-The test method is as follows:
+测试方法如下：
 
-```bash
-# Push stream command:
+```
+# 推流命令：
 ffmpeg -re -i testdata/test.flv -vcodec copy -acodec pcm_mulaw -ac 1 -ar 8000 -f flv "rtmp://127.0.0.1/live/test110"
 
-# play command:
+# 播放命令：
 ffplay rtmp://127.0.0.1/live/test110
 ```
 
-Hint, `-acodec pcm_mulaw` is G711U, if you want to use G711A, then change it to `-acodec pcm_alaw`
+提示，`-acodec pcm_mulaw`是G711U，如果想使用G711A，则修改为`-acodec pcm_alaw`
 
-1.2) Then there's the addition of RTMP to RTSP support
+1.2) 然后是新增了rtmp转rtsp的支持
 
-```bash
-# push stream command:
+```
+# 推流命令：
 ffmpeg -re -i testdata/test.flv -vcodec copy -acodec pcm_mulaw -ac 1 -ar 8000 -f flv "rtmp://127.0.0.1/live/test110"
 
-# Playback commands:
+# 播放命令：
 ffplay rtsp://127.0.0.1:5544/live/test110
 ```
 
-✒ 2) RTSP g711 as input
+✒ 2) rtsp G711作为输入
 
-Enhanced support for RTSP-forwarding RTSP.
+加强了对rtsp转发rtsp的支持。
 
-For RTSP-in-RTSP-out scenarios, lalserver only needs to do forwarding for rtsp data, which theoretically supports all encoding formats.  
-But in practice, due to the lack of compatibility with SDP format, the support for rtsp2rtsp G711 is not good enough, and the new version has made enhancements.
+对于rtsp进rtsp出的场景，lalserver只需要对rtp数据做转发即可，理论上是支持所有编码格式的。  
+但实际上由于对SDP格式的兼容性不够好，导致对于rtsp2rtsp G711的支持不够好，新版本做了加强。
 
-```bash
-# Push stream command:
+```
+# 推流命令：
 ffmpeg -re -stream_loop -1 -i testdata//test.flv -acodec pcm_mulaw -ac 1 -ar 8000 -vcodec copy -f rtsp rtsp://localhost:5544/live/test110
 
-# Playback commands:
+# 播放命令：
 ffplay rtsp://127.0.0.1:5544/live/test110
 ```
 
-✒ 3) Follow-up
+✒ 3) 后续
 
-3.1) Current version of G711 RTSP to RTMP, only video without sound, we will support it as soon as possible, this work is already in progress.  
-3.2) Enhance the performance of G711 under each sample rate.  
-3.3) Add support for container protocols such as `ts` for G711.  
+3.1) 当前版本G711 rtsp转rtmp，只有视频没有声音，我们会尽快支持，这个工作已经在进行中了。  
+3.2) 加强G711在各采样率下的表现。  
+3.3) 增加ts等容器协议对G711的支持。  
 
-#### ▦ II. Web UI
+#### ▦ 二. Web UI
 
-Add a simple web status page inside the lalserver process. After starting lalserver, type http://127.0.0.1:8083/lal.html in the browser to access it.
+在lalserver进程内部增加了一个简单的Web页面，启动lalserver后，在浏览器中输入 http://127.0.0.1:8083/lal.html 进行访问。
 
-[click me if you want to see screenshots](https://pengrl.com/lal/#/http_web_ui), which is basically divided into three main parts:
+[想看截图的点我](https://pengrl.com/lal/#/http_web_ui)， 基本分为三大部分：
 
-1. Basic information about the service
-    - Basic information about the service, such as version, startup time, etc.
-2. Group list information
-    - For example, how many input streams are there in total?
-    - Group list information, e.g. how many input streams there are in total, e.g. name of each stream, start time, remote address, video encoding format, aspect ratio, current bitrate, etc.
-3. Specific group information
-    - Operation mode: click the streams in the group list.
-    - For example, how many streams are pulling, information of pulling streams, etc.
+1. 服务的基础信息
+    - 比如版本、启动时间等
+2. group列表信息
+    - 比如总共有多少输入流
+    - 比如每条流的名称，启动时间，远端地址，视频编码格式、宽高，当前码率等
+3. 特定group信息
+    - 操作方式：点击group列表中的流
+    - 比如有多少路拉流，拉流的信息等
 
-The page can be refreshed regularly by ticking Auto.
+页面支持定时刷新，把Auto勾选上即可。
 
-The page is rendered by lalserver's internal HTTP serve and it calls lalserver's HTTP-API  to get the information dynamically.  
-Only native front-end technologies are used, no third-party JS/CSS libraries are introduced.
+页面是通过lalserver内部的http server渲染的，页面调用lalserver HTTP-API接口动态的获取信息。  
+只使用原生的前端技术，没有引入第三方的js/css库。
 
-We upgraded the Go version of lal from 1.14 to 1.16 with minimal dependencies, so that we can use the embed feature to embed HTML pages into  lalserver executable.  
-This means that you don't need to deploy HTML static files when deploying lalserver, just the lalserver executable plus any configuration files.
+我们把lal的Go版本最小依赖从1.14升级到1.16，从而使用embed功能将html页面内嵌到了lalserver可执行程序里。  
+这意味着，你在部署lalserver时不需要部署html静态文件，只需要部署lalserver可执行程序加配置文件即可。
 
-In the future, we will add all the features based on HTTP-API interface to this page, such as sending commands to pull rtsp streams from the remote end.
+后续，我们会在这个页面上增加所有基于HTTP-API接口的功能，比如发送命令从远端拉取rtsp流等。
 
-#### ▦ III. Applet lag
+#### ▦ 三. 小程序卡顿
 
-When WeChat applet pushes stream with rtmp, it supports a mode called RTC (Real Time Calling), and it will be very laggy when it pushes stream to lalserver and then pulls stream from lalserver to play after using this mode.  
-This version fixes this bug.
+微信小程序用rtmp推流时，支持一个模式(mode)叫RTC(实时通话)，用这个模式推流给lalserver后再从lalserver拉流播放会非常卡。  
+这个版本修复了这个bug。
 
-#### ▦ More
+#### ▦ 更多
 
-There are some more modifications not to be introduced one by one, they are roughly as follows:
+还有一些修改不逐个介绍了，大致如下：
 
-> - [feat] rtmp: server session support send ack
-> - [opt] rtmp: client session only uses the value of PeerWinAckSize as a trigger for whether to send an ack or not
+> - [feat] rtmp: server session支持发送ack
+> - [opt] rtmp: client session 只使用PeerWinAckSize的值作为是否发送ack的触发条件
 > - [refactor] remove deprecated io/ioutil packages
-> - [opt] rtmp: ClientSession support for customised tls.Config
-> - [fix] Fix a bug in parsing config files where the sub_session_hash_key field is written incorrectly
+> - [opt] rtmp: ClientSession支持定制化tls.Config
+> - [fix] 修复解析配置文件中sub_session_hash_key字段写错的bug
 > - [log] add log when not caching frame by SingleGopMaxFrameNum
-> - [chore] add version checking script check_versions.sh
-> - [chore] add check_versions.sh
-> 
-> The above is extracted from ["lal CHANGELOG version log"](https://pengrl.com/lal/#/CHANGELOG), you can get more details from the source document.
+> - [chore] 增加检查版本的脚本check_versions.sh
+>
+> 以上内容摘取自 [《lal CHANGELOG版本日志》](https://pengrl.com/lal/#/CHANGELOG) ，你可以通过源文档获取更详细的内容。
 
-#### ▦ Developers
+#### ▦ 开发者
 
-Thanks to the open source contributors who worked on this release: yoko(Liang), ZSC714725(Ah Loud), jaesung9507(Ah Han), liquanqing(Ah Khong), joestarzxh(Ah Hai).  
+感谢参与这个版本的开源贡献者： yoko(阿亮), ZSC714725(阿响), jaesung9507(阿韩), liquanqing(阿空), joestarzxh(阿海)  
 
-#### ▦ Learn more about lal
+#### ▦ 进一步了解lal
 
 - [github](https://github.com/q191201771/lal)
-- [official documentation](https://pengrl.com/lal)
-- [Contact Author](https://pengrl.com/lal/#/Author)
+- [官方文档](https://pengrl.com/lal)
+- [联系作者](https://pengrl.com/lal/#/Author)
 
-WeChat scan QR code to add yourself as my friend (into the WeChat group):
+微信扫码加我好友（进微信群）：
 
-![WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2303)
+![wechat](https://pengrl.com/images/yoko_vx.jpeg?date=2303)
 
-End of this article. Have a nice day!
+本文完，祝你今天开心。
 
 yoko, 202303
+

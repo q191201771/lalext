@@ -1,62 +1,62 @@
-# LAL v0.33.0 released to support capture streaming data playback debugging
+# LAL v0.33.0发布，支持抓取流数据回放调试
 
-Go language streaming media open source project [LAL](https://github.com/q191201771/lal) today released v0.33.0 version.
+Go语言流媒体开源项目 [LAL](https://github.com/q191201771/lal) 今天发布了v0.33.0版本。
 
-> LAL project address: https://github.com/q191201771/lal
+> LAL 项目地址：https://github.com/q191201771/lal
 
-The old rules: first pick three changes, briefly explained:
+老规矩，先挑三个修改简单介绍一下：
 
-#### ▌I, Support capture stream data playback debugging
+#### ▌ 一，支持抓取流数据回放调试
 
-This feature can greatly improve the efficiency of LAL users to give feedback on problems and identify then, thus improving the compatibility of LAL.
+这个功能可以大幅提高lal用户反馈问题、定位问题的效率，从而提高lal的兼容性。
 
-For details, I wrote a separate document: ["debug dump capture lal stream debugging"](https://pengrl.com/lal/#/debug_dump)
+详情我单独写了一篇文档： [《debug dump抓取lal流调试》](https://pengrl.com/lal/#/debug_dump)
 
-#### ▌II, HTTP-API and HTTP-Notify callbacks provide richer information about HLS protocols
+#### ▌ 二，HTTP-API和HTTP-Notify回调为HLS协议提供更丰富的信息
 
-As we all know, HLS is played by the client continuously initiating HTTP request after HTTP request, fetching one TS stream fragment file at a time.  
-This short-connection method leads to the server not being able to distinguish between different players, and not being able to judge the point in time when a player starts playing and ends playing.
+我们都知道，HLS是客户端持续性发起一个又一个HTTP请求，每次获取一个TS流片段文件的方式来播放的。  
+这种短连接的方法导致服务端不好区分不同的播放者，也不好判断播放者开始播放、结束播放的时间点。
 
-To address this issue, we support it by adding 302 jumps, adding a parameter with user unique ID to the `m3u8` URL, and adding that ID to multiple TSs of a user:
+此次，我们通过增加302跳转，给m3u8 url增加一个带用户唯一ID的参数，并且给一个用户的多个TS都增加上该ID，从而支持：
 
-- Getting the number of HLS players, bitrate, etc.
-- Get event notification when HLS starts or ends playing.
+- 获取hls播放者数量、码率等信息
+- 获取hls开始播放、结束播放的事件通知
 
-There are two configurations for this feature in the config file, see [hls/sub_session_timeout_ms](https://pengrl.com/lal/#/ConfigBrief?id=%e2%9c%b8-quothlssub_session_timeout_ msquot) and [hls/sub_session_hash_key](https://pengrl.com/lal/#/ConfigBrief?id=%e2%9c%b8-quothlssub_session_hash_keyquot)
+这个功能在配置文件有两个相关的配置，具体见 [hls/sub_session_timeout_ms](https://pengrl.com/lal/#/ConfigBrief?id=%e2%9c%b8-quothlssub_session_timeout_msquot) 和 [hls/sub_session_hash_key](https://pengrl.com/lal/#/ConfigBrief?id=%e2%9c%b8-quothlssub_session_hash_keyquot)
 
-If you don't like the overhead of `m3u8` 302 jumps, and you don't care about HLS stats and notifications, then you can turn that off via the config file.
+如果你不喜欢m3u8 302跳转带来的开销，你也不关心hls的统计与通知的信息，那么你就可以通过配置文件将该功能关闭。
 
-> Related documentation:  
-> [The lalserver HTTP API Interface](https://pengrl.com/lal/#/HTTPAPI)  
-> [The lalserver HTTP Notify (Callback/Webhook) event callback](https://pengrl.com/lal/#/HTTPNotify)
+> 相关文档：  
+> [《lalserver HTTP API接口》](https://pengrl.com/lal/#/HTTPAPI)  
+> [《lalserver HTTP Notify(Callback/Webhook)事件回调》](https://pengrl.com/lal/#/HTTPNotify)
 
-#### ▌III. Parsing RTP extension headers
+#### ▌ 三，解析rtp extension扩展头
 
-Added logic to parse RTP extension headers, allowing better support for RTSP streams.
+增加了解析rtp扩展头的逻辑，使得可以更好的支持rtsp流。
 
-#### ▌More modifications
+#### ▌ 更多修改
 
-There are some other modifications that are not explained one by one, roughly as follows:
+还有一些修改不逐个介绍了，大致如下：
 
-> - [chore] docker supports both amd and arm architectures
-> - [feat] demo: analyseflv supports http flv streams or flv files as input.
-> - [feat] plugin example: add example to read flv file and input data to lalserver via CustomPubSession.
-> - [opt] rtmp: reduces the size of memory preallocated for chunking.
-> - [opt] Plugin: Customise Pub supports AvPacket and RtmpMsg.
-> - [opt] Gop Buffering supports configuring the maximum number of buffered frames in a single Gop.
-> - [fix] Fix the problem that HLS fails to get app name.
-> - [fix] flv: fix the bug where ReadAllTagsFromFlvFile does not close the file
-> - [fix] rtmp: valid length check before receiving buff parsing
-> - [fix] rtmp.
+> - [chore] docker同时支持amd和arm架构
+> - [feat] demo: analyseflv支持http flv流或flv文件作为输入
+> - [feat] 插件化例子：增加读取flv文件再通过CustomPubSession将数据输入lalserver的例子
+> - [opt] rtmp: 缩小打chunk时预分配的内存大小
+> - [opt] 插件化：Cutsomize Pub支持AvPacket、RtmpMsg两种输入数据的方式
+> - [opt] Gop缓冲功能支持配置单个Gop内的最大缓冲帧数量
+> - [fix] 修复hls获取app name失败的问题
+> - [fix] flv: 修复ReadAllTagsFromFlvFile中没有关闭文件的bug
+> - [fix] rtmp: 接收buff解析前有效长度检查
 >
-> The above is extracted from ["lal CHANGELOG Release Log"](https://pengrl.com/lal/#/CHANGELOG) , you can get more details from the source document.
+> 以上内容摘取自 [《lal CHANGELOG版本日志》](https://pengrl.com/lal/#/CHANGELOG) ，你可以通过源文档获取更详细的内容。
 
-#### Learn more about lal
+#### 进一步了解lal
 
 - [github](https://github.com/q191201771/lal)
-- [Official documentation](https://pengrl.com/lal)
-- [Contact Author](https://pengrl.com/lal/#/Author)
+- [官方文档](https://pengrl.com/lal)
+- [联系作者](https://pengrl.com/lal/#/Author)
 
-End of this article. Have a nice day!
+
+本文完，祝你今天开心。
 
 yoko, 202301
