@@ -20,7 +20,8 @@ srt          ...基于Lalserver支持srt协议，目前已移入lalmax（https:/
 
 **Note:** translations to English are still in early stages; in case of doubt, the Chinese version shall always prevail.
 
-* **lal_website** — Documentation hosting the official lal documentation page https://pengrl.com/lal.
+* **lal_website** — Files for the official lal documentation page at https://pengrl.com/lal.
+* **lal_website_english** — Ongoing effort of translating the documentation files into English. 
 * **thirdparty** — Third-party C/C++ libraries (currently mainly `ffmpeg` and its dependencies), including compilation scripts.
 * **rfc** — Documentation for the many protocol standards.
 * **avfile** — Audio and video files for testing (free).

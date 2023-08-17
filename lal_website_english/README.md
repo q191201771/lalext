@@ -18,15 +18,15 @@
 
 > [lal github address](https://github.com/q191201771/lal): https://github.com/q191201771/lal
 >
-> - ▦ i. Introduction to lalserver
+> - ▦ I. Introduction to lalserver
 > - ✒ lalserver features
 > - ✒ Protocol conversion support
 > - ▦ II. Installing and running lalserver
-> - ✒ Way 1, source code compilation and installation.
-> - ✒ Way 2, Docker image installation
-> - ✒ Way 3, download the compiled binary executable file
+> - ✒ Method 1: Installing and compiling the source code
+> - ✒ Method 2: Using a Docker image
+> - ✒ Method 3: Downloading a pre-compiled binary executable
 > - ▦ III. Using lalserver
-> - ✒ List of push and pull stream url addresses by protocols
+> - ✒ List of push and pull stream URL addresses for each protocol
 > - ✒ lalserver configuration file
 > - ✒ lalserver HTTP events and interfaces
 > - ✒ lalserver advanced
@@ -43,7 +43,7 @@
 
 ### ▦ I. Introduction to lalserver
 
-[lalserver](https://github.com/q191201771/lal) is a pure Golang-developed streaming media (live audio and video network transmission) server. It supports protocols RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, [GB28181](https://www.chinesestandard.net/PDF/BOOK.aspx/GBT28181-2016) (Chinese National Standard). It also supports secondary development and expansion via plug-ins.
+[lalserver](https://github.com/q191201771/lal) is a pure Go streaming media server (live audio and video network transmission). It supports protocols RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, [GB28181](https://www.chinesestandard.net/PDF/BOOK.aspx/GBT28181-2016) (Chinese National Standard). It also supports secondary development and expansion via plug-ins.
 
 ! [lal feature map](https://pengrl.com/lal/_media/lal_feature.jpeg?date=220501)
 
@@ -93,11 +93,11 @@
 
 See: [Appendix - Inter-Protocol Conversion Support](https://pengrl.com/lal/#/appendix?id=%e2%9c%92-%e5%8d%8f%e8%ae%ae%e9%97%b4%e8%bd%ac%e6%8d%a2%e6%94%af%e6%8c%81%e6%83%85%e5%86%b5)
 
-### ▦ II. lalserver Installation and Operation
+### ▦ II. Installing and running lalserver
 
-lalserver supports 3 methods to install and run:
+lalserver supports 3 methods for installation and subsequent running:
 
-#### ✒ Method 1: Compile and install the source code.
+#### ✒ Method 1: Installing and compiling the source code.
 
 Download the source code:
 ```shell
@@ -122,7 +122,7 @@ $ . /bin/lalserver -c conf/lalserver.conf.json
 
 *Note that Windows replaces the path separator `/` with `\`*.
 
-#### ✒ Method 2: Docker image.
+#### ✒ Method 2: Using a Docker image.
 
 Download the image:
 
@@ -137,20 +137,20 @@ $ docker run -it -p 1935:1935 -p 8080:8080 -p 4433:4433 -p 5544:5544 -p 8083:808
 
 *If you want to build your own Docker image, refer to [Appendix - Building Your Own Docker Image](https://pengrl.com/lal/#/appendix?id=%e2%9c%92-%e6%9e%84%e5%bb%ba%e8%87%aa%e5%b7%b1%e7%9a%84docker%e9%95%9c%e5%83%8f)*
 
-#### ✒ Way 3, download the compiled binary executable
+#### ✒ Method 3: Downloading a pre-compiled binary executable
 
-lal provides compiled lal binary executables for `linux/macos/windows` platforms (in zip archive).
+lal provides compiled lal binary executables for  the Linux, macOS, and Windows platforms (in zip archive).
 Download from: [github lal latest release page](https://github.com/q191201771/lal/releases/latest)
-The downloaded file is run in mode 1 without further ado.
+The downloaded file can be run as shown in method 1.
 
-### ▦ iii. lalserver using
+### ▦ iii. Using lalserver
 
-#### ✒ List of push and pull stream url addresses for each protocol
+#### ✒ List of push and pull stream URL addresses for each protocol
 
 Once lalserver is started successfully, you can start using it.
 As a streaming service, the main function is streaming data forwarding. For example:
 
-Use ffmpeg to push rtmp streams:
+Use `ffmpeg` to push RTMP streams:
 
 ```shell
 ffmpeg -re -i demo.flv -c:a copy -c:v copy -f flv rtmp://127.0.0.1:1935/live/test110
