@@ -1,11 +1,11 @@
 * ***
 * [Click me to go to github.com/q191201771/lal](https://github.com/q191201771/lal)
 * ***
-* ===== [1 Introduction to lal](README.md) =====
-  * [ ▦ i. Introduction to lalserver](/?id=%e2%96%a6-%e4%b8%80-lalserver-%e7%ae%80%e4%bb%8b)
-  * [ ▦ ii. Installing and running lalserver](/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c)
-  * [ ▦ iii. Using lalserver](/?id=%e2%96%a6-%e4%b8%89-lalserver-%e4%bd%bf%e7%94%a8)
-  * [ ▦ iv. Getting reacquainted with lal](/?id=%e2%96%a6-%e5%9b%9b-%e9%87%8d%e6%96%b0%e8%ae%a4%e8%af%86lal)
+* =====[1 Introduction to lal](README.md) =====
+  * [ ▦ I. Introduction to lalserver](/?id=%e2%96%a6-%e4%b8%80-lalserver-%e7%ae%80%e4%bb%8b)
+  * [ ▦ II. Installing and running lalserver](/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c)
+  * [ ▦ III. Using lalserver](/?id=%e2%96%a6-%e4%b8%89-lalserver-%e4%bd%bf%e7%94%a8)
+  * [ ▦ IV. Getting reacquainted with lal](/?id=%e2%96%a6-%e5%9b%9b-%e9%87%8d%e6%96%b0%e8%ae%a4%e8%af%86lal)
   * [ ▦ V. Contact Author](/?id=%e2%96%a6-%e4%ba%94-%e8%81%94%e7%b3%bb%e4%bd%9c%e8%80%85)
 * ***
 * =====2 lalserver Supplementary documentation =====
@@ -25,11 +25,11 @@
   * [3.1 Demo Introduction](DEMO.md)
   * [3.2 Changelog version log](CHANGELOG.md)
   * [|-- v0.36.7 release, Customize Sub, I have all for you](brief_v0.36.7.md)
-  * [|-- v0.35.4 released, OBS supports RTMP H265 push stream, I'm with you](brief_v0.35.4.md)
+  * [|-- v0.35.4 released, OBS supports RTMP H.265 push stream, I'm with you](brief_v0.35.4.md)
   * [|-- v0.34.3 released, G711 audio is here, Web UI is here too](brief_v0.34.3.md)
   * [|-- v0.33.0 released, support capture stream data playback debugging](brief_v0.33.0.md)
   * [|-- v0.32.0 released, better support for pure video streaming](brief_v0.32.0.md)
-  * [3.3 github star trend chart](StarChart.md)
+  * [3.3 GitHub star trend chart](StarChart.md)
   * [3.4 Third party dependencies](ThirdDeps.md)
   * [3.5 Who's using LAL](https://github.com/q191201771/lal/issues/290)
 * =====4 Other documentation =====
@@ -39,9 +39,9 @@
 * =====5 To be collated =====
   * [Performance Test](Test.md)
   * [Diagrams](Drawing.md)
-  * [rtmp url, and vhost](RTMPURLVhost.md)
-  * [rtmp handshake handshake simple and complex modes](RTMPHandshake.md)
-  * [Various IDs in rtmp](RTMPID.md)
-  * [ffplay play rtsp splash screen](RTSPFFPlayBlur.md)
+  * [RTMP URL, and vhost](RTMPURLVhost.md)
+  * [RTMP handshake handshake simple and complex modes](RTMPHandshake.md)
+  * [Various IDs in RTMP](RTMPID.md)
+  * [ffplay play RTSP splash screen](RTSPFFPlayBlur.md)
   * [FAQ](FAQ.md)
   * [Important Concepts](concept.md)

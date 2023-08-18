@@ -78,8 +78,8 @@ There are some other changes not presented individually, roughly as follows:
 > - [refactor] fix all timeout related code
 > - [refactor] HEVC: expose all fields in hevc.Context
 > - [refactor] AVC: Expose sps struct fields in avc.Context
->Avc: Exposes the Sps struct field in avc.Context.
-> The above is extracted from the ["lal changelog"](https://pengrl.com/lal/#/CHANGELOG) , you can get more details from the source document.
+> Avc: Exposes the Sps struct field in avc.Context.
+> The above is extracted from the [lal changelog](https://pengrl.com/lal/#/CHANGELOG), you can get more details from the source document.
 
 ▦ Developers
 
@@ -93,7 +93,7 @@ Thanks to the open source contributors who worked on this release: yoko(Liang), 
 
 WeChat scan code to add yourself as a friend (into the WeChat group):
 
-! [WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
+![WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
 
 End of this article. Have a nice day!
 

@@ -9,7 +9,7 @@ To participate, you can either submit a PR to modify lal_website/FAQ.md, or foll
 
 ▌ Recording
 
-▌ H265
+▌ H.265
 
 ▌ RTSP
 
@@ -28,7 +28,7 @@ You can try instead with a headset.
 This is not really a problem for one-way live productions, because the playback side and the push-flow side are not together, and will not loop. For two-way interactive products, you need to do echo cancellation on (at least) your end.
 
 **Q: When using lalext/rtmp2webrtc, the viewing screen jumps? Ghosting?** (202205)
-Because Chrome WebRTC uses OpenH264, it only supports the baseline profile, so it doesn't support B-frames, therefore there will be some frames fallback when playing B-frames.
+Because Chrome WebRTC uses [OpenH264](https://github.com/cisco/openh264), it only supports the baseline profile, so it doesn't support B-frames, therefore there will be some frames fallback when playing B-frames.
 
 You can check if your RTMP stream has B-frames or not using the following command:
 ```bash
@@ -69,15 +69,15 @@ The second type is slightly more troublesome, lalserver does not directly suppor
 
 Also, if you want lalserver to provide direct support internally, you can go to GitHub and raise an issue, I will consider scheduling support, thanks.
 
-▌ h265
-**Q: Does lal support h265 playback?**
-lal supports h265. if you want to pull h265 streams from lalserver and play them, you can do that, so long as the player supports it.
+▌ H.265
+**Q: Does lal support H.265 playback?**
+lal supports H.265. if you want to pull H.265 streams from lalserver and play them, you can do that, so long as the player supports it.
 
-**Q: Why does it fail to play h265 FLV/RTMP streams with players like VLC?**
-lal supports h265 FLV/RTMP.
+**Q: Why does it fail to play H.265 FLV/RTMP streams with players like VLC?**
+lal supports H.265 FLV/RTMP.
 
-But since the official standard of FLV/RTMP doesn't support h265, the native official version of `ffmpeg`, VLC, `flv.js`etc.  don't support playing h265 rtmp/flv directly. 
-You can use [thirdparty/build.sh](thirdparty/build.sh) in the lalext project to compile a `ffmpeg` that supports h265. 
+But since the official standard of FLV/RTMP doesn't support H.265, the native official versions of `ffmpeg`, VLC, `flv.js`, etc. don't support playing H.265 rtmp/flv directly. 
+You can use [thirdparty/build.sh](thirdparty/build.sh) in the lalext project to compile a `ffmpeg` that supports H.265. 
 Also try: [EasyPlayer.js](https://github.com/tsingsee/EasyPlayer.js/).
 
 ▌ RTSP

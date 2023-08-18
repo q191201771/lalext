@@ -1,13 +1,13 @@
 ### lalserver
 
-#### 源码依赖
+#### Source code dependencies
 
-目前唯一的依赖，是我自己写的Go语言基础库：[github.com/q191201771/naza](https://github.com/q191201771/naza)
+The only current dependency is a Go language base library that I wrote myself: [github.com/q191201771/naza](https://github.com/q191201771/naza)
 
-#### 编译依赖
+#### Compilation dependencies
 
-Go版本需要>=1.16，和其他Go程序一样，只需要有Go编译环境即可。
+Go version needs to be >= 1.16. Just like any other Go program, you just need to have a Go compilation environment set up.
 
-#### 运行依赖
+#### Running dependencies
 
-无任何第三方依赖。生成的可执行文件可独立运行，无任何库依赖。
+No third-party dependencies. The generated executable can be run independently without any library dependencies.

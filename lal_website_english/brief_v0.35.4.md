@@ -1,4 +1,4 @@
-# LAL v0.35.4 released, OBS supports RTMP H265 push streaming
+# LAL v0.35.4 released, OBS supports RTMP H.265 push streaming, I'm with you
 
 Go language streaming open source project [LAL](https://github.com/q191201771/lal) released v0.35.4 today.
 
@@ -6,11 +6,11 @@ Go language streaming open source project [LAL](https://github.com/q191201771/la
 
 The old rules — a brief introduction:
 
-### ▦ I. OBS supports RTMP H265 push streaming
+### ▦ I. OBS supports RTMP H.265 push streaming
 
-The new standard, generally known as _enhanced RTMP_, has already been implemented in the new version of OBS (version 29.1+ [click to download the OBS installer](https://github.com/obsproject/obs-studio/releases)). To be able to use it, LAL has also made the corresponding adaptation; in other words, now you can use OBS to push H265 RTMP streams to LAL.
+The new standard, generally known as _enhanced RTMP_, has already been implemented in the new version of OBS (version 29.1+ [click to download the OBS installer](https://github.com/obsproject/obs-studio/releases)). To be able to use it, LAL has also made the corresponding adaptation; in other words, now you can use OBS to push H.265 RTMP streams to LAL.
 
-**Tip:** The advantage of using H265 is that compared to H264, it requires a lower bitrate but has a higher image quality.
+**Tip:** The advantage of using H.265 is that compared to H.264, it requires a lower bitrate but has a higher image quality.
 
 A few details worth noting:
 
@@ -22,9 +22,9 @@ For details on the implementation of the enhanced RTMP protocol, and how to use 
 
 ### ▦ II. G711A/G711U
 
-The last version already supported G711 audio encoding format, but it left a feature to be implemented: RTSP to RTMP with video only, without sound. This version supports that as well.
+The last version already supported G.711 audio encoding format (A-law and µ-law), but it left a feature to be implemented: RTSP to RTMP with video only, without sound. This version supports that as well.
 
-We're in the process of finishing up the overall G711 implementation: https://www.yuque.com/pengrl/public/psxbp37r3yqopnxx
+We're in the process of finishing up the overall G.711 implementation: https://www.yuque.com/pengrl/public/psxbp37r3yqopnxx
 
 ### ▦ III. RTSP TCP/UDP switching
 
@@ -57,7 +57,7 @@ Thanks to the open source contributors involved in this release: yoko, ZSC714725
 
 WeChat scan code to add yourself as a friend (into the WeChat group):
 
-! [WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
+![WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
 
 End of this article. Have a nice day!
 

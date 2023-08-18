@@ -45,7 +45,7 @@
 
 [lalserver](https://github.com/q191201771/lal) is a pure Go streaming media server (live audio and video network transmission). It supports protocols RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, [GB28181](https://www.chinesestandard.net/PDF/BOOK.aspx/GBT28181-2016) (Chinese National Standard). It also supports secondary development and expansion via plug-ins.
 
-! [lal feature map](https://pengrl.com/lal/_media/lal_feature.jpeg?date=220501)
+![lal feature map](https://pengrl.com/lal/_media/lal_feature.jpeg?date=220501)
 
 #### ✒ lalserver features
 
@@ -62,7 +62,7 @@
   - [x] Supports RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, GB28181 (Chinese National Standard).
   - [x] Supports conversion between different encapsulation protocols.
   - [x] Supports secondary development through plug-ins, support for expansion for custom protocols for input and output.
-- [x] **Multiple encoding formats**. Video support: H264/AVC, H265/HEVC, audio support: AAC, G711A/G711U.
+- [x] **Multiple encoding formats**. Video support: H.264/AVC, H.265/HEVC, audio support: AAC, G711A/G711U.
 - [x] **Multi-format recording**. Supports FLV, long MPEGTS, HLS recording (HLS live and recording can be turned on at the same time).
 - [x] **HTTPS**. Supports HTTPS-FLV, HTTPS-TS, HLS over HTTPS pull streaming.
 - [x] **WebSocket**. Supports WebSocket-FLV, WebSocket-TS pull streams.
@@ -81,7 +81,7 @@
 - [x] **CORS cross-domain**. HTTP-FLV, HTTP-TS, HLS cross-domain pull streams are supported. HTTP-API supports cross-domain.
 - [x] **HTTP file server**. For example, HLS sliced files can be played directly without additional HTTP file servers.
 - [x] **Listening port multiplexing**. HTTP-FLV, HTTP-TS, HLS can use the same ports. The same applies to HTTPS.
-- [x] **Second on playback**. Gop buffering.
+- [x] **Second on playback**. GOP buffering.
 - [x] **Supports (on server-side) automatic overlay of muted audio**.
 - [x] **Supports pulling streams before pushing streams**.
 - [x] **Supports reconnect after push stream disconnect, no gap perception on pull stream side**.
@@ -112,12 +112,12 @@ $ make
 
 > **Tips:**
 > If compiling with an IDE such as GoLand, then compiling the `lal/app/lalserver` directory is sufficient.
-> If you don't have Go compiler installed, you can refer to ["Installing GoLang on CentOS or macOS"](https://pengrl.com/p/34426/), and for Windows OS you can search for tutorials online.
+> If you don't have a Go compiler installed, you can refer to ["Installing Golang on CentOS or macOS"](https://pengrl.com/p/34426/), and for Windows OS you can search for tutorials online.
 
 Run:
 
 ```shell
-$ . /bin/lalserver -c conf/lalserver.conf.json
+$ ./bin/lalserver -c conf/lalserver.conf.json
 ```
 
 *Note that Windows replaces the path separator `/` with `\`*.
@@ -139,32 +139,31 @@ $ docker run -it -p 1935:1935 -p 8080:8080 -p 4433:4433 -p 5544:5544 -p 8083:808
 
 #### ✒ Method 3: Downloading a pre-compiled binary executable
 
-lal provides compiled lal binary executables for  the Linux, macOS, and Windows platforms (in zip archive).
-Download from: [github lal latest release page](https://github.com/q191201771/lal/releases/latest)
+lal provides compiled lal binary executables for  the Linux, macOS, and Windows platforms (in zip archive).  
+Download from: [github lal latest release page](https://github.com/q191201771/lal/releases/latest)  
 The downloaded file can be run as shown in method 1.
 
 ### ▦ iii. Using lalserver
 
 #### ✒ List of push and pull stream URL addresses for each protocol
 
-Once lalserver is started successfully, you can start using it.
-As a streaming service, the main function is streaming data forwarding. For example:
+Once lalserver has started successfully, you can begin using it.  
+As a streaming service, the main function is forwarding streaming data. For example:
 
 Use `ffmpeg` to push RTMP streams:
 
 ```shell
-ffmpeg -re -i demo.flv -c:a copy -c:v copy -f flv rtmp://127.0.0.1:1935/live/test110
-``
-
-Use ffplay to pull rtmp streams for playback:
-
-```shell
-ffplay rtmp://127.0.0.1/live/test110
+$ ffmpeg -re -i demo.flv -c:a copy -c:v copy -f flv rtmp://127.0.0.1:1935/live/test110
 ```
 
-For more protocols, see: [lalserver list of push and pull stream url addresses by protocol](https://pengrl.com/lal/#/streamurllist)
+Use ffplay to pull RTMP streams for playback:
 
-> tips.
+```shell
+$ ffplay rtmp://127.0.0.1/live/test110
+```
+
+> For more protocols, see: [lalserver list of push and pull stream url addresses by protocol](https://pengrl.com/lal/#/streamurllist)
+> 
 > For more third-party clients, see: [Summary of common push/pull streaming client information](https://pengrl.com/lal/#/CommonClient)
 
 #### ✒ lalserver configuration file
@@ -180,55 +179,49 @@ With the rich HTTP interfaces provided by lalserver, businesses can easily custo
 
 #### ✒ lalserver advanced
 
-- [lalserver Authentication Anti-theft Link](https://pengrl.com/lal/#/auth)
+- [lalserver Authentication Anti-Leeching Link](https://pengrl.com/lal/#/auth)
 - [lalserver secondary development - pub access to custom streams](https://pengrl.com/lal/#/customize_pub)
 
 ### ▦ IV. Getting reacquainted with lal
 
 #### ✒ lal's three-tier structure
 
-! [lal source code architecture diagram](https://pengrl.com/lal/_media/lal_src_fullview_frame.jpeg?date=211211)
-
-#### ✒ lal's three-layer structure
-
-! [lal source code architecture diagram](https://pengrl.com/lal/_media/lal_src_fullview_frame.jpeg?date=211211)
+![lal source code architecture diagram](https://pengrl.com/lal/_media/lal_src_fullview_frame.jpeg?date=211211)
 
 ##### ✦ Other demos
 
-In the lal project, in addition to `/app/lalserver`, which is the core service, there are some additional small applications provided in the `/app/demo` directory, such as push and pull streaming clients, as well as a pressure testing tool, a streaming analysis tool, and a scheduling example program for the lalserver cluster.
+In the lal project, in addition to `/app/lalserver`, which is the core service, there are some additional small applications provided in the `/app/demo` directory, such as push and pull streaming clients, as well as a pressure testing tool, a streaming analysis tool, and a scheduling example program for the lalserver cluster.  
 These demos can be used both directly, and as examples to show you how the stack provided by lal can be used.
 
 Learn more at: [Demo Introduction](https://pengrl.com/lal/#/DEMO)
 
 ##### ✦ Streaming stack library package/library
 
-There are protocol stacks for both the client and server side.
-The protocol stacks in lal are all independent and designed in multiple layers.
+There are protocol stacks for both the client and server side.  
+The protocol stacks in lal are all independent and designed in multiple layers.  
 Businesses can integrate lal's protocol stack package library in their own applications.
 
-##### ✦ Golang Common Base Library-naza
+##### ✦ Golang Common Base Library: naza
 
 lal abstracts non-streaming-specific generic base libraries in a separate GitHub repo: [naza](https://github.com/q191201771/naza).
 
-Learn more at: ["naza github address"](https://github.com/q191201771/naza): https://github.com/q191201771/naza
-
 #### ✒ lalext
 
-Standing on the shoulders of giants is the only way to see further. lal has combined lal's code with third-party libraries in another github repo [lalext](https://github.com/q191201771/lalext) for a richer feature set.
+Standing on the shoulders of giants is the only way to see further! lal has combined lal's code with third-party libraries in another GitHub repo — [lalext](https://github.com/q191201771/lalext) — with a richer feature set.
 
 ##### ✦ WebRTC
 
-A gateway for RTMP to WebRTC
+A gateway to stream from RTMP to WebRTC
 
-Learn more at: ["lalext github address"](https://github.com/q191201771/lalext): https://github.com/q191201771/lalext
+Learn more at the [lalext GitHub address](https://github.com/q191201771/lalext).
 
 ##### ✦ SRT
 
 #### ✒ In progress
 
-- [TODO Roadmap-summary being messed with](https://github.com/q191201771/lal/issues/157)
-- [Indefinite delay-summary that I'm not sure when I'll get to](https://github.com/q191201771/lal/issues/37)
-- [Help wanted-summary](https://github.com/q191201771/lal/issues/161)
+- [TODO Roadmap - Summary being messed with](https://github.com/q191201771/lal/issues/157)
+- [Indefinite delay - Summary that I'm not sure when I'll get to](https://github.com/q191201771/lal/issues/37)
+- [Help wanted - Summary](https://github.com/q191201771/lal/issues/161)
 
 ### ▦ V. Contact the author
 
@@ -240,10 +233,9 @@ Learn more at: ["lalext github address"](https://github.com/q191201771/lalext): 
 - lal github address: https://github.com/q191201771/lal
 - lal official document: https://pengrl.com/lal
 
+QR code to add the author on WeChat as a friend:
 
-QR code to add the author on WeChat as friend:
-
-! [lal author wechat](https://pengrl.com/images/yoko_vx.jpeg?date=220329)
+![lal author wechat](https://pengrl.com/images/yoko_vx.jpeg?date=220329)
 
 Any technical and non-technical communication is welcome.
 

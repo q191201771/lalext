@@ -28,8 +28,8 @@ The second method is to use the demo `app/demo/pullrtsp` to pull the rtsp stream
 
 The way to use it is as follows:
 
-```sh
-. /bin/pullrtsp -i rtsp://localhost:5544/live/test110 -o outpullrtsp.flv -t 0 -d outpullrtsp.laldump
+```shell
+$ ./bin/pullrtsp -i rtsp://localhost:5544/live/test110 -o outpullrtsp.flv -t 0 -d outpullrtsp.laldump
 ```
 
 The files `outpullrtsp.flv`, `outpullrtsp.laldump`, and `pullrtsp.log` will be generated after pulling the RTSP stream.
