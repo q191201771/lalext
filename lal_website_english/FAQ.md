@@ -2,7 +2,7 @@
 The FAQ is displayed at: https://pengrl.com/lal/#/FAQ 
 The FAQ documentation is hosted at [lal_website/FAQ.md](https://github.com/lalext/lal_website/FAQ.md) on the [lalext project on GitHub](https://github.com/q191201771/lalext/blob/master/lal_website/concept.md).
 
-You are welcome to add your own questions, or ask your own questions, or answer the questions at the bottom of the document. 
+You are welcome to ask your own questions or even to answer the questions at the bottom of the document. 
 
 To participate, you can either submit a PR to modify lal_website/FAQ.md, or follow up in this issue (I'll move the content over periodically).
 
@@ -31,8 +31,8 @@ This is not really a problem for one-way live productions, because the playback 
 Because Chrome WebRTC uses [OpenH264](https://github.com/cisco/openh264), it only supports the baseline profile, so it doesn't support B-frames, therefore there will be some frames fallback when playing B-frames.
 
 You can check if your RTMP stream has B-frames or not using the following command:
-```bash
-ffprobe -show_frames -select_streams v -show_entries frame=pict_type -i rtmp://xxxx
+```shell
+$ ffprobe -show_frames -select_streams v -show_entries frame=pict_type -i rtmp://xxxx
 ```
 If the following information is output, it means the RTMP stream has B-frames:
 ```
@@ -41,8 +41,8 @@ pict_type=B
 [/FRAME]
 ```
 Removing B-frames requires re-encoding the video, the command line is as follows.
-```bash
-ffmpeg -i input.mp4 -codec:v libx264 -bf 0 -codec:a copy -f mp4 input_no_b_frame.mp4
+```shell
+$ ffmpeg -i input.mp4 -codec:v libx264 -bf 0 -codec:a copy -f mp4 input_no_b_frame.mp4
 ```
 **Q: When using lalserver, after pushing the stream, VLC, `ffplay` and other players are stuck at the last frame and won't exit?**
 First of all, lalserver has a timeout mechanism, after a period of time, it will disconnect the pull stream player. 
@@ -53,7 +53,7 @@ Users can check whether the connection has been closed through lalserver's log, 
 Because under Linux, binding ports below 1024 requires root privileges, most open source projects will use ports like 8080, 3000 instead of 80 as the default port for testing. 
 Superusers can modify the configuration to use the default ports under 1024 .
 
-▌ Recording
+### ▌ Recording
 **Q: Can recordings be stored by hour? I want each hour to be stored as a separate video file.** (202205)
 There are two types of hourly storage:
 
