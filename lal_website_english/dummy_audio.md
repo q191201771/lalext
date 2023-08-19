@@ -1,76 +1,75 @@
-# lalserver 自动叠加静音音频
+# lalserver Automatic overlay of muted audio
 
-### ▦ 背景
+### ▦ Background
 
-没声音，再好的戏也出不来。。(手动狗头)
+Without sound, the best plays don't come out. (manual dog head)
 
-很多播放器（尤其是一些web js网页播放器）播放纯视频流（也即没有音频的流）时，可能出现播放不了、首帧打开时间特别慢、延迟大的情况。  
+Many players (especially some web js web players) playing pure video streams (i.e. streams with no audio) may fail to play, have exceptionally slow opening times for the first frame, and have large delays.  
 
-> **纯视频流**、**首帧打开时间**、**延迟**的含义见: https://pengrl.com/lal/#/concept.md
+The meanings of > **pure video stream**, **first frame open time**, **latency** can be found here: https://pengrl.com/lal/#/concept.md
 
-流内没有音频有以下两种原因：
+There are two reasons for the absence of audio within the stream:
 
-- 源流（也即输入到lalserver的流）就没有音频
-- 源流中有音频，但是转换成其他封装协议时，其他封装格式不支持该音频编码格式（比如需要转成flv封装协议给网页浏览器播放，输入流的音频编码格式是opus，flv并不支持opus）
+- There is no audio in the source stream (i.e. the stream that is input to the lalserver).
+- There is audio in the source stream, but when it is converted to other encapsulation protocols, the other encapsulation format does not support the audio encoding format (e.g. if you need to convert to flv encapsulation protocol for web browser playback, the audio encoding format of the input stream is opus, and flv does not support opus).
 
-以上两种情况，在rtsp协议的摄像头上比较常见，社区有很多人向我反馈过。
+The above two scenarios are more common on cameras with rtsp protocol, and I've had a lot of feedback from the community.
 
-### ▦ 功能
+### ▦ Features
 
-为了解决上述问题，lalserver支持自动检测流中是否有音频，当检测到没有音频时，向其中添加静音音频数据。  
-原理简单直接，你不是没音频就不行吗，哥们给你造点，静音音频也是音频，别拿豆包不当干粮。。
+To solve the above problems, lalserver supports automatically detecting whether there is audio in the stream or not, and adding muted audio data to it when no audio is detected.  
+The principle is simple and direct, you can't do it without audio, dude build you some, muted audio is also audio, don't take beanbag as dry food.
 
-### ▦ 如何使用
+### ▦ How it works
 
-对应的配置项：
+The corresponding configuration item:
 
-```
-//. 针对所有输入型流（包括所有协议、所有输入类型）的配置
-//  详细介绍见： https://pengrl.com/lal/#/dummy_audio
+``.
+//. Configuration for all input-based streams (including all protocols, all input types)
+// For details see: https://pengrl.com/lal/#/dummy_audio
 "in_session": {
 
-  //. 是否开启动态检测添加静音AAC数据的功能
-  //  如果开启，所有输入型流如果超过`add_dummy_audio_wait_audio_ms`时间依然没有
-  //  收到音频数据，则会自动为这路流叠加AAC的数据
-  "add_dummy_audio_enable": false,
+  //. Whether to enable dynamic detection of added mute AAC data.
+  // If enabled, all input-type streams that have exceeded the `add_dummy_audio_wait_audio_ms` time and still have not
+  // receive audio data, then AAC data will be automatically overlayed for this stream
+  "add_dummy_audio_enable": false, //.
 
-  //. 单位毫秒，具体见`add_dummy_audio_enable`
+  //. In milliseconds, see `add_dummy_audio_enable`.
   "add_dummy_audio_wait_audio_ms": 150
-},
+}, ``
 ```
 
-> 提示，以上内容来源 [lalserver配置文件说明](https://pengrl.com/lal/#/ConfigBrief) ，打开源文档可以获得更友好的阅读格式。
+> Hint, the above is sourced from [lalserver configuration file description](https://pengrl.com/lal/#/ConfigBrief), open the source document for a more friendly reading format.
 
-### ▦ 影响
+### ▦ Impact.
 
-（开启自动叠加静音音频功能）也可能产生不良影响——加大了首帧打开时间。  
-啥玩意，好处和坏处一样？  
-你听我解释，这得先从实现方法说起。.
+(Turning on automatic overlay of muted audio) may also have an adverse effect - increasing the first frame open time.  
+What the hell, as much good as bad?  
+Let me explain, it starts with the implementation....
 
-（开启自动叠加静音音频功能）lalserver在初始接收流数据时，存在一个分析阶段，分析流中是否有音频。  
-该阶段退出有两种触发条件，一是收到音频，二是达到`add_dummy_audio_wait_audio_ms`阈值时间。  
+(Turn on the automatic overlay mute audio feature) lalserver in the initial reception of the stream data, there is an analysis phase, to analyse the stream for the presence of audio.  
+There are two triggers for this phase to exit, either audio is received or the `add_dummy_audio_wait_audio_ms` threshold time is reached.  
 
-注意一些实现细节哈：
+Note some implementation details haha:
 
-1. 分析阶段lalserver会缓存着视频数据
-2. 退出分析阶段时，缓存的视频会一次性瞬时发送
-3. 退出分析阶段后，lalserver恢复正常转发（也即收到数据就发，当然，需要加静音音频就加）
+1. lalserver will cache the video data during the analysis phase.
+2. when exiting the analysis phase, the cached video will be sent instantaneously.
+3. after exiting the analysis phase, the lalserver resumes normal forwarding (i.e., it sends the data as soon as it receives it, but of course, if it needs to add muted audio, it adds it).
 
-所以：
+So:
 
-- 对于有音频的流，没有太大影响，啥时候收到音频啥时候正常，一般就是100毫秒上下
-- 对于没有音频的流，前面这个缓存阶段取决于`add_dummy_audio_wait_audio_ms`这个阈值时间
+- For audio streams, there is no great impact, when to receive the audio when normal, generally is 100 milliseconds up and down
+- For streams without audio, the previous caching phase depends on the `add_dummy_audio_wait_audio_ms` threshold time.
 
-`add_dummy_audio_wait_audio_ms`没有必要配置的太大，一般音频帧的间隔都是几十毫秒，这个设置成一秒以下就行了。
+There is no need to configure `add_dummy_audio_wait_audio_ms` too large, generally the interval between audio frames is a few tens of milliseconds, and this can be set to less than a second.
 
-值得一提，如果不开启自动叠加静音音频功能，那么对流不会有任何影响。
+It's worth mentioning that if you don't turn on the auto overlay mute audio feature, then it won't have any effect on the stream.
 
-个人建议：
+Personal advice:
 
-如果你存在上文背景中描述的问题，不妨尝试开启这个功能。如果你明确知道播放端（或者你的下游拉流端）可以很好处理没有音频的流，那就不需要开启了。
+If you have the problem described in the background above, try turning this feature on. If you know definitively that the playback side (or your downstream pull streaming side) can handle streams without audio just fine, then there's no need to turn it on.
+2TODO Why the player behaves this way. Don't ask why it does this, asking means I don't do player development, I don't know, and I'm afraid to ask.
 
-TODO 播放器为什么有这种表现。别问为什么会这样，问就是我不做播放器开发，我也不知道，我也不敢问。。
-
-本文完，祝你今天开心。
+End of this article, have a nice day.
 
 yoko, 202211
