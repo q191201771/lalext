@@ -28,7 +28,7 @@ Here is a simple example:
 | first chunk of chunk1 | first chunk of chunk2 | second chunk of chunk1 | second chunk of chunk2 |
 ```
 
-#### Thinking
+#### Reflection Upon the Concept
 
 So let's think about it, with the common RTMP over TCP scheme today, when the application layer has a message to send, we cut it into chunks, and then send all the cut chunks, and then loop through the next message.
 
@@ -43,7 +43,7 @@ The above is actually head-of-line blocking versus header blocking, and QUIC HTT
 
 Here are some common RTMP projects that use chunk stream ids.
 
-#### obs push stream
+#### OBS push stream
 
 ```
 csid 2 is used to transport SetChunkSize.
@@ -64,7 +64,7 @@ csid 3 FCUnpublish | deleteStream
 
 Note that when ffmpeg pushes the stream, it sends the connect first, then the SetChunkSize, the receiver should assume the chunk size of the opposite end is 128 when it doesn't receive the SetChunkSize.
 
-#### pulling stream from nginx rtmp module
+#### Pulling stream from the nginx RTMP module
 
 ```
 csid 2 Window ACk Size | SetPeerBandwidth | SetChunkSize
@@ -94,16 +94,16 @@ msid 1 publish signalling | audio/video data
 
 Same as OBS.
 
-#### pull stream from nginx rtmp module
+#### Pulling stream from the nginx RTMP module
 
 ```
 msid 0 signalling
 msid 1 onStatus of play signalling | audio/video data
 ```
 
-As you can see, all three projects are using msid 1 to transfer audio and video data.
+As you can see, all three projects are using `msid` 1 to transfer audio and video data.
 
-In lal, `_result for createStream` uses 1 for msid, and publish and play use `_result` to return msid
+In lal, `_result for createStream` uses 1 for `msid`, and publish and play use `_result` to return `msid`.
 
 ### transaction id
 
@@ -121,7 +121,7 @@ publish: 0
 
 However, this is not the case for the specific implementation of each RTMP software, for example:
 
-#### obs push stream
+#### OBS push stream
 
 ```
 connect tid: 1
@@ -140,7 +140,7 @@ For testing, the server side uses lal, which replies to the message as it is rec
 
 The result is the same as with the OBS push stream.
 
-#### pull stream from nginx rtmp module
+#### Pulling stream from the nginx RTMP module
 
 ```
 onBWDone tid: 0
@@ -157,7 +157,7 @@ createStream: 2
 play or publish: 3
 ```
 
-### message type id
+### Message type id
 
 This is the simplest one, it indicates what type of message is used in the application layer, e.g. audio (8), video (9), metadata (18), specific signalling (e.g., 1 is SetChunkSize), command type signalling (20), and so on.
 
