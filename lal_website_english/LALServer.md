@@ -5,7 +5,7 @@
 lalserver is a streaming forwarding service. It is similar to the `nginx-rtmp-module` service.   Simply put, the core function of this kind of service is to forward the audio/video data sent by the push stream client to the corresponding pull stream client.
 However, lalserver supports more protocols and provides richer functionality.
 
-## 1 lalserver features
+## 1. lalserver features
 
 - [x] **All platforms**
   - [x] Supports Linux/macOS/Windows multi-system development, debugging, running.
@@ -47,7 +47,7 @@ However, lalserver supports more protocols and provides richer functionality.
 - [x] **Bring your own Web UI page**.
 - [x] **Supports video with B-frames**.
 
-## 2 Protocols supported by lalserver
+## 2. Protocols supported by lalserver
 
 | Trans encapsulation type | sub rtmp | sub http[s]/websocket[s]-flv | sub http[s]/websocket[s]-ts | sub hls | sub rtsp | relay push rtmp |
 |--------------------------|:--------:|:----------------------------:|:---------------------------:|:-------:|:--------:|:---------------:|
@@ -74,7 +74,7 @@ For the meaning of this table, see: [connection type session pub/sub/push/pull](
 
 Note that if only RTSP streams (RTP packets to be exact) are forwarded to each other, and no transcapsulation into other formats is involved, all types are theoretically supported.
 
-## 3 lalserver feature map
+## 3. lalserver feature map
 
 ![lal feature map](_media/lal_feature.jpeg)
 
