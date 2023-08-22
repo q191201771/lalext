@@ -90,39 +90,39 @@ $ curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
 ```json
                                 
 {
-  "error_code": 0,              // Interface return value, 0 means success.
-  "desp": "succ",               // Interface return description, "succ" means success.
+  "error_code": 0,                  // Interface return value, 0 means success.
+  "desp": "succ",                   // Interface return description, "succ" means success.
   "data": {
-    "stream_name": "test110",   // stream name
-    "app_name": "live",         // appName
-    "audio_codec": "AAC",       // audio codec format "AAC"
-    "video_codec": "H264",      // video codec format "H264" | "H265"
-    "video_width": 640,         // video width
-    "video_height": 360,        // video height
+    "stream_name": "test110",       // stream name
+    "app_name": "live",             // appName
+    "audio_codec": "AAC",           // audio codec format "AAC"
+    "video_codec": "H264",          // video codec format "H264" | "H265"
+    "video_width": 640,             // video width
+    "video_height": 360,            // video height
     "pub": { // ----- receives information about the push stream -----
-      "session_id": "RTMPPUBSUB1", // Session ID, a globally unique identifier for the session.
-      "protocol": "RTMP",       // Push stream protocol, range: "RTMP" | "RTSP"
-      "base_type": "PUB",       // Base type, fixed to "PUB".
+      "session_id": "RTMPPUBSUB1",  // Session ID, a globally unique identifier for the session.
+      "protocol": "RTMP",           // Push stream protocol, range: "RTMP" | "RTSP"
+      "base_type": "PUB",           // Base type, fixed to "PUB".
       "start_time": "2020-10-11 19:17:41.586", // Start time of push flow
       "remote_addr": "127.0.0.1:61353",        // peer address
-      "read_bytes_sum": 9219247, // Cumulative read data size (counted from start of push)
-      "wrote_bytes_sum": 3500,  // Cumulative sent data size
-      "bitrate_kbits": 436,     // Last 5 seconds bitrate in kbit/s. Equivalent to `read_bitrate_kbits` for pub types unless otherwise declared.
-      "read_bitrate_kbits": 436, // Last 5 seconds of read data bitrate
-      "write_bitrate_kbits": 0   // Last 5 seconds of transmit data rate.
+      "read_bytes_sum": 9219247,    // Cumulative read data size (counted from start of push)
+      "wrote_bytes_sum": 3500,      // Cumulative sent data size
+      "bitrate_kbits": 436,         // Last 5 seconds bitrate in kbit/s. Equivalent to `read_bitrate_kbits` for pub types unless otherwise declared.
+      "read_bitrate_kbits": 436,    // Last 5 seconds of read data bitrate
+      "write_bitrate_kbits": 0      // Last 5 seconds of transmit data rate.
     },
     "subs": [ // Information about ----- pulling streams, there may be multiple protocols, each with multiple possible session connections -----
       {
-        "session_id": "FLVSUB1", // session ID, globally unique identifier for the session
-        "protocol": "FLV",      // pull streaming protocol, range: "RTMP" | "FLV" | "TS"
-        "base_type": "SUB", // Base type, fixed to "SUB".
+        "session_id": "FLVSUB1",    // session ID, globally unique identifier for the session
+        "protocol": "FLV",          // pull streaming protocol, range: "RTMP" | "FLV" | "TS"
+        "base_type": "SUB",         // Base type, fixed to "SUB".
         "start_time": "2020-10-11 19:19:21.724", // Start time of stream pulling
         "remote_addr": "127.0.0.1:61785", // peer address
-        "read_bytes_sum": 134, // Cumulative read data size (calculated from the start of the pull)
+        "read_bytes_sum": 134,      // Cumulative read data size (calculated from the start of the pull)
         "wrote_bytes_sum": 2944020, // Cumulative size of sent data
-        "bitrate_kbits": 439,   // Last 5 seconds bitrate in kbit/s. For sub types, this is equivalent to `write_bitrate_kbits` unless otherwise declared.
-        "read_bitrate_kbits": 0, // Last 5 seconds of read data bitrate
-        "write_bitrate_kbits": 439 // the last 5 seconds of send data bitrate
+        "bitrate_kbits": 439,       // Last 5 seconds bitrate in kbit/s. For sub types, this is equivalent to `write_bitrate_kbits` unless otherwise declared.
+        "read_bitrate_kbits": 0,    // Last 5 seconds of read data bitrate
+        "write_bitrate_kbits": 439  // the last 5 seconds of send data bitrate
       }
     ],
     "pull": { // ----- This node pulls streams from other nodes back to the source -----
