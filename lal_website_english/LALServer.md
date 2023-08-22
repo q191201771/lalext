@@ -50,7 +50,7 @@ However, lalserver supports more protocols and provides richer functionality.
 ## 2 Protocols supported by lalserver
 
 | Trans encapsulation type | sub rtmp | sub http[s]/websocket[s]-flv | sub http[s]/websocket[s]-ts | sub hls | sub rtsp | relay push rtmp |
-|--------------------------|----------|------------------------------|-----------------------------|---------|----------|-----------------|
+|--------------------------|:--------:|:----------------------------:|:---------------------------:|:-------:|:--------:|:---------------:|
 | pub rtmp                 |    ✔     |             ✔                |              ✔              |    ✔    |    ✔     |       ✔         |
 | pub rtsp                 |    ✔     |             ✔                |              ✔              |    ✔    |    ✔     |       ✔         |
 | relay pull rtmp          |    ✔     |             ✔                |              ✔              |    ✔    |    ✔     |       ✔         |
@@ -58,7 +58,7 @@ However, lalserver supports more protocols and provides richer functionality.
 ### Support for encoding protocols by encapsulation protocol
 
 | Encoding type | rtmp | rtsp | hls | flv | mpegts |
-|---------------|------|------|-----|-----|--------|
+|---------------|:----:|:----:|:---:|:---:|:------:|
 | aac           |   ✔  |   ✔  |  ✔  |  ✔  |   ✔    |
 | avc/h264      |   ✔  |   ✔  |  ✔  |  ✔  |   ✔    |
 | hevc/h265     |   ✔  |   ✔  |  ✔  |  ✔  |   ✔    |
@@ -66,7 +66,7 @@ However, lalserver supports more protocols and provides richer functionality.
 ### Recorded file type
 
 | Type of recording | hls | flv | mpegts |
-|-------------------|-----|-----|--------|
+|-------------------|:---:|:---:|:------:|
 | pub rtmp          |  ✔  |  ✔  |    ✔   |
 | pub rtsp          |  ✔  |  ✔  |    ✔   |
 

@@ -1,44 +1,44 @@
 ## Protocol Support List
 
 | Push Stream Client | RTMP | RTSP |
-|--------------------|------|------|
+|--------------------|:----:|:----:|
 | ffmpeg             |  ✔   |  ✔   |
-| obs                |  ✔   |  X   |
+| obs                |  ✔   |  𝙓   |
 
 | Pull Streaming Client  | RTMP | RTSP | HTTP-FLV | HTTPS-FLV | HLS | HTTP-TS | WebSocket-FLV | WebSocket-TS | Remarks |
-|------------------------|------|------|----------|-----------|-----|---------|---------------|--------------|---------|
-| ffmpeg/ffplay          |  ✔   |  ✔   |    ✔     |     ✔     |  ✔  |    ✔    |       X       |       X      |         |
-| vlc                    |  ✔   |  ✔   |    ✔     |     X     |  ✔  |    ✔    |       X       |       X      |         |
-| MPV                    |  ✔   |  ✔   |    ✔     |     ✔     |  ✔  |    ✔    |       X       |       X      |         |
-| flv.js                 |  X   |  X   |    ✔     |     ?     |  X  |    X    |       ✔       |       X      |         |
-| hls.js                 |  X   |  X   |    X     |     X     |  ✔  |    X    |       X       |       X      |         |
-| Watermelon Player (js) |  X   |  X   |    ✔     |     ?     |  ✔  |    X    |       ✔       |       X      |         |
-| MPlayer                |  ?   |  ?   |    ?     |     ?     |  ?  |    ?    |       ?       |       ?      |         |
+|------------------------|:----:|:----:|:--------:|:---------:|:---:|:-------:|:-------------:|:------------:|---------|
+| ffmpeg/ffplay          |  ✔   |  ✔   |    ✔     |     ✔     |  ✔  |    ✔    |       𝙓       |       𝙓      |         |
+| vlc                    |  ✔   |  ✔   |    ✔     |     𝙓     |  ✔  |    ✔    |       𝙓       |       𝙓      |         |
+| MPV                    |  ✔   |  ✔   |    ✔     |     ✔     |  ✔  |    ✔    |       𝙓       |       𝙓      |         |
+| flv.js                 |  𝙓   |  𝙓   |    ✔     |     ？     |  𝙓  |    𝙓    |       ✔       |       𝙓      |         |
+| hls.js                 |  𝙓   |  𝙓   |    𝙓     |     𝙓     |  ✔  |    𝙓    |       𝙓       |       𝙓      |         |
+| Watermelon Player (js) |  𝙓   |  𝙓   |    ✔     |     ？     |  ✔  |    𝙓    |       ✔       |       𝙓      |         |
+| MPlayer                |  ？   |  ？   |    ？     |     ？     |  ？  |    ？    |       ？       |       ？      |         |
 
 ## Some client instructions
 
 TODO(chef): This part needs to be sorted out.
 
-* 1 rtmp push stream
-  * 1.1 obs
-    * 1.1.1 obs capture camera
+* 1 RTMP push stream
+  * 1.1 OBS
+    * 1.1.1 OBS capture camera
   * 1.2 ffmpeg
     * 1.2.1 ffmpeg read file push
-* 2 rtsp push stream
+* 2 RTSP push stream
   * 2.1 ffmpeg
     * 2.1.1 ffmpeg read file push streaming
-* 3 rtmp pull stream
-  * 3.1 vlc
+* 3 RTMP pull stream
+  * 3.1 VLC
   * 3.2 ffmpeg
     * 3.2.1 ffmpeg pull stream save file
   * 3.3 ffplay
   * 3.4 mpv
-* 4 `http-flv` and `https-flv` pull streams
+* 4 `HTTP-FLV` and `HTTPS-FLV` pull streams
 * 5 `HLS (m3u8+ts)` pull-streaming
-  * 5.1 safari
-  * 5.2 vlc, ffmpeg, ffplay
+  * 5.1 Safari
+  * 5.2 VLC, ffmpeg, ffplay
 * 6 `http-ts` pull-streaming
-* 7 rtsp pull-streaming
+* 7 RTSP pull-streaming
 * 8 test file download
 
 (Followed by adding other clients to use, and other streaming protocol formats.)

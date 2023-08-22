@@ -3,7 +3,7 @@
 ## ✒ Protocol conversion support
 
 | Trans encapsulation type | sub rtmp | sub http[s]/websocket[s]-flv | sub http[s]/websocket[s]-ts | sub hls | sub rtsp | relay push rtmp |
-|--------------------------|----------|------------------------------|-----------------------------|---------|----------|-----------------|
+|--------------------------|:--------:|:----------------------------:|:---------------------------:|:-------:|:--------:|:---------------:|
 | pub rtmp                 |    ✔     |             ✔                |              ✔              |    ✔    |    ✔     |       ✔         |
 | pub rtsp                 |    ✔     |             ✔                |              ✔              |    ✔    |    ✔     |       ✔         |
 | relay pull rtmp          |    ✔     |             ✔                |              ✔              |    ✔    |    ✔     |       ✔         |
@@ -11,7 +11,7 @@
 ### Support for encoding protocols by encapsulation protocol
 
 | Encoding type | rtmp | rtsp | hls | flv | mpegts |
-|---------------|------|------|-----|-----|--------|
+|---------------|:----:|:----:|:---:|:---:|:------:|
 | aac           |   ✔  |   ✔  |  ✔  |  ✔  |   ✔    |
 | avc/h264      |   ✔  |   ✔  |  ✔  |  ✔  |   ✔    |
 | hevc/h265     |   ✔  |   ✔  |  ✔  |  ✔  |   ✔    |
@@ -19,7 +19,7 @@
 ### Recorded file type
 
 | Type of recording | hls | flv | mpegts |
-|-------------------|-----|-----|--------|
+|-------------------|:---:|:---:|:------:|
 | pub rtmp          |  ✔  |  ✔  |    ✔   |
 | pub rtsp          |  ✔  |  ✔  |    ✔   |
 
