@@ -1,73 +1,82 @@
 # RTMP URL basics
 
-The format of an RTMP URL is similar to a HTTP URL. The format is as follows:
+The format of a RTMP URL is similar to a HTTP URL. The format is as follows:
 
     rtmp://<host>[:port]/<appName>/<streamName>[?param1=value1][&param2=value2]
 
-Where rtmp is the scheme field, fixed.
+Where `rtmp` is the scheme field, fixed.
 
-Let's illustrate with rtmp play pull stream (publish is similar).
+Let's illustrate with RTMP play pull stream (publish is similar).
 
-Logic of rtmp pull stream client:
-The first step, if the host part is the domain name, then first through the domain name resolution to get the opposite end ip.
-The second step is to use the ip and port to establish a tcp connection. Note that if the port does not exist in the url, 1935 is used.
-The third step, the client and the server through rtmp signalling interaction, to establish a good pull channel, and then the server to the client to send the corresponding stream of audio and video data.
+Logic of RTMP pull stream client:
+1. The first step: if the host part is the domain name, then do a domain name resolution to get the opposite end's IP address.
+2. The second step is to use the IP and port to establish a TCP connection. Note that if the port does not exist in the URL, 1935 is used (default port).
+3. In the third step, the client and the server interact through through RTMP signalling to establish a good pull channel, through which the server sends the client the requested stream of audio and video data.
 
-Here some students may wonder, the domain name is resolved into an ip for tcp connection, how does the server know what domain name is used by the client to connect?
-The answer is that the client through rtmp signalling, the domain name is transmitted to the server. Specifically, it is rtmp connect signalling (note that this connect is not tcp connect) and play signalling.
+Here some students may wonder; If the domain name is resolved into an IP for TCP connection, how does the server know what domain name is used by the *client* to connect?  
+The answer is that, during the RTMP signalling phase, the client transmits the domain name to the server. Specifically, there is a phase for RTMP connect signalling (note that the connection in not established via TCP connect!) and another for play signalling.
 
-Look at a simple url example.
+So, let's take a look at a simple URL example.
 
-Before testing, modify /etc/hosts so that fake.lal.com, the fake test domain, resolves to the local 127.0.0.1 lalserver. The client uses ffmpeg.
-
-ffplay rtmp://fake.lal.com/live/test110
+Before testing, modify `/etc/hosts` so that `fake.lal.com` — a fake test domain — resolves to the local `127.0.0.1` lalserver. The client can then use `ffmpeg` in the following way:
+```shell
+$ ffplay rtmp://fake.lal.com/live/test110
+```
 Signalling value:
+```yaml
 connect
   appName: live
   tcUrl: rtmp://fake.lal.com:1935/live
 play
   streamName: test110
-vhost
-Let's start with what vhost does.
+```
+## vhost
 
-For example, let's say you have your own rtmp server (which will be referred to as the source) with a lot of streams on it. The source station due to network and load reasons, and can not serve the whole country viewers to pull the stream, so you in order to better play the effect, use Ali CDN to do stream distribution, that is, the user from the edge node of the Ali CDN to pull the stream, Ali CDN from your source station back to the source to pull the stream.
-And because you are worried about Ali CDN is not reliable, so you added a Tencent CDN. users can be on any CDN to pull any of the way you source station on the stream.
+Let's now see what we can achieve with **vhost** instead.
 
-At this point, the problem is, your source station was pulled flow, how to distinguish which CDN to pull the flow?
+For example, let's say you have your own RTMP server (which will be referred to as **the source**) with a lot of streams on it. The source station, due to network and CPU load reasons, can not serve viewers in the whole country to pull the stream. Therefore, in order to achieve good quality during playback, you can use Ali CDN to do stream distribution, that is, the user pulls its stream from the edge node of the Ali CDN and the Ali CDN calls back to the source to pull the stream.
 
-Simple practice, you can apply for two domain names, such as Ali using alfake.lal.com, Tencent using txfake.lal.com, their DNS resolution are pointing to the source station IP.
+And because you are worried about Ali CDN not being reliable, you added a Tencent CDN as well. Users can be on any CDN to pull any of the streams on your source station.
 
-But this has a disadvantage, that is, subsequent changes, the need for frequent operation of the domain name, such as access to CDN3, CDN4...
+At this point, the problem is, when your source station gets a request to pull a stream, how does it know from which CDN to pull it?
 
-Then talk about the practice of vhost.
+A simple solution is to use *two* domain names, one for Ali using alfake.lal.com, and another for Tencent using txfake.lal.com, both of which resolving via DNS to the source station IP address.
 
-In fact, it is very simple, that is, the url host only one, in the non-host part, fill in a domain name field. Since it's not host, there's no DNS domain name resolution involved. You can name it whatever you want and quickly provide it to the CDN.
+But this has a disadvantage, namely, ongoing maintenance and dealing with subsequent changes, such as the potential need for frequent changes to the domain name, or providing access through CDN3, CDN4...
 
-Then exactly where to put it, this is actually an industry subterfuge. There are two common:
+In this scenario, it's better to use a **vhost**.
 
-Also take that previous example rtmp://fake.lal.com/live/test110 to use
+In fact, this is much simpler. In effect, the URL host just fills in a domain name field in the non-host part. Because it's not in the host part, there's no DNS domain name resolution involved. You can name it whatever you like and quickly make it available to the CDN.
 
-In the first one, a directory is added between host and appName. The server needs to resolve it from the rtmp connect signalling.
+As for where exactly to put it, there are actually a few industry tricks for that. These are the two most common ones.
 
-rtmp://fake.lal.com/alfake.lal.com/live/test110
+Take the previous example of `rtmp://fake.lal.com/live/test110`:
 
+The first trick is to add a directory between host and `appName`. The server needs to resolve this during the RTMP connection signalling phase.
+```shell
+$ ffplay rtmp://fake.lal.com/alfake.lal.com/live/test110
+```
+```yaml
 Signalling value:
 connect
   appName: alfake.lal.com/live
   tcUrl: rtmp://fake.lal.com:1935/alfake.lal.com/live
 play
   streamName: test110
-The second one, which is simpler, is to add a url parameter. The server needs to parse it from the rtmp play signalling.
-
-rtmp://fake.lal.com/alfake.lal.com/live/test110
-
+```  
+  
+The second trick is even simpler: just add a parameter to the URL. The server needs to parse it during the RTMP play signalling phase.
+```shell
+$ ffplay rtmp://fake.lal.com/alfake.lal.com/live/test110
+```
+```yaml
 Signalling value:
 connect
   appName: live
   tcUrl: rtmp://fake.lal.com:1935/live
 play
   streamName: test110?vhost=alfake.lal.com
-
+```
 yoko, 20210121
 
 ---

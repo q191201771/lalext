@@ -1,74 +1,87 @@
-Let's put the conclusion first:
+# Let's start with the conclusion!
 
-To play rtsp stream splash screen, you can try the following two simple methods first:
+To play a RTSP stream splash screen, you can try the following two simple methods first:
 
-Use interleaved (rtp over tcp) mode to transfer data
-Increase the socket receive buffer (especially if the objective conditions of the network are not too bad, such as a local loop, or intranet)
-The corresponding command line parameters for ffplay/ffmpeg are respectively:
+1. Use interleaved (RTP over TCP) mode to transfer data; *or*
+2. Increase the socket receive buffer (especially if the objective conditions of the network are not too bad, such as a local loop, or intranet).
 
-- rtsp_transport tcp
-- buffer_size 1000000
+The corresponding command line parameters for `ffplay`/`ffmpeg` are, respectively:
 
-Note that this article does not deal with UDP transmission, NACK, FEC, bit rate adaptive content, that is another level of things, we will talk about it later!
+1. `rtsp_transport tcp`
+2. `buffer_size 1000000`
 
-Reason
+Note that this article does not deal with UDP transmission, NACK, FEC, bit rate adaptive content, etc. That is another level of complexity, we will talk about it on a future article!
+
+## Rationale
 
 A user has raised a bug with lal, see: https://github.com/q191201771/lal/issues/46
 
-Simply put, when using lalserver as a stream forwarding server, ffplay pulls rtsp stream playback with a splash screen.
+Simply put, when using lalserver as a stream forwarding server, `ffplay` pulls RTSP stream playback with a splash screen.
 
-Testing, gathering information
+## Testing & gathering information
 
-Push large bitrate rtsp stream (~3Mb/s) to lalserver, ffplay plays rtsp stream with splash screen.
-Push large bitrate rtsp stream to lalserver, use ffplay to play rtmp stream normally.
-Push large bitrate rtsp stream to lalserver, use ffplay to play rtsp (rtp over tcp) stream normally.
-Push large bitrate rtsp stream to lalserver, use vlc to play rtsp streams.
-Push large bitrate rtsp stream to lalserver, use pullrtsp (a widget in lal) to pull rtsp stream and store it as flv file, after that, play the file normally.
-Push small bitrate rtsp stream to lalserver, use ffplay to play the rtsp stream, it works.
-Push large bitrate rtsp streams to other rtsp servers, use ffplay to play rtsp streams.
-From point 1 and 2, we can judge that the part of lalserver that receives rtsp push streams is not problematic, that is, the uplink is not problematic.
-From points 3 and 4, we can judge that the part of lalserver sending rtsp streams is normal for some of the stream pulling clients.
-Combined with points 5 and 6, it can be roughly judged that the problem may be related to ffplay or the test environment.
+1. Push large bitrate RTSP stream (~3Mb/s) to lalserver, `ffplay` plays RTSP stream with splash screen.
+2. Push large bitrate RTSP stream to lalserver, use `ffplay` to play RTMP stream normally.
+3. Push large bitrate RTSP stream to lalserver, use `ffplay` to play RTSP (RTP over TCP) stream normally.
+4. Push large bitrate RTSP stream to lalserver, use VLC to play RTSP streams.
+5. Push large bitrate RTSP stream to lalserver, use `pullrtsp` (a widget in lal) to pull RTSP stream and store it as FLV file; after that, play the file normally.
+6. Push small bitrate RTSP stream to lalserver, use `ffplay` to play the RTSP stream, it works.
+7.Push large bitrate RTSP stream to other RTSP servers, use `ffplay` to play RTSP streams.
 
-Then the core problem is still to see why ffplay will be splash screen.
+From point 1 and 2, we can judge that the part of lalserver that *receives* RTSP push streams is not problematic, that is, the uplink is not problematic.  
+From points 3 and 4, we can judge that the part of lalserver *sending* RTSP streams is normal for some of the stream pulling clients.  
+Combined with points 5 and 6, it can be roughly judged that the problem may be related to `ffplay` or the test environment.
 
-Analysing ffplay
+Then the core problem is still to see *why* `ffplay` will show a splash screen!
 
-Looking at ffplay's logs, I found that the splash screen is always accompanied by the following warning logs:
+## Analysing ffplay
 
-[rtsp @ 0x7f93a8804400] max delay reached. need to consume packet
-[rtsp @ 0x7f93a8804400] RTP: missed 11 packets
-Go to the ffmpeg source code, find the source code corresponding to the log, and read it briefly.
+Looking at `ffplay`'s logs, I found that the splash screen is always accompanied by the following warning logs:
 
-The context logic of the first line of the log is that reading rtp udp data has timed out and you need to force consumption of the cache queue.
-The second line of the log means that the seq numbers of the packets in the cache queue are not consecutive.
+    [rtsp @ 0x7f93a8804400] max delay reached. need to consume packet
+    [rtsp @ 0x7f93a8804400] RTP: missed 11 packets
 
-ok, the cause of the screen is found, let's see how to solve.
+I went to the `ffmpeg` source code, found the source code corresponding to the log, and read it briefly.
 
-First of all, read the timeout related logic, found the variable max_delay.
-Then continue to look for associated, found the variable reorder_queue_size, corresponding to the meaning of set number of packets to buffer for handling of reordered packets.
-Then we found the variable buffer_size, which corresponds to the meaning of Underlying protocol send/receive buffer size.
+The context logic of the first line of the log is that reading RTP UDP data has timed out and you need to force consumption of the cache queue.  
+The second line of the log means that the sequence numbers of the packets in the cache queue are not consecutive.
 
-All three of these variables can be set via command line arguments.
+Ok, the cause of the splash screen was found, let's see how to solve.
+
+First of all, I read the timeout related logic and found the variable `max_delay`.  
+Then I continued to look for associated variables, thus finding the variable `reorder_queue_size`, corresponding to the set number of packets to buffer for handling of reordered packets.  
+Then I found the variable `buffer_size`, which corresponds to the underlying protocol send/receive buffer size.
+
+All three of these variables can be set via command line arguments.  
 The first two are related to higher-level logic, and the third one sets the socket receive buffer (a kernel-level parameter).
+
 Which one to change?
 
-According to my personal experience, I try to increase the buffer_size first. After all, as soon as possible, complete receipt of data is the best, not timely receipt, receipt is not complete is the next step in the processing.
+According to my personal experience, I usually try to increase the `buffer_size` first. After all, it's best to receive the data completely first; if it's not received in a timely fashion, then we go to the next step in the processing.
 
-$ffplay -buffer_size 1000000 rtsp://127.0.0.1:5544/live/test110
-No more splash screen in my environment, problem solved.
+```shell
+$ ffplay -buf fer_size 1000000 rtsp://127.0.0.1:5544/live/test110
+```
 
-Follow-up
+No more splash screen in my environment, problem solved!
 
-Note that if ffplay sets buffer_size the log appears:
+## Follow-up
 
-Attempted to set receive buffer to size 1000000 but it only ended up set as ...
-It means that setting the socket receive buffer failed. If it is a linux system, you can try to use the following command line commands before starting ffplay to modify the default value of the socket receive buffer and the maximum value allowed to be set.
+Note that if `ffplay` sets `buffer_size`, the following message appears in the log:
+
+    Attempted to set receive buffer to size 1000000 but it only ended up set as ...
+
+It means that setting the socket receive buffer failed. If you're on a Linux system, you can try to use the following command line commands before starting `ffplay` to modify the default value of the socket receive buffer and the maximum value allowed to be set.
 
 The method is as follows:
 
-echo 2000000 > /proc/sys/net/core/rmem_default
-echo 2000000 > /proc/sys/net/core/rmem_max
-The original is not easy to reproduce, please indicate the article from the open source streaming media server lal, Github: https://github.com/q191201771/lal official documentation: https://pengrl.com/lal
+```shell
+$ echo 2000000 > /proc/sys/net/core/rmem_default
+$ echo 2000000 > /proc/sys/net/core/rmem_max
+```
 
 yoko, 20210206
+
+---
+
+Being original is not easy. Reproduction is allowed, but please reference this article as being part of the documentation for the open-source streaming media server [lal](https://github.com/q191201771/lal) (GitHub link).   Official documentation: [https://pengrl.com/lal](https://pengrl.com/lal)
