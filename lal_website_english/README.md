@@ -39,13 +39,14 @@
 > - ✦ WebRTC
 > - ✦ MCU Merge Streaming
 > - ✒ In progress
-> - ▦ V. Contact the author.
+> - ▦ V. Contact the author
+> - ▦ VI. English translation
 
 ### ▦ I. Introduction to lalserver
 
 [lalserver](https://github.com/q191201771/lal) is a pure Go streaming media server (live audio and video network transmission). It supports protocols RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, [GB28181](https://www.chinesestandard.net/PDF/BOOK.aspx/GBT28181-2016) (Chinese National Standard). It also supports secondary development and expansion via plug-ins.
 
-![lal feature map](https://pengrl.com/lal/_media/lal_feature.jpeg?date=220501)
+![lal feature map](_media/lal_feature.jpeg?date=220501)
 
 #### ✒ lalserver features
 
@@ -91,7 +92,7 @@
 
 #### ✒ Protocol conversion support
 
-See: [Appendix - Inter-Protocol Conversion Support](https://pengrl.com/lal/#/appendix?id=%e2%9c%92-%e5%8d%8f%e8%ae%ae%e9%97%b4%e8%bd%ac%e6%8d%a2%e6%94%af%e6%8c%81%e6%83%85%e5%86%b5)
+See: [Appendix - Inter-Protocol Conversion Support](appendix.md)
 
 ### ▦ II. Installing and running lalserver
 
@@ -168,32 +169,32 @@ $ ffplay rtmp://127.0.0.1/live/test110
 
 #### ✒ lalserver configuration file
 
-If you want to learn more about lalserver's capabilities, take a look at: [lalserver configuration file description](https://pengrl.com/lal/#/ConfigBrief).
+If you want to learn more about lalserver's capabilities, take a look at: [lalserver configuration file description](ConfigBrief.md).
 
 #### ✒ lalserver HTTP Events and Interfaces
 
 With the rich HTTP interfaces provided by lalserver, businesses can easily customise the system to fit their corporate logic using their own familiar language while keeping lalserver running independently.
 
-- [lalserver HTTP Notify(Callback/Webhook) event callback](https://pengrl.com/lal/#/HTTPNotify)
-- [lalsrver HTTP API Interface](https://pengrl.com/lal/#/HTTPAPI)
+- [lalserver HTTP Notify(Callback/Webhook) event callback](HTTPNotify.md)
+- [lalsrver HTTP API Interface](HTTPAPI.md)
 
 #### ✒ lalserver advanced
 
-- [lalserver Authentication Anti-Leeching Link](https://pengrl.com/lal/#/auth)
-- [lalserver secondary development - pub access to custom streams](https://pengrl.com/lal/#/customize_pub)
+- [lalserver Authentication Anti-Leeching Link](auth.md)
+- [lalserver secondary development - pub access to custom streams](customize_pub.md)
 
 ### ▦ IV. Getting reacquainted with lal
 
 #### ✒ lal's three-tier structure
 
-![lal source code architecture diagram](https://pengrl.com/lal/_media/lal_src_fullview_frame.jpeg?date=211211)
+![lal source code architecture diagram](_media/lal_src_fullview_frame.jpeg?date=211211)
 
 ##### ✦ Other demos
 
 In the lal project, in addition to `/app/lalserver`, which is the core service, there are some additional small applications provided in the `/app/demo` directory, such as push and pull streaming clients, as well as a pressure testing tool, a streaming analysis tool, and a scheduling example program for the lalserver cluster.  
 These demos can be used both directly, and as examples to show you how the stack provided by lal can be used.
 
-Learn more at: [Demo Introduction](https://pengrl.com/lal/#/DEMO)
+Learn more at: [Demo Introduction](DEMO.md)
 
 ##### ✦ Streaming stack library package/library
 
@@ -211,7 +212,7 @@ Standing on the shoulders of giants is the only way to see further! lal has comb
 
 ##### ✦ WebRTC
 
-A gateway to stream from RTMP to WebRTC
+A gateway to stream from RTMP to WebRTC.
 
 Learn more at the [lalext GitHub address](https://github.com/q191201771/lalext).
 
@@ -241,8 +242,8 @@ Any technical and non-technical communication is welcome.
 
 ### ▦ VI. English translation
 
-The English translation is a currently a two-step process, and may be out of sync with the main documentation in Chinese, which, for all purposes, should _always_ remain authoritative.
+The English translation is currently a two-step process, and may not be in sync with the main Chinese documentation, which for all intents and purposes should _always_ remain authoritative.
 
-Since the current human translator does not speak any Chinese language, this requires machine translation via DeepL (possibly with some help from Google Translate as well) on the first step. Chinese <-> English technical translations work surprisingly well, but a second step is nevertheless required to render the English more fluent and idiomatic (and less "robotic"!). Unfortunately, I'm afraid that [yoko](https://github.com/q191201771/)'s personal style may be lost in the process, and I apologise in advance for that. Maybe one day a native Chinese speaker will be able to go through all the text and subtly correct the translation!
+Since the current human translator does not speak any Chinese, this requires machine translation via DeepL (possibly with some help from Google Translate as well) on the first step. Chinese <-> English technical translations work surprisingly well, but a second step is still needed to make the English more fluent and idiomatic (and less "robotic"!). Unfortunately, I'm afraid that [Chef/yoko](https://github.com/q191201771/)'s personal style will be lost in the process, and I apologise in advance. Perhaps one day a native Chinese speaker will be able to go through all the text and subtly correct the translation!
 
-Due to the nature of the underlying publishing technology, there is no easy way to automate the whole process (at least for now), which means that, occasionally, some pages may be _very_ out of sync.
+Due to the nature of the underlying publishing technology, there is no easy way to automate the whole process (at least for now), which means that occasionally some pages may be _very_ out of sync.

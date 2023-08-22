@@ -1,5 +1,6 @@
-rtmp url basics
-The format of an rtmp url is similar to an http url. the format is as follows:
+# RTMP URL basics
+
+The format of an RTMP URL is similar to a HTTP URL. The format is as follows:
 
     rtmp://<host>[:port]/<appName>/<streamName>[?param1=value1][&param2=value2]
 
@@ -66,6 +67,9 @@ connect
   tcUrl: rtmp://fake.lal.com:1935/live
 play
   streamName: test110?vhost=alfake.lal.com
-The original is not easy to reproduce, please indicate the article from the open source streaming media server lal, Github: https://github.com/q191201771/lal official documentation: https://pengrl.com/lal
 
 yoko, 20210121
+
+---
+
+Being original is not easy. Reproduction is allowed, but please reference this article as being part of the documentation for the open-source streaming media server [lal](https://github.com/q191201771/lal) (GitHub link).   Official documentation: [https://pengrl.com/lal](https://pengrl.com/lal)

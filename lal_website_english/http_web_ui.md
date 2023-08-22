@@ -1,16 +1,16 @@
-# lalserver Web UI 可视化
+# lalserver Web UI Visualisation
 
-启动lalserver后，在浏览器中输入 http://127.0.0.1:8083/lal.html 进行访问。
+After launching lalserver, access it by typing http://127.0.0.1:8083/lal.html in your browser.
 
-以下是一些截图，更具体的介绍可以看看 [v0.34.3 的发版文档](https://pengrl.com/lal/#/brief_v0.34.3)
+Below are some screenshots, for a more specific description you can take a look at the [v0.34.3 release documentation](brief_v0.34.3.md).
 
-图1，服务的基础信息和group列表信息：
+Figure 1: The basic information of the service and the group list information:
 
-![ui1](https://pengrl.com/lal/_media/web_ui_1.jpg)
+![The basic information of the service and the group list information](_media/web_ui_1.jpg)
 
 
-图2，特定group信息：
+Figure 2: Group-specific information:
 
-![ui2](https://pengrl.com/lal/_media/web_ui_2.jpg)
+![Group-specific information](_media/web_ui_2.jpg)
 
-NOTE: HttpWebUiVersion = "v0.0.2"
+**NOTE:** HttpWebUiVersion = "v0.0.2"

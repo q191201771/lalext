@@ -146,4 +146,4 @@ Documentation for secondary development of specific features:
 
 Contact me if you don't understand anything, I will further update the documentation.
 
-This note updated at 2210 by yoko
+This note updated on 2210 by yoko

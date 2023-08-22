@@ -1,60 +1,61 @@
-# enhanced RTMP/FLV
+## ▦ Background
 
-## ▦ 背景
+As we all know, the RTMP protocol is widely used in live broadcast scenarios. At present, live streaming generally uses RTMP for streaming, but Adobe has no longer updated RTMP. Therefore, for some new encoding formats, the standard FLV format does not support encoding such as HEVC.  
+The Chinese cloud service provider Kingsoft Cloud defines CodecID=12 as the CodecID of HEVC, and many streaming media services in China are also implemented according to this standard, but for some open source tools such as `ffmpeg` and OBS, they do not support this Chinese standard.
 
-众所周知，RTMP协议在直播场景下应用相当广泛，目前直播推流一般都是使用RTMP进行推流，但Adobe已经不再更新RTMP，故对于一些新的编码格式，标准的FLV格式不支持HEVC等编码，国内云厂商金山云定义了codecid=12作为HEVC的的codecid，国内一众的流媒体服务也是按照这个标准去实现，但对于ffmpeg、OBS等一些开源工具，这个国内标准并不支持。
+## ▦ Enhanced RTMP/FLV
 
-## ▦ enhanced RTMP/FLV
+Recently, Veovera Software Organization (VSO) proposed [enhanced RTMP](enhanced_rtmp.md), aiming to enable RTMP/FLV to support currently popular encoding formats, such as HEVC, VP9, and AV1. Judging from the documents, well-known institutions such as FFmpeg, VideoLAN (VLC), OBS, and Adobe participated in this standard, indicating that this new standard will be widely used in the near future.
 
-近期Veovera Software Organization（VSO）提出了[enhanced RTMP](https://github.com/veovera/enhanced-rtmp)，旨在让RTMP/FLV支持目前比较流行的编码格式，例如HEVC、VP9、AV1。从文档来看，参与这个标准还有FFmpeg、VideoLAN(VLC)、OBS、Adobe等知名机构，说明这个新标准在不久的将来会广泛应用。
+![pic](_media/enhanced-rtmp_1.png)
 
-![pic](https://pengrl.com/lal/_media/enhanced-rtmp_1.png)
+According to the latest document, currently enhanced RTMP/FLV only supports HEVC, VP9, AV1 and other video encoding formats. I believe that audio encoding formats will also be supported in the near future, therefore we will not need to modify `ffmpeg` by then. The entry barrier will be greatly reduced. However, the new RTMP/FLV standard is not exactly the same as the Chinese general standard, but <font color="red">the new standard is compatible both with the old and the Chinese standards</font>, and it is very easy to support.
 
-从最新的文档来看，目前enhanced RTMP/FLV只支持了HEVC、VP9、AV1等视频编码格式，相信在不久之后，音频编码格式也会支持上，相信到时候我们就不需要去魔改ffmpeg，接入门槛将会大大降低。不过，RTMP /FLV这个新标准，和国内通用的标准并不完全一样，但是<font color="red">新标准是兼容老的以及国内定义的标准的</font>，要支持起来也很容易。
+## ▦ Format specification
 
-## ▦ 格式说明
+The RTMP internal load also uses the FLV Tag, so here we mainly explain the enhanced FLV Video Tag format.
 
-RTMP内部负载也是使用FLV的Tag，故这里主要讲解下enhaned FLV Video Tag格式。
+### ▦ Standard FLV Video Tag
 
-### ▦ 标准FLV Video Tag
+![pic](_media/enhanced-rtmp_2.png)
 
-![pic](https://pengrl.com/lal/_media/enhanced-rtmp_2.png)
-
-在标准的FLV格式中，Video Tag由Tag Header和Tag Body组成，Tag Header固定5个字节，可以通过第一个字节的后4bits来判断codec信息。
+In the standard FLV format, the Video Tag is composed of the Tag Header and the Tag Body. Tag Header is fixed at 5 bytes, and the codec information can be judged by the last 4 bits of the first byte.
 
 ### ▦ Enhanced FLV Video Tag
 
-![pic](https://pengrl.com/lal/_media/enhanced-rtmp_3.png)
-![pic](https://pengrl.com/lal/_media/enhanced-rtmp_4.png)
+![pic](_media/enhanced-rtmp_3.png)
+![pic](_media/enhanced-rtmp_4.png)
 
-在Enhanced FLV标准中，Video Tag Header的5个字节，变成以上格式
+In the Enhanced FLV standard, the 5 bytes of the Video Tag Header become the above format.
 
-1. 可以通过header[0]&0x80进行判断是否是enhanced FLV
-2. PacketType由原来标准的第2个字节变成了第一个字节后4bits，如果PacketType=0，表示是sequence header，后面的Tag Body便是CodecConfigurationRecord部分，例如HEVC就是HEVCDecoderConfigurationRecord。如果PacketType=1和PacketType=3，说明Tag Body就是NALus，不过PacketType=1需要注意的是，Tag Body的前3个字节为Composition Time。
+1. `header[0]&0x80` can be used to determine whether it is enhanced FLV or not.
+2. PacketType from the original standard 2 bytes into the first byte after the 4bits, if PacketType = 0, that is, sequence header, after the Tag Body comes the `CodecConfigurationRecord` part; for instance, HEVC is `HEVCDecoderConfigurationRecord`. If PacketType = 1 or PacketType = 3, it means that Tag Body is NALus, but note that, with PacketType = 1, the first 3 bytes of Tag Body are the Composition Time.
 
-## ▦ 目前支持Enhanced RTMP/FLV的服务器/客户端
+## ▦ Current server/client support for Enhanced RTMP/FLV
 
 ```
-OBS：OBS 29.1+
-Srs:6.0.42+
-mpegts：1.7.3+
-lal:0.35.4+
+OBS: OBS 29.1+
+srs: 6.0.42+
+mpegts: 1.7.3+
+lal: 0.35.4+
 ```
 
-## ▦ 如何测试
+## ▦ How to test it
 
-（1）打开OBS，在“输出”中在视频编码器中选择HEVC
+(1) Open OBS and in "Output" select HEVC in the video encoder.
 
-![pic](https://pengrl.com/lal/_media/enhanced-rtmp_5.png)
+![pic](_media/enhanced-rtmp_5.png)
 
-（2）在“直播”中输入rtmp的地址，例如:rtmp://127.0.0.1:1935/live/test110
+(2) Input the address of RTMP in "Live", e.g.: `rtmp://127.0.0.1:1935/live/test110`
 
-![pic](https://pengrl.com/lal/_media/enhanced-rtmp_6.png)
+![pic](_media/enhanced-rtmp_6.png)
 
-（3）使用ffplay或者VLC播放Rtsp或者HLS流
+(3) Use `ffplay` or VLC to play RTSP or HLS streams
 
-（4）如果想播放FLV流，由于ffmpeg和VLC暂时还不支持此标准，可以使用mpegts.js进行测试，笔者这里利用了srs的播放器，在URL中输入lal的http-flv的拉流地址即可
+(4) If you want to play FLV streams, since `ffmpeg` and VLC don't support this standard yet, you can use `mpegts.js` to test it, I use srs's player here, and just enter lal's HTTP-FLV stream pull address in the URL.
 
-![pic](https://pengrl.com/lal/_media/enhanced-rtmp_7.png)
+![pic](_media/enhanced-rtmp_7.png)
 
 axiang, 202304
+
+*Translators' note: the images contain text that has not been translated yet. TODO(gwyneth)*

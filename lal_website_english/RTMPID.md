@@ -1,66 +1,70 @@
-### chunk stream id
+### Chunk stream id
 
-#### 设计思想
+#### Design Idea
 
-按rtmp的设计思想，是可以在一条链路上传输多路流，比如最常见的一路音频流和一路视频流，音频流和视频流可独立打开关闭。
-那么当某一路流中的message特别大时（比如视频的关键帧），可能会导致音频流的message需要等待这个特别大的message传输完毕后才能传输。
-rtmp为了解决这个问题，选择将对应用层有意义的message切割成chunk，那么传输时就不需要一个message接一个message传输了，而可以一个chunk接一个chunk传输。
-（注意，chunk必须是完整的，不能发送chunk1的前半部分再发chunk2然后再发送chunk1的后半部分）
-接收端将`chunk stream id`相同的chunk组合成完整的message再返回给应用层。
+According to the design idea of RTMP, it is possible to transmit multiple streams on one link, for example, the most common stream is audio and one stream is video, where the audio and video streams can be turned on and off independently of each other.
 
-下面是一个简单的例子
+Then, if the message in one stream is particularly large (such as the key frame of the video), this may result in the message of the audio stream having to wait for the transmission of this particularly large message before it can be transmitted.
+
+To solve this problem, RTMP chooses to cut the messages that are meaningful to the application layer into *chunks*, so that instead of transmitting one *message* after another, chunks are instead transmitted.  
+(Note that the chunks must be complete; you can't send the first half of chunk 1, then chunk 2, then the second half of chunk 1.)
+
+The receiver combines the chunks with the same `chunk stream id` into a complete message and returns it to the application layer.
+
+Here is a simple example:
 
 ```
-# 假设Video message 1很大
+# Assume Video message 1 is large
 
-# 最原始的多路流传输方式，Audio Message 2只能等待Video message 1传输完毕后才能传输
-| Audio message 1 | Video message 1 | Audio Message 2 | Video message2 |
+# In the most primitive way of multistreaming, Audio Message 2 can only wait for Video message 1 to finish transmitting.
+| Audio message 1 | Video message 1 | Audio message 2 | Video message2 |
 
-# 将Video Message 1切割成两个chunk（这里为了简化，其实可能不止两个chunk）
-# 这样，Audio Message 2就不需要等待整个Video message 1发送完毕再发送了
-# 另外，其他的message也是chunk的形式了
+# Cut Video Message 1 into two chunks (for simplicity here, there may be more than two chunks)
+# So that Audio Message 2 doesn't need to wait for Video Message 1 to finish being sent.
+# In addition, the other messages are now chunks as well
 | Audio message 1 | first chunk of Video meesage 1 | Audio Message 2 | last chunk of Video message 2 | Video message 2 |
 
-# 以下这种是错误的，chunk必须保持完整
-| chunk1的前半部分 | chunk2的前半部分 | chunk1的后半部分 | chunk2的后半部分 |
+| last chunk of Video message 2 | Video message 2 | Video message 2 | The following is incorrect, the chunk must remain intact
+| first chunk of chunk1 | first chunk of chunk2 | second chunk of chunk1 | second chunk of chunk2 |
 ```
 
-#### 思考
+#### Thinking
 
-那我们来思考一下，按现在常见的rtmp over tcp的方案，当应用层有一个message需要传输时，我们会将它切割成chunk，然后发送切割出的所有chunk，然后再循环处理下一个message。
+So let's think about it, with the common RTMP over TCP scheme today, when the application layer has a message to send, we cut it into chunks, and then send all the cut chunks, and then loop through the next message.
 
-事实上，一个message的chunk是被连续发送的，并不会插入其他chunk。此基础上基于tcp的流式顺序性，是无法达到上面大message不阻塞其他stream的message的设计。
+In fact, the chunks of a message are sent one after the other and no other chunks are inserted. On this basis, TCP-based streaming sequentiality cannot achieve the above design of a large message that does not block messages from other streams.
 
-那么理论上rtmp的这个设计思路可不可行呢？是可行的，比如发送队列不使用FIFO的大buffer，而是以chunk组成的更细粒度的管理。或者使用UDP传输，一般都会按MTU切割应用层的message，基本和chunk的概念类似。
+Theoretically, is this RTMP design idea feasible? It is feasible, for example, sending queues not using large FIFO buffers, but in chunks composed of more fine-grained management. Or the use of UDP transmission, generally according to the MTU cut application layer message, basically similar to the concept of chunk.
 
-以上其实就是Head-of-Line blocking对头阻塞问题，QUIC HTTP/3使用了类似的思路处理这个问题。
+The above is actually head-of-line blocking versus header blocking, and QUIC HTTP/3 uses a similar idea to deal with this.
 
-#### 实践
 
-下面是一些常见的rtmp项目使用chunk stream id的情况
+#### Practice
 
-#### obs推流
+Here are some common RTMP projects that use chunk stream ids.
+
+#### obs push stream
 
 ```
-csid 2 用于传输 SetChunkSize。
-csid 3 用于传输信令，比如 connect | releaseStream | FCPublish | createStream | publish
-csid 4 用于传输 metaData + 音频数据 + 视频数据。
+csid 2 is used to transport SetChunkSize.
+csid 3 is used to transport signalling like connect | releaseStream | FCPublish | createStream | publish
+csid 4 is used to transfer metaData + audio data + video data.
 ```
 
-#### ffmpeg推流
+#### ffmpeg push stream
 
 ```
 csid 2 SetChunkSize
 csid 3 connect | releaseStream | FCPublish | createStream
 csid 8 publish
-csid 4 metaData + 视频数据
-csid 6 音频数据
+csid 4 metaData + video data
+csid 6 audio data
 csid 3 FCUnpublish | deleteStream
 ```
 
-注意，ffmpeg推流时，是先发的connect，再发SetChunkSize，接收端在没有收到SetChunkSize时，应该假定对端的chunk size为128。
+Note that when ffmpeg pushes the stream, it sends the connect first, then the SetChunkSize, the receiver should assume the chunk size of the opposite end is 128 when it doesn't receive the SetChunkSize.
 
-#### 从nginx rtmp module拉流
+#### pulling stream from nginx rtmp module
 
 ```
 csid 2 Window ACk Size | SetPeerBandwidth | SetChunkSize
@@ -69,43 +73,43 @@ csid 5 onStatus for Play
 csid 5 metaData e.g. len 24
 csid 2 user control message
 csid 5 metaData e.g. len 699
-csid 7 视频数据
-csid 6 音频数据
+csid 7 video data
+csid 6 audio data
 ```
 
-可以看到，obs推流的音频和视频数据共用一个csid，ffmpeg则是两个csid，nginx rtmp module则是metaData也单独使用一个csid。
+As you can see, OBS push stream audio and video data share one csid, ffmpeg has two csid, and nginx RTMP module has a separate csid for metaData as well.
 
-chunk stream id如何获取，message如何切割成chunk，chunk如何重组成message可以参见 [lal](https://github.com/q191201771/lal) (https://github.com/q191201771/lal)的实现。
+How to get the chunk stream id, how to cut the message into chunks, and how to reassemble chunks into messages can be found in the implementation of [lal](https://github.com/q191201771/lal) (https://github.com/q191201771/).
 
 ### message stream id
 
-#### obs推流
+#### OBS push stream
 
 ```
-msid 0 信令
-msid 1 publish信令 | 音视频数据
+msid 0 signalling
+msid 1 publish signalling | audio/video data
 ```
 
-#### ffmpeg推流
+#### ffmpeg push stream
 
-和obs一样
+Same as OBS.
 
-#### 从nginx rtmp module拉流
+#### pull stream from nginx rtmp module
 
 ```
-msid 0 信令
-msid 1 onStatus of play信令 | 音视频数据
+msid 0 signalling
+msid 1 onStatus of play signalling | audio/video data
 ```
 
-可以看到，三个项目都是使用msid 1传输音视频数据。
+As you can see, all three projects are using msid 1 to transfer audio and video data.
 
-lal中，`_result for createStream`的msid使用1，publish 和 play 使用`_result`中返回msid
+In lal, `_result for createStream` uses 1 for msid, and publish and play use `_result` to return msid
 
 ### transaction id
 
-command类型message中的一个字段。
+A field in a message of type `command`.
 
-尽管文档中将大部分message都定义为0了，比如:
+Although the documentation defines most messages as 0, e.g.:
 
 ```
 connect tid: 1
@@ -115,9 +119,9 @@ deleteStream: 0
 publish: 0
 ```
 
-但是各rtmp软件的具体实现却不是这样，比如：
+However, this is not the case for the specific implementation of each RTMP software, for example:
 
-#### obs推流
+#### obs push stream
 
 ```
 connect tid: 1
@@ -129,14 +133,14 @@ FCUnpublish: 6
 deleteStream: 7
 ```
 
-可以看到是自增的过程。
-测试时服务端使用lal，lal是按照接收到的tid原样回复message。
+As you can see, it's a self-incrementing process.  
+For testing, the server side uses lal, which replies to the message as it is received with the `tid`.
 
-#### ffmpeg推流
+#### ffmpeg push stream
 
-结果和obs推流一样
+The result is the same as with the OBS push stream.
 
-#### 从nginx rtmp module拉流
+#### pull stream from nginx rtmp module
 
 ```
 onBWDone tid: 0
@@ -145,7 +149,7 @@ _result of createStream: 2
 onStatus of Play: 0
 ```
 
-测试时客户端使用lal，lal按递增的方式处理tid：
+The test uses lal on the client, which handles the `tid` in an incremental fashion:
 
 ```
 connect tid: 1
@@ -155,13 +159,15 @@ play or publish: 3
 
 ### message type id
 
-这个是最简单的，标明应用层的message是什么类型，比如音频(8)、视频(9)、metadata(18)、特定信令(比如1是SetChunkSize)、Command类型的信令(20)等。
+This is the simplest one, it indicates what type of message is used in the application layer, e.g. audio (8), video (9), metadata (18), specific signalling (e.g., 1 is SetChunkSize), command type signalling (20), and so on.
 
 ### TODO
 
-现在rtmp的使用场景基本上都是一个Connection对应一次推流或者拉流。
-其实rtmp在flash中使用时，一个Connection对象上是可以打开、关闭多个Stream，这才是最贴合rtmp语义的用法。由于我手上没有合适的环境，暂时没有测试。
-
-原创不易，转载请注明文章出自开源流媒体服务器[lal](https://github.com/q191201771/lal)，Github：[https://github.com/q191201771/lal](https://github.com/q191201771/lal)  官方文档：[https://pengrl.com/lal](https://pengrl.com/lal)  
+Nowadays, RTMP's usage scenario is basically one connection corresponding to one push or pull stream.  
+In fact, when RTMP is used in Flash, multiple streams can be opened and closed on one connection object, which is the most suitable usage for RTMP semantics. Since I don't have a suitable environment, I didn't test it for the time being.
 
 yoko, 201908
+
+---
+
+Being original is not easy. Reproduction is allowed, but please reference this article as being part of the documentation for the open-source streaming media server [lal](https://github.com/q191201771/lal) (GitHub link).   Official documentation: [https://pengrl.com/lal](https://pengrl.com/lal)

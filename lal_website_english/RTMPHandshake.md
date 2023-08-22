@@ -142,6 +142,8 @@ The practice of nrm is to fill the 32-byte digest directly into the end of s2, i
 c2
 The construction method of c2 is the same as s2. Only it uses the digest in s2 as the hmac-sha256 key.
 
-The original is not easy to reproduce, please indicate the article from the open source streaming server lal, Github: https://github.com/q191201771/lal Official Documentation: https://pengrl.com/lal
-
 yoko, 201906
+
+---
+
+Being original is not easy. Reproduction is allowed, but please reference this article as being part of the documentation for the open-source streaming media server [lal](https://github.com/q191201771/lal) (GitHub link).   Official documentation: [https://pengrl.com/lal](https://pengrl.com/lal)

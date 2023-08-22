@@ -23,7 +23,7 @@
 * ***
 * =====3 lal Supplementary Documentation =====
   * [3.1 Demo Introduction](DEMO.md)
-  * [3.2 Changelog version log](CHANGELOG.md)
+  * [3.2 Changelog version log](../CHANGELOG.md)
   * [|-- v0.36.7 release, Customize Sub, I have all for you](brief_v0.36.7.md)
   * [|-- v0.35.4 released, OBS supports RTMP H.265 push stream, I'm with you](brief_v0.35.4.md)
   * [|-- v0.34.3 released, G711 audio is here, Web UI is here too](brief_v0.34.3.md)
@@ -40,7 +40,7 @@
   * [Performance Test](Test.md)
   * [Diagrams](Drawing.md)
   * [RTMP URL, and vhost](RTMPURLVhost.md)
-  * [RTMP handshake handshake simple and complex modes](RTMPHandshake.md)
+  * [RTMP handshake - Simple and complex modes](RTMPHandshake.md)
   * [Various IDs in RTMP](RTMPID.md)
   * [ffplay play RTSP splash screen](RTSPFFPlayBlur.md)
   * [FAQ](FAQ.md)

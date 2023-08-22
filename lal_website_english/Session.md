@@ -1,25 +1,25 @@
-# 连接类型之session pub/sub/push/pull
+# Session pub/sub/push/pull of connection types
 
-流媒体传输，通常指持续性在网络上传输流式音视频数据。  
-一条传输数据的网络通道，由两端组成，下面我们对不同情况下的两端做定义。  
+**Streaming media transmission** usually refers to the continuous transmission of streaming audio and video data over a network.  
+A network channel for transmitting data consists of two ends, and we define the two ends in the following cases.
 
-### 连接建立方向角度，ClientSession, ServerSession
+### Connection establishment direction perspective, ClientSession, ServerSession
 
-从连接建立方向角度，分为主动发起端，和被动处理端。
+From the perspective of connection establishment direction, there are two types of connections: **active initiating side** and **passive processing side**.
 
-比如over TCP的连接：
+For example, over TCP connection:
 
-- 调用connect，连接对方的称为主动发起端
-- 调用accept，处理连接的称为被动处理端
+- The one that calls connect and connects to the other side is called the active initiator.
+- The call to accept and process the connection is called the passive processing side.
 
-很多时候，我们会把
+Often, we will refer to the active initiator as the client.
 
-- 主动发起端称为client客户端
-- 被动处理端称为server服务端
+- The active initiator is called the client.
+- The passive processor is called the server.
 
-注意，这种client，server的划分是一种特定含义的划分。client客户端并不仅仅是指PC、APP、Web等运行在C端的程序，也可以是在一个服务器上的服务，比如服务A使用connect连接另外一个服务器上的服务B。
+Note that this division of client and server is a specific division of meaning. "Client" does not just mean a programme running on the C side of a PC, app, web, etc., but also a *service* on a server, for example, service A connects to service B on another server.
 
-从连接建立方向角度，主动发起端称为client session，被动处理端称为server session：
+From the connection establishment direction point of view, the active initiating side is called **client session** and the passive processing side is called **server session**:
 
 ```
              connect       accept
@@ -27,73 +27,73 @@
 |  ClientSession  |  ---->  |  ServerSession  |
 +-----------------+         +-----------------+
 ```
-### 音视频数据发送方向角度，(AVData)InSession, OutSession
 
-除了连接建立方向角度，另一个角度是音视频数据发送方向角度：
+### Audio and video data sending direction axis, (AVData)InSession, OutSession
 
-- 数据发送端，也即(AVData)OutSession
-- 数据接收端，也即(AVData)InSession
+In addition to the connection establishment direction axis, another axis is the audio/video data sending direction:
 
-注意，此处说的数据都是指音视频数据。而不是连接建立后，业务层协议中握手、发布、订阅等信令数据。
+- Data sender, i.e. (AVData)OutSession
+- The data sender, i.e. (AVData)OutSession, is the data receiver, i.e. (AVData)InSession.
 
-由于连接建立方向和数据发送方向可能一致也可能相反，所以又分为4种角色：
+Note that all the data mentioned here does not refers to (raw) audio and video data. Instead, it refers to the signalling data such as handshake, publish, subscribe, etc. in the business layer protocol after the connection is established.
+
+Since the direction of connection establishment and the direction of data sending may be the same or opposite, they are further divided into 4 roles:
 
 ### PushSession, PullSession, PubSession, SubSession
 
-A连接B，A向B发送数据：
+A connects to B and A sends data to B:
 
 ```
 A | --connect--> | B
   | --av data--> |
 ```
 
-上面这种情况：
+In the case above:
 
-- A属于`ClientSession`+`OutSession`，我们称之为`PushSession`
-- B属于`ServerSession`+`InSession`，我们称之为`PubSession`
+- A is a `ClientSession` + `OutSession`, which we call `PushSession`.
+- B is a `ServerSession` + `InSession`, which we call `PubSession`.
 
-另一种情况，A连接B，B向A发送数据：
+In the other case, A connects to B and B sends data to A:
 
 ```
 A | --connect--> | B
   | <--av data-- |
 ```
 
-上面这种情况：
+The above case:
 
-- A属于`ClientSession`+`InSession`，我们称之为`PullSession`
-- B属于`ServerSession`+`OutSession`，我们称之为`SubSession`
+- A belongs to `ClientSession` + `InSession`, which we call `PullSession`.
+- B belongs to `ServerSession` + `OutSession`, which we call `SubSession`.
 
-*注，Pub/Sub是Publish/Subscribe的缩写*
+**Note that Pub/Sub is an acronym for Publish/Subscribe**.
 
-**注意，Push、Pull、Pub、Sub这四种session的定义是我个人下的定义，没有业界标准。只是在lal以及相关项目、文档中的一个共识。**
+**Note that the definitions of Push, Pull, Pub, and Sub are my personal definitions, and there is no industry standard. It is just a consensus in lal and related projects and documents.**
 
-> 命名上的相关讨论： https://github.com/q191201771/lal/issues/243
+> Related discussion on naming: https://github.com/q191201771/lal/issues/243
 
-### 为什么要统一命名
+### Why do we need to standardise the nomenclature?
 
-有两点好处：
+There are two advantages:
 
-一，便于沟通
+First, it makes communications easier.
 
-比如说一个流媒体模块支持rtmp推流。那么究竟是说它可以处理别人给它推rtmp流，还是说它可以将流用rtmp格式推送给别人？  
-有了命名，第一种情况对应pub，第二种情况对应push。
+Let's consider a streaming module that supports RTMP push streams and RTSP pull streams. So does it mean that someone pushes a RTMP stream to it, and then another person pulls a RTSP stream from it; or does it take the initiative to pull RTSP stream from someone else, and then convert the stream to RTMP format and push it out?  
+With our nomenclature, the first case corresponds to `rtmp pub + rtsp sub`, and the second case corresponds to `rtsp pull -> rtmp push`.
 
-比如说一个流媒体模块支持rtmp推流，rtsp拉流。那么究竟是说别人将rtmp流推给它，然后另外一个人从它这拉rtsp流；还是说它主动从别人那拉rtsp流，然后再将流转换成rtmp格式推送出去呢？  
-有了命名，第一种情况对应`rtmp pub+rtsp sub`，第二种情况对应`rtsp pull -> rtmp push`。
+Now, with the protocol support table in ["Introduction to lalserver"](LALServer.md), you can get a pretty clear idea of what protocols lalserver supports, and which ones can be converted.  
+On the [Demo listings page](DEMO.md), from the name of each of the demo applications, you can clearly figure out its role.
 
-现在，通过[《lalserver简介》](LALServer.md)中的协议支持表格，你可以很清晰的知道lalserver支持哪些协议，以及哪些协议可以转换。  
-通过，通过[《Demo简介》](DEMO.md)中的各demo名称，你可以很清晰知道它们的作用。
+Second, it makes it easy to organise and reuse code.
 
-二，便于组织与复用代码
+Take the RTSP protocol as an example:
 
-拿rtsp协议举例：
-
-1. pub和sub作为server端，信令部分的处理有大部分是相同的，同理，push和pull作为client端也是如此
-2. 另外，pub和pull作为接收(in)音视频数据流端，有大部分逻辑是相同的，同理，sub和push作为(out)发送音视频数据流端也是如此
+1. pub and sub as the server side, most of the signalling part of the processing is the same, similarly, push and pull as the client side is also the same.
+2. In addition, most of the logic is the same for pub and pull as the inbound audio/video streams, and similarly for sub and push as the outbound streams.
 
 ![rtsp session](_media/lal_rtsp_session.jpeg)
 
-原创不易，转载请注明文章出自开源流媒体服务器[lal](https://github.com/q191201771/lal)，Github：[https://github.com/q191201771/lal](https://github.com/q191201771/lal)  官方文档：[https://pengrl.com/lal](https://pengrl.com/lal)  
-
 yoko, 20210206
+
+---
+
+Being original is not easy. Reproduction is allowed, but please reference this article as being part of the documentation for the open-source streaming media server [lal](https://github.com/q191201771/lal) (GitHub link).   Official documentation: [https://pengrl.com/lal](https://pengrl.com/lal)
