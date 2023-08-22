@@ -113,7 +113,7 @@ $ make
 
 > **Tips:**
 > If compiling with an IDE such as GoLand, then compiling the `lal/app/lalserver` directory is sufficient.
-> If you don't have a Go compiler installed, you can refer to ["Installing Golang on CentOS or macOS"](https://pengrl.com/p/34426/), and for Windows OS you can search for tutorials online.
+> If you don't have a Go compiler installed, you can refer to ["Installing Golang on CentOS or macOS"](https://pengrl.com/p/34426/) 🇨🇳, and for Windows OS you can search for tutorials online.
 
 Run:
 
@@ -136,7 +136,7 @@ Run the image:
 $ docker run -it -p 1935:1935 -p 8080:8080 -p 4433:4433 -p 5544:5544 -p 8083:8083 -p 8084:8084 -p 30000-30100:30000-30100/udp q191201771/lal /lal/bin /lalserver -c /lal/conf/lalserver.conf.json
 ```
 
-*If you want to build your own Docker image, refer to [Appendix - Building Your Own Docker Image](https://pengrl.com/lal/#/appendix?id=%e2%9c%92-%e6%9e%84%e5%bb%ba%e8%87%aa%e5%b7%b1%e7%9a%84docker%e9%95%9c%e5%83%8f)*
+*If you want to build your own Docker image, refer to [Appendix - Building Your Own Docker Image](appendix.md#-building-your-own-docker-image)*
 
 #### ✒ Method 3: Downloading a pre-compiled binary executable
 
@@ -163,9 +163,9 @@ Use ffplay to pull RTMP streams for playback:
 $ ffplay rtmp://127.0.0.1/live/test110
 ```
 
-> For more protocols, see: [lalserver list of push and pull stream url addresses by protocol](https://pengrl.com/lal/#/streamurllist)
+> For more protocols, see: [lalserver list of push and pull stream url addresses by protocol](streamurllist.md)
 > 
-> For more third-party clients, see: [Summary of common push/pull streaming client information](https://pengrl.com/lal/#/CommonClient)
+> For more third-party clients, see: [Summary of common push/pull streaming client information](CommonClient.md)
 
 #### ✒ lalserver configuration file
 

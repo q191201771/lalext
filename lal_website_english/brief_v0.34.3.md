@@ -61,7 +61,7 @@ ffplay rtsp://127.0.0.1:5544/live/test110
 
 Add a simple web status page inside the lalserver process. After starting lalserver, type http://127.0.0.1:8083/lal.html in the browser to access it.
 
-[click me if you want to see screenshots](https://pengrl.com/lal/#/http_web_ui), which is basically divided into three main parts:
+[click here if you want to see screenshots](http_web_ui.md), which is basically divided into three main parts:
 
 1. Basic information about the service
     - Basic information about the service, such as version, startup time, etc.
@@ -100,7 +100,7 @@ There are some more modifications not to be introduced one by one, they are roug
 > - [chore] add version checking script check_versions.sh
 > - [chore] add check_versions.sh
 > 
-> The above is extracted from ["lal CHANGELOG version log"](https://pengrl.com/lal/#/CHANGELOG), you can get more details from the source document.
+> The above is extracted from ["lal version log"](../CHANGELOG.md), you can get more details from the source document.
 
 #### ▦ Developers
 
@@ -108,11 +108,11 @@ Thanks to the open source contributors who worked on this release: yoko(Liang), 
 
 #### ▦ Learn more about lal
 
-- [github](https://github.com/q191201771/lal)
-- [official documentation](https://pengrl.com/lal)
+- [GitHub](https://github.com/q191201771/lal)
+- [Official Documentation](https://pengrl.com/lal)
 - [Contact Author](https://pengrl.com/lal/#/Author)
 
-WeChat scan QR code to add yourself as my friend (into the WeChat group):
+WeChat scan QR code to add yourself as the author's friend (into the WeChat group):
 
 ![WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2303)
 

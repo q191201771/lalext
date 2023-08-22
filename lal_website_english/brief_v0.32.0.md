@@ -8,9 +8,9 @@ I'd like to pick three important changes and briefly introduce them:
 
 #### ▌I, Automatic overlay of muted audio
 
-This is to better support [pure video streaming](https://pengrl.com/lal/#/concept?id=%e7%ba%af%e9%9f%b3%e9%a2%91%e6%b5%81%ef%bc%8c%e7%ba%af%e8%a7%86%e9%a2%91%e6% b5%81), to solve the problem that the first frame opening time may be particularly slow and delayed when many players play live streams of pure video.
+This is to better support [pure video streaming](concept.md#pure-audio-stream-pure-video-stream), to solve the problem that the first frame opening time may be particularly slow and delayed when many players play live streams of pure video.
 
-For details, I've written a separate document: [lalserver auto overlay mute audio](https://pengrl.com/lal/#/dummy_audio)
+For details, I've written a separate document: [lalserver auto overlay mute audio](dummy_audio.md)
 
 #### ▌II. Support for RTMPS and RTSPS
 
@@ -43,7 +43,7 @@ RTMPS and RTSPS can be enabled through the configuration file of [lalserver](htt
   },
 ```
 
-> Hint: the above is sourced from ["lalserver configuration file description"](https://pengrl.com/lal/#/ConfigBrief), open the source document for a more friendly reading format.
+> Hint: the above is sourced from ["lalserver configuration file description"](ConfigBrief.md), open the source document for a more friendly reading format.
 
 #### ▌III, Better support for more RTSP cameras
 
@@ -73,19 +73,23 @@ There are a few more modifications that I won't introduce one by one, they are r
 >
 > - [log] Print RTSP signalling. Enriched several error logs, e.g. transferring its exceptions.
 >
-> - [doc] New document: important concepts https://pengrl.com/lal/#/concept
+> - [doc] New document: important concepts [https://pengrl.com/lal/#/concept](concept.md)
 >
 > - [doc] Added documentation: important concepts
 >
 >   
 >
->   The above is extracted from ["lal CHANGELOG Release Log"](https://pengrl.com/lal/#/CHANGELOG), you can get more details from the source document.
+>   The above is extracted from the [lal version log](../CHANGELOG.md), you can get more details from the source document.
 
-#### Learn more about lal
+#### ▦ Learn more about lal
 
-- [github](https://github.com/q191201771/lal)
-- [Official documentation](https://pengrl.com/lal)
+- [GitHub](https://github.com/q191201771/lal)
+- [Official Documentation](https://pengrl.com/lal)
 - [Contact Author](https://pengrl.com/lal/#/Author)
+
+WeChat scan QR code to add yourself as the author's friend (into the WeChat group):
+
+![WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
 
 End of this article. Have a nice day! 
 

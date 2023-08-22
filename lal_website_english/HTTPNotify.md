@@ -5,7 +5,7 @@ The business side can better implement their own customised business by combinin
 
 ## ▌ I. Related Configuration
 
-HTTP Notify has some configurations in the configuration file as follows (specific to the document [lalserver configuration file description](https://pengrl.com/lal/#/ConfigBrief)):
+HTTP Notify has some configurations in the configuration file as follows (specific to the document [lalserver configuration file description](ConfigBrief.md):
 
 ```json
   ...

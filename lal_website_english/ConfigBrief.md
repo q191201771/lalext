@@ -321,7 +321,7 @@ If 0, do not merge.
 
 Configuration for all input type streams (all protocols, all input types).
 
-For details see: https://pengrl.com/lal/#/dummy_audio
+For details see: [Dummy audio](dummy_audio.md)
 
 #### ✸ "in_session/add_dummy_audio_enable"
 

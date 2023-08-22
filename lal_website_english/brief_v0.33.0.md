@@ -22,13 +22,13 @@ To address this issue, we support it by adding 302 jumps, adding a parameter wit
 - Getting the number of HLS players, bitrate, etc.
 - Get event notification when HLS starts or ends playing.
 
-There are two configurations for this feature in the config file, see [hls/sub_session_timeout_ms](https://pengrl.com/lal/#/ConfigBrief?id=%e2%9c%b8-quothlssub_session_timeout_ msquot) and [hls/sub_session_hash_key](https://pengrl.com/lal/#/ConfigBrief?id=%e2%9c%b8-quothlssub_session_hash_keyquot)
+There are two configurations for this feature in the config file, see [hls/sub_session_timeout_ms](ConfigBrief.md#-hlssub_session_timeout_ms) and [hls/sub_session_hash_key](ConfigBrief.md#-hlssub_session_hash_key)
 
 If you don't like the overhead of `m3u8` 302 jumps, and you don't care about HLS stats and notifications, then you can turn that off via the config file.
 
 > Related documentation:  
-> [The lalserver HTTP API Interface](https://pengrl.com/lal/#/HTTPAPI)  
-> [The lalserver HTTP Notify (Callback/Webhook) event callback](https://pengrl.com/lal/#/HTTPNotify)
+> [The lalserver HTTP API Interface](HTTPAPI.md)  
+> [The lalserver HTTP Notify (Callback/Webhook) event callback](HTTPNotify.md)
 
 #### ▌III. Parsing RTP extension headers
 
@@ -49,13 +49,17 @@ There are some other modifications that are not explained one by one, roughly as
 > - [fix] rtmp: valid length check before receiving buff parsing
 > - [fix] rtmp.
 >
-> The above is extracted from ["lal CHANGELOG Release Log"](https://pengrl.com/lal/#/CHANGELOG) , you can get more details from the source document.
+> The above is extracted from ["lal CHANGELOG Release Log"](../CHANGELOG), you can get more details from the source document.
 
-#### Learn more about lal
+#### ▦ Learn more about lal
 
-- [github](https://github.com/q191201771/lal)
-- [Official documentation](https://pengrl.com/lal)
+- [GitHub](https://github.com/q191201771/lal)
+- [Official Documentation](https://pengrl.com/lal)
 - [Contact Author](https://pengrl.com/lal/#/Author)
+
+WeChat scan QR code to add yourself as the author's friend (into the WeChat group):
+
+![WeChat](https://pengrl.com/images/yoko_vx.jpeg?date=2304)
 
 End of this article. Have a nice day!
 

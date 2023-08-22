@@ -4,7 +4,7 @@ lalserver provides a HTTP API which you can use to get some status of lalserver 
 
 ## ▌ I. Related Configuration
 
-The HTTP API has some entries in the configuration file as follows (specifically based on the document [lalserver configuration file description](https://pengrl.com/lal/#/ConfigBrief)):
+The HTTP API has some entries in the configuration file as follows (specifically based on the document [lalserver configuration file description](ConfigBrief.md):
 
 ```json
   ...

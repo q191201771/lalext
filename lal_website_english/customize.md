@@ -6,12 +6,12 @@ From the introductory level to expert:
 
 | Level |         Mode/style                                                     | Functionality (business side) | Relevant documentation                                                                                                          |
 |---|------------------------------------------------------------------------|-----:|------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1 | Start the lalserver directly                                           |  60% | [lalserver Installation and Operation](https://pengrl.com/lal/#/?id=%e2%96%a6-%e4%ba%8c-lalserver-%e5%ae%89%e8%a3%85%e3%80%81%e8%bf%90%e8%a1%8c)   |
-| 2 | Changing the lalserver configuration file                              |  70% | [lalserver Configuration File Description](https://pengrl.com/lal/#/ConfigBrief)                                                                     |
-| 3 | Business-side services work with lalserver's HTTP Notify/HTTP API.     |  80% | [lalserver HTTP Notify event callbacks](https://pengrl.com/lal/#/HTTPNotify) \|  [lalserver HTTP API connection](https://pengrl.com/lal/#/HTTPAPI) |
-| 4 | Work with other demos in lal                                           |  85% | [Introduction to the demos](https://pengrl.com/lal/#/DEMO)                                                                                        |
+| 1 | Start the lalserver directly                                           |  60% | [Installing and running lalserver](README.md#-ii-installing-and-running-lalserver)   |
+| 2 | Changing the lalserver configuration file                              |  70% | [lalserver Configuration File Description](ConfigBrief.md)                                                                     |
+| 3 | Business-side services work with lalserver's HTTP Notify/HTTP API.     |  80% | [lalserver HTTP Notify event callbacks](HTTPNotify.md) <br> [lalserver HTTP API connection](HTTPAPI.md) |
+| 4 | Work with other demos in lal                                           |  85% | [Introduction to the demos](DEMO.md)                                                                                        |
 | 5 | Work with lalext extensions                                            |  90% | [lalext](https://github.com/q191201771/lalext)                                                                                 |
-| 6 | Secondary development based on lalserver                               |  95% | [lalserver secondary development](https://pengrl.com/lal/#/customize)                                                                                   |
+| 6 | Secondary development based on lalserver                               |  95% | [lalserver secondary development](customize_pub.md)                                                                                   |
 | 7 | Ditch lalserver and make your own application built on the lal library |  99% | nil                                                                                                                                                        |
 | 8 | Drop lal completely                                                    | 100% | nil                                                                                                                                                        |
 
@@ -60,9 +60,9 @@ In the lal project, the package library can be roughly divided into two main par
 
 lalserver secondary development is to use lalserver's logic from the library of  basic functions, but also engage in a little customisation and plug-in development.  
 You can understand that logic provides a lot of the default implementation, such as: access to a number of standard protocols, flow management, flow forwarding, authentication, configuration management, and so on.  
-If the basic library can't meet your needs — for example, you want to access custom protocols, custom authentication and so on — you can target the secondary development.  
+If the basic library can't meet your needs — for example, you want to access custom protocols, custom authentication and so on — you can target the secondary development.
 
-The boundary of lalserver secondary development capability depends on the interface provided by logic. Our goal is:
+The limits of the lalserver secondary development capabilities depends on the interface provided by logic. Our goal is:
 
 1. What is Caesar's to Caesar, God's to God. The business side should not modify the code in the lal pkg library.
    1. Generic code, try to mention PR, contribute to open source;

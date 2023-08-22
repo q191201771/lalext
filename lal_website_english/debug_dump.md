@@ -10,7 +10,7 @@ Here are the corresponding dump methods for each protocol:
 
 Via the `debug_dump_packet` parameter in the `/api/ctrl/start_rtp_pub` interface of lalserver's HTTP-API
 
-> See specifically: https://pengrl.com/lal/#/HTTPAPI?id=_24-apictrlstart_rtp_pub
+> See specifically: [HTTPAPI.md](HTTPAPI.md#24-apictrlstart_rtp_pub)
 
 #### ▦ RTSP
 
@@ -20,7 +20,7 @@ RTSP has two methods:
 
 The first is via the `debug_dump_packet` parameter in the `/api/ctrl/start_relay_pull` interface of the HTTP-API of lalserver
 
-> See specifically: https://pengrl.com/lal/#/HTTPAPI?id=_21-apictrlstart_relay_pull
+> See specifically: [HTTPAPI.md](HTTPAPI.md#21-apictrlstart_relay_pull)
 
 ##### ✒ demo pullrtsp
 
