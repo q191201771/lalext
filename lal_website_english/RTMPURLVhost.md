@@ -56,8 +56,8 @@ The first trick is to add a directory between host and `appName`. The server nee
 ```shell
 $ ffplay rtmp://fake.lal.com/alfake.lal.com/live/test110
 ```
-```yaml
 Signalling value:
+```yaml
 connect
   appName: alfake.lal.com/live
   tcUrl: rtmp://fake.lal.com:1935/alfake.lal.com/live
@@ -69,8 +69,8 @@ The second trick is even simpler: just add a parameter to the URL. The server ne
 ```shell
 $ ffplay rtmp://fake.lal.com/alfake.lal.com/live/test110
 ```
-```yaml
 Signalling value:
+```yaml
 connect
   appName: live
   tcUrl: rtmp://fake.lal.com:1935/live
