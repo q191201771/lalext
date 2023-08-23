@@ -1,7 +1,6 @@
 ### test.flv
 
-信息如下：
-
+信息如下/The information is as follows:
 ```
 Input #0, flv, from 'test.flv':
   Metadata:
@@ -16,13 +15,13 @@ Input #0, flv, from 'test.flv':
 
 ### test.h264
 
-使用如下命令生成的ES流(h264 annexb)
+使用如下命令生成的ES流(h264 annexb)/ES stream generated using the following command (H.264 Annex B)
 
-```
-ffmpeg -i test.flv -vcodec copy -an -f rawvideo -vbsf h264_mp4toannexb test.h264
+```sh
+$ ffmpeg -i test.flv -vcodec copy -an -f rawvideo -vbsf h264_mp4toannexb test.h264
 ```
 
-信息如下：
+信息如下/The information is as follows:
 
 ```
 Input #0, h264, from 'test.h264':

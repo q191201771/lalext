@@ -13,8 +13,8 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/q191201771/naza/pkg/nazahttp"
@@ -43,9 +43,9 @@ func main() {
 	nazalog.Assert(nil, err)
 
 	var pageFn = func(writer http.ResponseWriter, request *http.Request) {
-		buf, err := ioutil.ReadFile("rtmp2webrtc.html")
+		buf, err := os.ReadFile("rtmp2webrtc.html")
 		if err != nil {
-			buf, err = ioutil.ReadFile("rtmp2webrtc/rtmp2webrtc.html")
+			buf, err = os.ReadFile("rtmp2webrtc/rtmp2webrtc.html")
 		}
 		if err != nil {
 			writer.WriteHeader(404)
