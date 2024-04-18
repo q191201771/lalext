@@ -1,5 +1,7 @@
 # LAL v0.36.7发布，Customize Sub，我有的都给你
 
+> **注意，v0.36.7之后的版本没有单独的发版介绍文档，修改内容见 [CHANGELOG.md](https://pengrl.com/lal/#/CHANGELOG)**
+
 Go语言流媒体开源项目 [LAL](https://github.com/q191201771/lal) 今天发布了v0.36.7版本。
 
 > LAL 项目地址：https://github.com/q191201771/lal

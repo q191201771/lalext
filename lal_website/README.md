@@ -35,9 +35,8 @@
 >     - ✦ 其他demo
 >     - ✦ 流媒体协议栈库package/library
 >     - ✦ Golang通用基础库-naza
->   - ✒ lalext
->     - ✦ WebRTC
->     - ✦ MCU合流
+>   - ✒ lalmax
+>     - ✦ SRT、RTC、mp4、gb28181、onvif
 >   - ✒ 进行中
 > - ▦ 五. 联系作者
 
@@ -62,7 +61,7 @@
   - [x] 支持RTMP, RTSP(RTP/RTCP), HLS, HTTP[S]/WebSocket-FLV/TS, GB28181
   - [x] 支持不同封装协议间相互转换
   - [x] 支持通过插件形式进行二次开发，支持扩展自定义协议，输入输出都可以
-- [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC，G711A/G711U
+- [x] **多种编码格式**。视频支持H264/AVC，H265/HEVC，音频支持AAC, G711A/G711U, OPUS
 - [x] **多种格式录制**。支持FLV，长MPEGTS，HLS录制(HLS直播与录制可同时开启)
 - [x] **HTTPS**。支持HTTPS-FLV，HTTPS-TS，HLS over HTTPS拉流
 - [x] **WebSocket**。支持Websocket-FLV，WebSocket-TS拉流
@@ -213,17 +212,11 @@ lal将非流媒体特有的通用基础库抽象在一个独立的github repo [n
 
 了解更多请访问： [《naza github 地址》](https://github.com/q191201771/naza)： https://github.com/q191201771/naza
 
-#### ✒ lalext
+#### ✒ lalmax
 
-站在巨人的肩膀上才能看的更远。lal在另一个github repo [lalext](https://github.com/q191201771/lalext)中，将lal的代码与第三方的库结合，实现了更丰富的功能。
+lalmax是在lal的基础上集成第三方库，可以提供SRT、WebRTC、mp4、gb28181、onvif等解决方案。
 
-##### ✦ WebRTC
-
-rtmp转WebRTC的网关
-
-了解更多请访问： [《lalext github 地址》](https://github.com/q191201771/lalext)： https://github.com/q191201771/lalext
-
-##### ✦ SRT
+了解更多请访问： [《lalmax github 地址》](https://github.com/q191201771/lalmax)： https://github.com/q191201771/lalmax
 
 #### ✒ 进行中
 
@@ -233,18 +226,6 @@ rtmp转WebRTC的网关
 
 ### ▦ 五. 联系作者
 
-- 微信： q191201771
-- QQ： 191201771
-- 微信群： 加我微信好友后，告诉我拉你进群
-- QQ群： 635846365
-- 邮箱：191201771@qq.com
-- lal github地址： https://github.com/q191201771/lal
-- lal官方文档： https://pengrl.com/lal
+[点我查看作者联系方式](https://pengrl.com/#/Author)
 
-
-作者微信，扫码加好友：
-
-![lal作者微信](https://pengrl.com/images/yoko_vx.jpeg?date=220329)
-
-欢迎任何技术和非技术的交流。
-
+this note updated at 2312
