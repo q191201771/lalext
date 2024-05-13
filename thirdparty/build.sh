@@ -14,9 +14,9 @@
 ##      brew install xquartz sdl glfw3 glew
 ##
 ## centos 安装依赖：
+## yum -y install cmake unzip bzip2 bzip2-libs bzip2-devel
 ## yum install centos-release-scl -y
 ## yum install devtoolset-9 -y
-## yum install cmake
 ## scl enable devtoolset-9 bash
 ##
 ## macos m1没有编译出ffplay，我自己手动编译的
@@ -51,6 +51,11 @@
 ##      https://github.com/libass/libass/releases/tag/0.17.1
 ##      https://github.com/libass/libass/releases/download/0.17.1/libass-0.17.1.tar.gz
 ##
+## 注释 libfreetype
+##
+##      http://mirror.ossplanet.net/nongnu/freetype/
+##      http://mirror.ossplanet.net/nongnu/freetype/freetype-2.13.0.tar.gz
+##
 ## 注释 ffmpeg
 ##
 ##      https://github.com/FFmpeg/FFmpeg/archive/refs/tags/n4.4.tar.gz
@@ -62,6 +67,7 @@
 ##
 ## 注释 验证ffmpeg以及库是否能正常使用
 ##
+## 注释 没有安装libfontconfig，而是直接使用我macOS上之前已经有的
 
 set -x
 
@@ -105,13 +111,22 @@ cd opus-1.3.1
 make -j8 && make install && make clean
 cd -
 
-echo 'libass...'
-tar zxvf libass-0.17.1.tar.gz
-cd libass-0.17.1/
+echo 'libfreetype...'
+tar zxvf freetype-2.13.0.tar.gz
+cd freetype-2.13.0
 ./configure --prefix=${PREFIX}
 make -j8 && make install && make clean
+cd -
 
-## 注释 汇编优化相关的configure参数，加上会影响性能 --disable-x86asm --disable-asm \
+# libfontconfig
+
+#echo 'libass...'
+#tar zxvf libass-0.17.1.tar.gz
+#cd libass-0.17.1/
+#./configure --prefix=${PREFIX}
+#make -j8 && make install && make clean
+#cd -
+
 echo 'ffmpeg...'
 tar zxvf n4.4.tar.gz
 tar zxvf mod_ffmpeg_to_support_rtmp_hevc.tgz
@@ -126,7 +141,11 @@ export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
             --enable-shared --disable-static \
             --enable-gpl --enable-nonfree \
             --enable-debug=3 --disable-optimizations --disable-stripping \
-            --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libopus --enable-libass
+            --disable-x86asm --disable-asm \
+            --enable-libx264 --enable-libx265 --enable-libfdk-aac --enable-libopus --enable-libfreetype --enable-libfontconfig
+
+# 注释 汇编优化相关的configure参数，加上会影响性能 --disable-x86asm --disable-asm
+#  --enable-libass
 # --extra-cflags="-I${PREFIX}/include -I/opt/homebrew/include -L${PREFIX}/lib -L/opt/homebrew/lib"
 # --extra-libs="-lpthread -lm" \
 
