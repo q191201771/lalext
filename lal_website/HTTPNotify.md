@@ -71,30 +71,30 @@ Accept-Encoding: gzip
         "video_codec": "H264",    // 视频编码格式 "H264" | "H265"
         "video_width": 640,       // 视频宽
         "video_height": 360,      // 视频高
-        "pub": {                                   // -----接收推流的信息-----
-          "session_id": "RTMPPUBSUB1",             // 会话ID，会话全局唯一标识
-          "protocol": "RTMP",                      // 推流协议，取值范围： "RTMP" | "RTSP"
-          "base_type": "PUB",                      // 基础类型，该处固定为"PUB"
-          "start_time": "2020-10-11 19:17:41.586", // 推流开始时间
-          "remote_addr": "127.0.0.1:61353",        // 对端地址
-          "read_bytes_sum": 9219247,               // 累计读取数据大小（从推流开始时计算）
-          "wrote_bytes_sum": 3500,                 // 累计发送数据大小
-          "bitrate_kbits": 436,                    // 最近5秒码率，单位kbit/s。对于pub类型，如无特殊声明，等价于`read_bitrate_kbits`
-          "read_bitrate_kbits": 436,               // 最近5秒读取数据码率
-          "write_bitrate_kbits": 0                 // 最近5秒发送数据码率
+        "pub": {                                             // -----接收推流的信息-----
+          "session_id": "RTMPPUBSUB1",                       // 会话ID，会话全局唯一标识
+          "protocol": "RTMP",                                // 推流协议，取值范围： "RTMP" | "RTSP"
+          "base_type": "PUB",                                // 基础类型，该处固定为"PUB"
+          "start_time": "2024-05-16 14:50:34.795 +0800 CST", // 推流开始时间
+          "remote_addr": "127.0.0.1:61353",                  // 对端地址
+          "read_bytes_sum": 9219247,                         // 累计读取数据大小（从推流开始时计算）
+          "wrote_bytes_sum": 3500,                           // 累计发送数据大小
+          "bitrate_kbits": 436,                              // 最近5秒码率，单位kbit/s。对于pub类型，如无特殊声明，等价于`read_bitrate_kbits`
+          "read_bitrate_kbits": 436,                         // 最近5秒读取数据码率
+          "write_bitrate_kbits": 0                           // 最近5秒发送数据码率
         },
-        "subs": [                                    // -----拉流的信息，可能存在多种协议，每种协议可能存在多个会话连接-----
+        "subs": [                                              // -----拉流的信息，可能存在多种协议，每种协议可能存在多个会话连接-----
           {
-            "session_id": "FLVSUB1",                 // 会话ID，会话全局唯一标识
-            "protocol": "FLV",                       // 拉流协议，取值范围： "RTMP" | "FLV" | "TS"
-            "base_type" "SUB"                        // 基础类型，该处固定为"SUB"
-            "start_time": "2020-10-11 19:19:21.724", // 拉流开始时间
-            "remote_addr": "127.0.0.1:61785",        // 对端地址
-            "read_bytes_sum": 134,                   // 累计读取数据大小（从拉流开始时计算）
-            "wrote_bytes_sum": 2944020,              // 累计发送数据大小
-            "bitrate_kbits": 439,                    // 最近5秒码率，单位kbit/s。对于sub类型，如无特殊声明，等价于`write_bitrate_kbits`
-            "read_bitrate_kbits": 0,                 // 最近5秒读取数据码率
-            "write_bitrate_kbits": 439               // 最近5秒发送数据码率
+            "session_id": "FLVSUB1",                           // 会话ID，会话全局唯一标识
+            "protocol": "FLV",                                 // 拉流协议，取值范围： "RTMP" | "FLV" | "TS"
+            "base_type" "SUB"                                  // 基础类型，该处固定为"SUB"
+            "start_time": "2024-05-16 14:50:34.795 +0800 CST", // 拉流开始时间
+            "remote_addr": "127.0.0.1:61785",                  // 对端地址
+            "read_bytes_sum": 134,                             // 累计读取数据大小（从拉流开始时计算）
+            "wrote_bytes_sum": 2944020,                        // 累计发送数据大小
+            "bitrate_kbits": 439,                              // 最近5秒码率，单位kbit/s。对于sub类型，如无特殊声明，等价于`write_bitrate_kbits`
+            "read_bitrate_kbits": 0,                           // 最近5秒读取数据码率
+            "write_bitrate_kbits": 439                         // 最近5秒发送数据码率
           }
         ],
         "pull": {              // -----该节点从其他节点拉流回源信息-----
@@ -282,4 +282,4 @@ hls生成每个ts分片文件时。
 }
 ```
 
-NOTE: HttpNotifyVersion = "v0.2.2"
+NOTE: HttpNotifyVersion = "v0.2.4"
