@@ -30,6 +30,7 @@ HTTP API在配置文件中有一些配置如下（具体以 [lalserver 配置文
 2.3. /api/ctrl/kick_session     // 强行踢出关闭指定session，session可以是pub、sub、pull类型
 2.4. /api/ctrl/start_rtp_pub    // 打开GB28181接收端口
 2.5. /api/ctrl/stop_rtp_pub     // 关闭GB28181接收端口
+2.6. /api/ctrl/add_ip_blacklist // 增加IP黑名单，加入名单的IP将无法连接本服务
 ```
 
 ## ▌ 三. 名词解释：
@@ -408,4 +409,41 @@ $curl -H "Content-Type:application/json" -X POST -d '{"stream_name": "test110", 
 
 `stop_rtp_pub`这个接口暂时没有开放。
 
-NOTE: HttpApiVersion = "v0.4.6"
+### 2.6 `/api/ctrl/add_ip_blacklist`
+
+✸ 简要描述： 增加IP黑名单，加入名单的IP将无法连接本服务。目前只支持hls协议。
+✸ 请求示例：
+
+```
+$curl -H "Content-Type:application/json" -X POST -d '{"ip": "127.0.0.1", "duration_sec": 60}' http://127.0.0.1:8083/api/ctrl/add_ip_blacklist
+```
+
+✸ 请求方式： `HTTP POST`
+
+✸ 请求参数：
+
+```
+{
+  "ip": "127.0.0.1",  // 必填项，加入黑名单的远端客户端IP
+  "duration_sec": 60  // 必填项，加入黑名单的时长，单位秒
+}
+```
+
+✸ 返回值`error_code`可能取值：
+
+- 0    请求接口成功。指定会话被关闭
+- 1002 参数错误
+
+✸ 返回示例：
+
+```
+{
+  "error_code": 0,
+  "desp": "succ"
+}
+```
+
+
+NOTE: HttpApiVersion = "v0.4.8"
+
+updated at 202405
