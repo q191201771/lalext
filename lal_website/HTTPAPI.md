@@ -129,7 +129,21 @@ $curl http://127.0.0.1:8083/api/stat/group?stream_name=test110
       "base_type": "PULL", // 该处固定为"PULL"
       ...                  // 其他字段和上面pub的内部字段相同，不再赘述
     },
-    "pushs":[] // 主动外连转推信息，暂时不提供
+    "pushs":[], // 主动外连转推信息，暂时不提供
+    "in_frame_per_sec": [  // 最近32秒内的fps（也即每一秒有多少帧视频数据）
+      {
+        "unix_sec": 1723513826,
+        "v": 15
+      },
+      {
+        "unix_sec": 1723513825,
+        "v": 15
+      },
+      {
+        "unix_sec": 1723513824,
+        "v": 15
+      }
+    ]
   }
 }
 ```
@@ -444,6 +458,6 @@ $curl -H "Content-Type:application/json" -X POST -d '{"ip": "127.0.0.1", "durati
 ```
 
 
-NOTE: HttpApiVersion = "v0.4.8"
+NOTE: HttpApiVersion = "v0.4.9"
 
 updated at 202405

@@ -101,7 +101,21 @@ Accept-Encoding: gzip
           "base_type": "PULL", // 该处固定为"PULL"
           ...                  // 其他字段和上面pub的内部字段相同，不再赘述
         }, 
-        "pushs":[] // 主动外连转推信息，暂时不提供
+        "pushs":[], // 主动外连转推信息，暂时不提供
+        "in_frame_per_sec": [  // 最近32秒内的fps（也即每一秒有多少帧视频数据）
+          {
+            "unix_sec": 1723513826,
+            "v": 15
+          },
+          {
+            "unix_sec": 1723513825,
+            "v": 15
+          },
+          {
+            "unix_sec": 1723513824,
+            "v": 15
+          }
+        ]
       }
     ]
 }
@@ -282,4 +296,4 @@ hls生成每个ts分片文件时。
 }
 ```
 
-NOTE: HttpNotifyVersion = "v0.2.4"
+NOTE: HttpNotifyVersion = "v0.2.5"
